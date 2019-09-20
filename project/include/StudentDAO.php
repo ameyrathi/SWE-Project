@@ -35,4 +35,34 @@ class StudentDAO {
         $conn = null;        
         return $password;
     }
+
+    public function validUser($userid){
+        /**
+         * checks if the username is Valid
+         * @param string $userid is the username
+         * @return boolean if username exists in the database
+         */
+        $connMgr = new connection_manager();
+        $conn = $connMgr->connect();
+
+        $sql = 'SELECT * FROM student WHERE userid = :userid';
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':userid', $userid, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $success = $stmt->fetch();
+        
+        if($success == false) {
+            return false;
+        }
+        return true;
+    }
+
+    function adminLogin($password){
+        if($password == "password"){
+            return true;
+        }
+        return false;
+    }
+
 }
