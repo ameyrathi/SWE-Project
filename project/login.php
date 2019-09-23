@@ -9,7 +9,7 @@ if(isset($_SESSION["userid_attempt"])) {
 
 ?>
 <html>
-<link rel="stylesheet" href="sidebar.css"/>
+<link rel="stylesheet" href="stylesheet.css"/>
 <body>
 <!-- need to enter action -->
 <h1>Welcome to BIOS!</h1>
