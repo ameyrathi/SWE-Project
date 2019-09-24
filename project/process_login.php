@@ -38,7 +38,7 @@ if($username == "admin"){
 else{
     $userValid = $StudentDAO->validUser($username);
     if($userValid!=1){
-        $_SESSION["errors"] = "Username Invalid";
+        $_SESSION["errors"] = "Invalid Username";
         header('Location: login.php');
         die;
     }
@@ -48,7 +48,7 @@ else{
         header("Location: student_home.php");
     }
     else{
-        $_SESSION["errors"]="Incorrect Password";
+        $_SESSION["errors"]="Invalid Password";
         header("Location: login.php");
     }
 }
