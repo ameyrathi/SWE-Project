@@ -13,6 +13,9 @@
     }
 
     token_gateway($token);
+    
+    $biddingrounddao = new BiddingRoundDAO();
+    $current_round = $biddingrounddao->checkBiddingRound();
 ?>
 
 <!-- The sidebar -->

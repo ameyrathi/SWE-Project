@@ -13,6 +13,7 @@
     }
 
     token_gateway($token);
+    
 ?>
 
 <!-- The sidebar -->
