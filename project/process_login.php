@@ -45,7 +45,8 @@ else{
     $db_password = $StudentDAO->getPassword($username);
     if($password == $db_password){
         $_SESSION["userid"] = $username;
-        header("Location: student_home.php");
+        $token = generate_token($username);
+        header("Location: student_home.php?token=$token");
     }
     else{
         $_SESSION["errors"]="Invalid Password";
