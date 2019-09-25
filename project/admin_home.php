@@ -4,7 +4,7 @@
 
 <html>
 
-<link rel="stylesheet" href="sidebar.css"/>
+<link rel="stylesheet" href="stylesheet.css"/>
 
 <!-- The sidebar -->
 <div class="sidebar">
