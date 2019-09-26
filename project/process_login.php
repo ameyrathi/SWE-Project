@@ -28,7 +28,9 @@ if(empty($password)){
 $StudentDAO = new StudentDAO();
 if($username == "admin"){
     if($admin = $StudentDAO->adminLogin($password)){
-        header("Location: admin_home.php");
+        $_SESSION["userid"] = $username;
+        $token = generate_token($username);
+        header("Location: admin_home.php?token=$token");
     }
     else{
         $_SESSION["errors"]="Incorrect Password";

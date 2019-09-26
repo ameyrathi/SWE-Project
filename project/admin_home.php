@@ -1,5 +1,14 @@
 <?php
-    require_once "include/common.php";
+    require_once 'include/common.php';
+    require_once 'include/protect_token.php';
+
+    if(isset($_GET["token"])) {
+        $token = $_GET["token"];
+    } else {
+        $token = "";
+    }
+
+    token_gateway($token);
 ?>
 
 <html>
@@ -8,9 +17,9 @@
 
 <!-- The sidebar -->
 <div class="sidebar">
-  <a class="active" href="admin_home.php">Home</a>
-  <a href="admin_round.php">Round Management</a>
-  <a href="admin_bootstrap.php">Bootstrap</a>
+  <a class="active" href="admin_home.php?token=<?php echo $token;?>">Home</a>
+  <a href="admin_round.php?token=<?php echo $token;?>">Round Management</a>
+  <a href="admin_bootstrap.php?token=<?php echo $token;?>">Bootstrap</a>
   <a href="sign_out.php">Sign Out</a>
 </div>
 
