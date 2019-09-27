@@ -256,10 +256,11 @@ function doBootstrap() {
                         }
 
                         // invalid section check
-                        #$section_array = explode('S',$section);
-                        #if(count($section_array) != 2 || !is_int($section_array[1]) || (int)$section_array[1] < 0 || (int)$section_array[1] > 99){
-                        #    array_push($section_row_errors, "invalid section");
-                        #}
+                        $section_first_char = substr($section, 0, 1);
+                        $section_other_char = substr($section, 1, strlen($section)-1);
+                        if($section_first_char != "S" || !is_numeric($section_other_char) || $section_other_char < 1 || $section_other_char > 99) {
+                            array_push($section_row_errors, "invalid section");
+                        }
 
                         // invalid day check
                         if((int)$day < 1 || (int)$day > 7){
