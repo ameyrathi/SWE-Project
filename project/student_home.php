@@ -21,7 +21,6 @@
   <a class="active" href="student_home.php?token=<?php echo $token?>">Home</a>
   <a href="student_add_bid.php?token=<?php echo $token?>">Bid</a>
   <a href="student_drop_bid.php?token=<?php echo $token?>">Drop Bid</a>
-  <a href="student_view_bid.php?token=<?php echo $token?>">View Bids</a>
   <a href="student_view_results.php?token=<?php echo $token?>">View Results</a>
   <a href="sign_out.php">Sign Out</a>
 </div>
