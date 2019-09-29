@@ -6,8 +6,8 @@ function doBootstrap() {
     $errors = array();
     $num_record_loaded = array();
 
-	# need tmp_name -a temporary name create for the file and stored inside apache temporary folder- for proper read address
-	$zip_file = $_FILES["bootstrap-file"]["tmp_name"];
+    # need tmp_name -a temporary name create for the file and stored inside apache temporary folder- for proper read address
+    $zip_file = $_FILES["bootstrap-file"]["tmp_name"];
 
 	# Get temp dir on system for uploading
 	$temp_dir = sys_get_temp_dir();
@@ -256,11 +256,10 @@ function doBootstrap() {
                         }
 
                         // invalid section check
-                        $section_first_char = substr($section, 0, 1);
-                        $section_other_char = substr($section, 1, strlen($section)-1);
-                        if($section_first_char != "S" || !is_numeric($section_other_char) || $section_other_char < 1 || $section_other_char > 99) {
-                            array_push($section_row_errors, "invalid section");
-                        }
+                        #$section_array = explode('S',$section);
+                        #if(count($section_array) != 2 || !is_int($section_array[1]) || (int)$section_array[1] < 0 || (int)$section_array[1] > 99){
+                        #    array_push($section_row_errors, "invalid section");
+                        #}
 
                         // invalid day check
                         if((int)$day < 1 || (int)$day > 7){
@@ -440,7 +439,13 @@ function doBootstrap() {
                     }
 
                     if(empty($bid_row_errors)) {
-                        $success = $biddao->add_bid_for_bootstrap($userid, $amount, $code, $section);
+                        $success = false;
+                        if($biddao->bootstrap_bid_already_exists($userid, $code, $section)) {
+                            $success = $biddao->update_bid_for_bootstrap($userid, $amount, $code, $section);
+                        } else {
+                            $success = add_bid_for_bootstrap($userid, $amount, $code, $section);
+                        }
+
                         if($success) {
                             $bid_processed++;
                         } else {
