@@ -167,7 +167,7 @@ class BidDAO {
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
-        $stmt = $conn->prepare("UPDATE round1_bid SET amount=:amount WHERE userid=:userid AND code=:courseid AND section=:section");
+        $stmt = $conn->prepare("UPDATE round1_bid SET amount=:amount AND section=:section WHERE userid=:userid AND code=:courseid");
         
         $stmt->bindParam(":userid", $userid);
         $stmt->bindParam(":amount", $amount);
