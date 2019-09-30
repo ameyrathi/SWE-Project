@@ -96,6 +96,10 @@ function doBootstrap() {
                 $sectiondao->removeAll();
                 $studentdao->removeAll();
 
+                function trim_element($element) { // create function to trim a string
+                    return trim($element);
+                }
+
                 // student.csv
                 $student_headers_list = fgetcsv($student_file); # skip header
                 $student_row_count = 1;
@@ -111,8 +115,8 @@ function doBootstrap() {
                         }
                     }
 
-                    if(count($student_row_errors) == 0) {
-                        [$userid, $password, $name, $school, $edollar] = $student_row;
+                    if(count($student_row_errors) == 0) { // if no blank fields in this row
+                        [$userid, $password, $name, $school, $edollar] = array_map("trim_element", $student_row);
 
                         // invalid userid check
                         if(strlen($userid) > 128) {
@@ -186,7 +190,7 @@ function doBootstrap() {
                     }
 
                     if(count($course_row_errors) == 0) {
-                        [$course, $school, $title, $description, $exam_date, $exam_start, $exam_end] = $course_row;
+                        [$course, $school, $title, $description, $exam_date, $exam_start, $exam_end] = array_map("trim_element", $course_row);
 
                         // invalid exam date check
                         if(!validateDate($exam_date)){
@@ -256,7 +260,7 @@ function doBootstrap() {
                     }
 
                     if(count($section_row_errors) == 0) {
-                        [$course, $section, $day, $start, $end, $instructor, $venue, $size] = $section_row;
+                        [$course, $section, $day, $start, $end, $instructor, $venue, $size] = array_map("trim_element", $section_row);
 
                         // invalid course check
                         if($coursedao->get_course($course) != TRUE){
@@ -350,7 +354,7 @@ function doBootstrap() {
                     }
 
                     if(count($prerequisite_row_errors) == 0) {
-                        [$course, $prerequisite] = $prerequisite_row;
+                        [$course, $prerequisite] = array_map("trim_element", $prerequisite_row);
 
                         //invalid course check
                         if($coursedao->get_course($course) != TRUE){
@@ -396,7 +400,7 @@ function doBootstrap() {
                     }
 
                     if(count($course_completed_row_errors) == 0) {
-                        [$userid, $code] = $course_completed_row;
+                        [$userid, $code] = array_map("trim_element", $course_completed_row);
 
                         //invalid userid check
                         if(!$studentdao->validUser($userid)){
@@ -443,7 +447,7 @@ function doBootstrap() {
                     }
 
                     if(count($bid_row_errors) == 0) {
-                        [$userid, $amount, $code, $section] = $bid_row;
+                        [$userid, $amount, $code, $section] = array_map("trim_element", $bid_row);
 
                         //invalid userid check
                         if(!$studentdao->validUser($userid)){
