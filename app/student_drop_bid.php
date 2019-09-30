@@ -57,7 +57,7 @@
         ";
 
         $BidDAO = new BidDAO();
-        $list_of_bids = $BidDAO->get_bids($current_round);
+        $list_of_bids = $BidDAO->get_bids_by_student($current_round);
 
         $bid_valid = false;
 

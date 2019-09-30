@@ -50,7 +50,7 @@
         ";
 
         if($current_round == 1) {
-            $round1_bids = $biddao->get_bids(1);
+            $round1_bids = $biddao->get_bids_by_student(1);
             foreach($round1_bids as $this_bid) {
                 [$course, $section, $amount] = $this_bid;
                 echo "<tr>
@@ -60,45 +60,8 @@
                         <td>Pending</td>
                     </tr>";  
             }      
-        } elseif($current_round == 2) {
-            $round1_bids = $biddao->get_bids(1);
-            $round2_bids = $biddao->get_bids(2);
-
-            $pending_courses = [];
-
-            foreach($round2_bids as $this_bid) {
-                [$course, $section, $amount] = $this_bid;
-
-                echo "<tr>
-                <td>$course</td>
-                <td>$section</td>
-                <td>$amount</td>
-                <td>Pending</td>
-                </tr>";
-
-                array_push($pending_courses, $course);
-            }
-
-            foreach($round1_bids as $this_bid) {
-                [$course, $section, $amount] = $this_bid;
-
-                if(!in_array($course, $pending_courses)) {
-                    echo "<tr>
-                    <td>$course</td>
-                    <td>$section</td>
-                    <td>$amount</td>";
-    
-                    if($successfuldao->check_success($_SESSION["userid"], $course, $section, 1) != false) {
-                        echo "<td>Successful</td>";
-                    } else {
-                        echo "<td>Unsuccessful</td>";
-                    }
-    
-                    echo "</tr>";
-                }
-            }
         }
-    } 
+    }
 ?>
 
 </div>
