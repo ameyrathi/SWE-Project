@@ -77,10 +77,12 @@ function doBootstrap() {
 				if (!empty($student_file)) {
 					fclose($student_file);
 					@unlink($student_path);
+               }
+            } 
+            else {
+                function trim_element($element) { // create function to trim a string
+                    return trim($element);
                 }
-			} else {
-				$connection_manager = new connection_manager();
-                $conn = $connection_manager->connect();
 
                 # create DAOs
                 $biddao = new BidDAO();
@@ -108,13 +110,13 @@ function doBootstrap() {
 
                     // blank field(s) check
                     for($i=0; $i<count($student_row); $i++) {
-                        if(empty($student_row[$i])) {
+                        if(rtrim($student_row[$i]) === '' ) {
                             array_push($student_row_errors, "blank $student_headers_list[$i]");
                         }
                     }
 
                     if(count($student_row_errors) == 0) {
-                        [$userid, $password, $name, $school, $edollar] = $student_row;
+                        [$userid, $password, $name, $school, $edollar] = array_map("trim_element", $student_row);
 
                         // invalid userid check
                         if(strlen($userid) > 128) {
@@ -128,12 +130,20 @@ function doBootstrap() {
 
                         // invalid e-dollar check
                         if(is_numeric($edollar)) {
-                            if(strpos($edollar , ".") != false) {
-                                $decimal_places = strlen(substr(strrchr($edollar, "."), 1));
-                                if($decimal_places > 2) {
-                                    array_push($student_row_errors, "invalid edollar");
+                            if($edollar < 0){
+                                array_push($student_row_errors, "invalid edollar");
+                            }
+                            else{
+                                if(strpos($edollar , ".") != false) {
+                                    $decimal_places = strlen(substr(strrchr($edollar, "."), 1));
+                                    if($decimal_places > 2) {
+                                        array_push($student_row_errors, "invalid edollar");
+                                    }
                                 }
                             }
+                        }
+                        else{
+                            array_push($student_row_errors, "invalid edollar");
                         }
 
                         // invalid password check
@@ -142,7 +152,7 @@ function doBootstrap() {
                         }
 
                         // invalid name check
-                        if(strlen($name) > 128) {
+                        if(strlen($name) > 100) {
                             array_push($student_row_errors, "invalid name");
                         }
                     }
@@ -162,6 +172,7 @@ function doBootstrap() {
                 }
                 array_push($num_record_loaded, "student.csv: $student_processed row(s) processed");
                 fclose($student_file);
+                unlink($student_path);
 
                 // course.csv
                 $course_headers_list = fgetcsv($course_file); # skip header
@@ -173,13 +184,13 @@ function doBootstrap() {
 
                     // blank field(s) check
                     for($i=0; $i<count($course_row); $i++) {
-                        if(empty($course_row[$i])) {
+                        if(rtrim($course_row[$i]) === '' ) {
                             array_push($course_row_errors, "blank $course_headers_list[$i]");
                         }
                     }
 
                     if(count($course_row_errors) == 0) {
-                        [$course, $school, $title, $description, $exam_date, $exam_start, $exam_end] = $course_row;
+                        [$course, $school, $title, $description, $exam_date, $exam_start, $exam_end] = array_map("trim_element", $course_row);
 
                         // invalid exam date check
                         if(!validateDate($exam_date)){
@@ -211,7 +222,7 @@ function doBootstrap() {
                         }
 
                         //invalid description check
-                        if(strlen($description > 1000)){
+                        if(strlen($description) > 1000){
                             array_push($course_row_errors, "invalid description");
                         }
                     }
@@ -231,6 +242,7 @@ function doBootstrap() {
                 }
                 array_push($num_record_loaded, "course.csv: $course_processed row(s) processed");
                 fclose($course_file);
+                unlink($course_path);
 
                 //section.csv
                 $section_headers_list = fgetcsv($section_file); # skip header
@@ -242,13 +254,13 @@ function doBootstrap() {
 
                     // blank field(s) check
                     for($i=0; $i<count($section_row); $i++) {
-                        if(empty($section_row[$i])) {
+                        if(rtrim($section_row[$i]) == '') {
                             array_push($section_row_errors, "blank $section_headers_list[$i]");
                         }
                     }
 
                     if(count($section_row_errors) == 0) {
-                        [$course, $section, $day, $start, $end, $instructor, $venue, $size] = $section_row;
+                        [$course, $section, $day, $start, $end, $instructor, $venue, $size] = array_map("trim_element", $section_row);
 
                         // invalid course check
                         if($coursedao->get_course($course) != TRUE){
@@ -256,10 +268,27 @@ function doBootstrap() {
                         }
 
                         // invalid section check
-                        #$section_array = explode('S',$section);
-                        #if(count($section_array) != 2 || !is_int($section_array[1]) || (int)$section_array[1] < 0 || (int)$section_array[1] > 99){
-                        #    array_push($section_row_errors, "invalid section");
-                        #}
+                        if($coursedao->get_course($course) == TRUE){
+                            $section_array = explode('S',$section);
+                            if(count($section_array) == 2){
+                                if($section_array[0] == ''){
+                                    if(!is_numeric($section_array[1])){
+                                        array_push($section_row_errors, "invalid section");
+                                    }
+                                    else{
+                                        if((int)$section_array[1] <= 0 || (int)$section_array[1] > 99){
+                                            array_push($section_row_errors, "invalid section");
+                                        }
+                                    }
+                                }
+                                else{
+                                    array_push($section_row_errors, "invalid section");
+                                }
+                        }
+                            else{
+                                array_push($section_row_errors, "invalid section");
+                            }
+                        }
 
                         // invalid day check
                         if((int)$day < 1 || (int)$day > 7){
@@ -307,6 +336,7 @@ function doBootstrap() {
                 }
                 array_push($num_record_loaded, "section.csv: $section_processed row(s) processed");
                 fclose($section_file);
+                unlink($section_path);
 
                 //prerequisite.csv
                 $prerequisite_headers_list = fgetcsv($prerequisite_file); # skip header
@@ -318,13 +348,13 @@ function doBootstrap() {
 
                     // blank field(s) check
                     for($i=0; $i<count($prerequisite_row); $i++) {
-                        if(empty($prerequisite_row[$i])) {
+                        if(rtrim($prerequisite_row[$i]) == '') {
                             array_push($prerequisite_row_errors, "blank $prerequisite_headers_list[$i]");
                         }
                     }
 
                     if(count($prerequisite_row_errors) == 0) {
-                        [$course, $prerequisite] = $prerequisite_row;
+                        [$course, $prerequisite] = array_map("trim_element", $prerequisite_row);
 
                         //invalid course check
                         if($coursedao->get_course($course) != TRUE){
@@ -352,6 +382,7 @@ function doBootstrap() {
                 }
                 array_push($num_record_loaded, "prerequisite.csv: $prerequisite_processed row(s) processed");
                 fclose($prerequisite_file);
+                unlink($prerequisite_path);
 
                 //course_completed.csv
                 $course_completed_list = fgetcsv($course_completed_file); # skip header
@@ -363,13 +394,13 @@ function doBootstrap() {
 
                     // blank field(s) check
                     for($i=0; $i<count($course_completed_row); $i++) {
-                        if(empty($course_completed_row[$i])) {
+                        if(rtrim($course_completed_row[$i]) == '') {
                             array_push($course_completed_row_errors, "blank $course_completed_headers_list[$i]");
                         }
                     }
 
                     if(count($course_completed_row_errors) == 0) {
-                        [$userid, $code] = $course_completed_row;
+                        [$userid, $code] = array_map("trim_element", $course_completed_row);
 
                         //invalid userid check
                         if(!$studentdao->validUser($userid)){
@@ -377,7 +408,7 @@ function doBootstrap() {
                         }
 
                         //invalid course check
-                        if(!$coursedao->get_course($course)){
+                        if(!$coursedao->get_course($code)){
                             array_push($course_completed_row_errors, "invalid course");
                         }
                     }
@@ -398,6 +429,7 @@ function doBootstrap() {
                 }
                 array_push($num_record_loaded, "course_completed.csv: $course_completed_processed row(s) processed");
                 fclose($course_completed_file);
+                unlink($course_completed_path);
 
                 //bid.csv
                 $bid_headers_list = fgetcsv($bid_file); # skip header
@@ -409,13 +441,13 @@ function doBootstrap() {
 
                     // blank field(s) check
                     for($i=0; $i<count($bid_row); $i++) {
-                        if(empty($bid_row[$i])) {
+                        if(rtrim($bid_row[$i]) == '') {
                             array_push($bid_row_errors, "blank $bid_headers_list[$i]");
                         }
                     }
 
                     if(count($bid_row_errors) == 0) {
-                        [$userid, $amount, $code, $section] = $bid_row;
+                        [$userid, $amount, $code, $section] = array_map("trim_element", $bid_row);
 
                         //invalid userid check
                         if(!$studentdao->validUser($userid)){
@@ -428,13 +460,15 @@ function doBootstrap() {
                         }
 
                         //invalid course check
-                        if(!$coursedao->get_course($course)){
+                        if(!$coursedao->get_course($code)){
                             array_push($bid_row_errors, "invalid course");
                         }
 
                         //invalid section check
-                        if(!$sectiondao->is_valid_section($code, $section)){
-                            array_push($bid_row_errors, "invalid section");
+                        if($coursedao->get_course($code)){
+                            if(!$sectiondao->is_valid_section($code, $section)){
+                                array_push($bid_row_errors, "invalid section");
+                            }
                         }
                     }
 
@@ -443,7 +477,7 @@ function doBootstrap() {
                         if($biddao->bootstrap_bid_already_exists($userid, $code, $section)) {
                             $success = $biddao->update_bid_for_bootstrap($userid, $amount, $code, $section);
                         } else {
-                            $success = add_bid_for_bootstrap($userid, $amount, $code, $section);
+                            $success = $biddao->add_bid_for_bootstrap($userid, $amount, $code, $section);
                         }
 
                         if($success) {
@@ -459,7 +493,7 @@ function doBootstrap() {
                 }
                 array_push($num_record_loaded, "bid.csv: $bid_processed row(s) processed");
                 fclose($bid_file);
-                
+                unlink($bid_path);
             }
         }
     }
