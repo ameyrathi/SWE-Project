@@ -2,13 +2,19 @@
 
 require_once("connection_manager.php");
 
-class Round1DAO{
+class SectionResultsDAO{
 
-    function add_results($course, $section, $min_bid , $vacancies){
+    function add_results($course, $section, $min_bid, $vacancies, $closed_round){
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
-        $stmt = $conn->prepare("INSERT INTO round1_results VALUES(:course, :section, :min_bid, :vacancies)");
+        if($closed_round == 1) {
+            $table = "round1_results";
+        } elseif($closed_round == 2) {
+            $table = "round2_results";
+        }
+
+        $stmt = $conn->prepare("INSERT INTO $table VALUES(:course, :section, :min_bid, :vacancies)");
         
         $stmt->bindParam(":course", $course);
         $stmt->bindParam(":section", $section);
@@ -23,11 +29,17 @@ class Round1DAO{
         return $success;
     }
 
-    function update_results($course, $section, $min_bid , $vacancies){
+    function update_results($course, $section, $min_bid , $vacancies, $closed_round){
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
-        $stmt = $conn->prepare("UPDATE round1_results SET min_bid = :min_bid, vacancies = :vacancies WHERE course = :course AND section = :section");
+        if($closed_round == 1) {
+            $table = "round1_results";
+        } elseif($closed_round == 2) {
+            $table = "round2_results";
+        }
+
+        $stmt = $conn->prepare("UPDATE $table SET min_bid = :min_bid, vacancies = :vacancies WHERE course = :course AND section = :section");
 
         $stmt->bindParam(":min_bid", $min_bid);
         $stmt->bindParam(":vacancies", $vacancies);
@@ -39,8 +51,14 @@ class Round1DAO{
         return $success;
     }
 
-    function removeAll(){
-        $sql = 'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE round1_results';
+    function removeAll($closed_round){
+        if($closed_round == 1) {
+            $table = "round1_results";
+        } elseif($closed_round == 2) {
+            $table = "round2_results";
+        }
+
+        $sql = 'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE $table';
         
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
