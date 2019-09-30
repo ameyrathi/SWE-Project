@@ -33,7 +33,7 @@ class BidDAO {
         return $success;
     }
 
-    function get_bids($current_round) {
+    function get_bids_by_student($current_round) {
     /**
      * retrieve course code, section and amount for all bids placed by student
      * @return array of course code, section, amount for all bids placed by student
@@ -128,7 +128,7 @@ class BidDAO {
      * truncates bid table (used in bootstrapping stage)
      */
     public function removeAll() {
-        $sql = 'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE bid';
+        $sql = 'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE round1_bid';
         
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
@@ -167,7 +167,7 @@ class BidDAO {
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
-        $stmt = $conn->prepare("UPDATE round1_bid SET amount=:amount AND section=:section WHERE userid=:userid AND code=:courseid");
+        $stmt = $conn->prepare("UPDATE round1_bid SET amount=:amount WHERE userid=:userid AND code=:courseid AND section=:section");
         
         $stmt->bindParam(":userid", $userid);
         $stmt->bindParam(":amount", $amount);
@@ -195,15 +195,50 @@ class BidDAO {
 
         $stmt->execute();
 
-        $result = [];
+        $raw_bids = [];
 
         while($row = $stmt->fetch()) {
             $this_bid_list = [];
             foreach($row as $idx => $value) {
                 array_push($this_bid_list, $value);
             }
-            array_push($result, $this_bid_list);
+            array_push($raw_bids, $this_bid_list);
         }
+
+        // $result is now in this format:
+            // [ ['ben.ng.2009', '11', 'IS100', 'S1'], ['calvin.ng.2009', '12', 'IS100', 'S1'], ... ]
+
+        // but we want it to be in this format:
+            // [ "IS100, S1" => [ ['ben.ng.2009','11'], ['calvin.ng.2009','12'] ], ... ]
+
+        $result = [];
+
+        foreach($raw_bids as $this_bid) {
+            [$userid, $amount, $course, $section] = $this_bid;
+            $course_section_concat = $course . ", " . $section;
+
+            if(!array_key_exists($course_section_concat, $result)) { // if course_section not a key in $result yet
+                $result[$course_section_concat] = [[$userid, $amount]];
+            } else { // if course_section already exists as a key in $result
+                $result[$course_section_concat][] = [$userid, $amount];
+            }
+        }
+
+        foreach($result as $course_section_concat => &$this_bid_list) { // pass by reference so usort will modify it
+            usort(
+                $this_bid_list, 
+                function($a, $b) {
+                    $sorting = 0;
+                    if ($a[1] < $b[1]) {
+                        $sorting = 1;
+                    } else if ($a[1] > $b[1]) {
+                        $sorting = -1;
+                    }
+                    return $sorting; 
+                }
+            );
+        }
+
         return $result;
     }
 
@@ -224,6 +259,6 @@ class BidDAO {
 }
 
 // $BidDAO = new BidDAO();
-// var_dump($BidDAO->get_bidded_courses("ian.ng.2009", $current_round));
+// var_dump($BidDAO->retrieve_all_bids(1));
 
 ?>
