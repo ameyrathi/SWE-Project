@@ -80,6 +80,10 @@ function doBootstrap() {
                }
             } 
             else {
+                function trim_element($element) { // create function to trim a string
+                    return trim($element);
+                }
+
                 # create DAOs
                 $biddao = new BidDAO();
                 $coursedao = new CourseDAO();
@@ -96,10 +100,6 @@ function doBootstrap() {
                 $sectiondao->removeAll();
                 $studentdao->removeAll();
 
-                function trim_element($element) { // create function to trim a string
-                    return trim($element);
-                }
-
                 // student.csv
                 $student_headers_list = fgetcsv($student_file); # skip header
                 $student_row_count = 1;
@@ -115,7 +115,7 @@ function doBootstrap() {
                         }
                     }
 
-                    if(count($student_row_errors) == 0) { // if no blank fields in this row
+                    if(count($student_row_errors) == 0) {
                         [$userid, $password, $name, $school, $edollar] = array_map("trim_element", $student_row);
 
                         // invalid userid check
@@ -477,7 +477,7 @@ function doBootstrap() {
                         if($biddao->bootstrap_bid_already_exists($userid, $code, $section)) {
                             $success = $biddao->update_bid_for_bootstrap($userid, $amount, $code, $section);
                         } else {
-                            $success = add_bid_for_bootstrap($userid, $amount, $code, $section);
+                            $success = $biddao->add_bid_for_bootstrap($userid, $amount, $code, $section);
                         }
 
                         if($success) {
