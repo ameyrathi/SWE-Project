@@ -1,6 +1,8 @@
 <?php
 require_once("connection_manager.php");
 
+$_SESSION["userid"] = "ben.ng.2009";
+
 class CourseCompletedDAO {
 
     /**
@@ -21,7 +23,7 @@ class CourseCompletedDAO {
         $result = [];
 
         while($row = $stmt->fetch()) {
-            array_push($result, $row);
+            array_push($result, $row["code"]);
         }
 
         $stmt = null;
@@ -66,7 +68,7 @@ class CourseCompletedDAO {
     }
 }
 
-// $CourseCompletedDAO = new CourseCompletedDAO();
-// var_dump($CourseCompletedDAO->get_completed_courses());
+$CourseCompletedDAO = new CourseCompletedDAO();
+var_dump($CourseCompletedDAO->get_completed_courses());
 
 ?>
