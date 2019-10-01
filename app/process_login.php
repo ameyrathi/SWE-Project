@@ -26,7 +26,7 @@ if(empty($password)){
 
 
 $StudentDAO = new StudentDAO();
-if($username == "admin"){
+if(strtolower($username) == "admin"){
     if($admin = $StudentDAO->adminLogin($password)){
         $_SESSION["userid"] = $username;
         $token = generate_token($username);
