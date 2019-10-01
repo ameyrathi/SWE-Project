@@ -417,6 +417,15 @@ function doBootstrap() {
                         if(!$coursedao->get_course($code)){
                             array_push($course_completed_row_errors, "invalid course");
                         }
+
+                        //prerequisite fulfilled check
+                        $prerequisites_needed = $prerequisitedao->get_prerequisite_courses($code);
+                        $student_completed_courses = $coursecompleteddao->get_completed_courses();
+                        foreach($prerequisites_needed as $this_prerequisite) {
+                            if(!in_array($this_prerequisite, $student_completed_courses)) {
+                                array_push($course_completed_row_errors, "invalid course completed");
+                            }
+                        }
                     }
 
                     if(empty($course_completed_row_errors)) {
