@@ -52,15 +52,6 @@ INSERT INTO `course` (`course`, `school`, `title`, `description`, `examdate`, `e
 ('MGMT001', 'SOB', 'Business,Government, and Society', 'learn the interrelation amongst the three', '20131102', '08:30:00', '11:45:00'),
 ('MGMT002', 'SOB', 'Technology and World Change', 'As technology changes, so does the world', '20131101', '12:00:00', '15:15:00');
 
---
--- Dumping data for table `course_completed`
---
-
-INSERT INTO `course_completed` (`userid`, `code`) VALUES
-('amy.ng.2009', 'IS100'),
-('gary.ng.2009', 'IS100'),
-('ben.ng.2009', 'IS102'),
-('ben.ng.2009', 'IS103');
 
 --
 -- Dumping data for table `prerequisite`
@@ -77,33 +68,36 @@ INSERT INTO `prerequisite` (`parent_course`, `child_course`) VALUES
 ('IS209', 'IS106');
 
 --
--- Dumping data for table `round1_bid`
+-- Dumping data for table `student`
 --
 
-INSERT INTO `round1_bid` (`userid`, `amount`, `code`, `section`) VALUES
-('ben.ng.2009', 11.00, 'IS100', 'S1'),
-('calvin.ng.2009', 12.00, 'IS100', 'S1'),
-('dawn.ng.2009', 13.00, 'IS100', 'S1'),
-('eddy.ng.2009', 14.00, 'IS100', 'S1'),
-('fred.ng.2009', 15.00, 'IS100', 'S1'),
-('gary.ng.2009', 16.00, 'IS100', 'S1'),
-('harry.ng.2009', 17.00, 'IS100', 'S1'),
-('ian.ng.2009', 18.00, 'IS100', 'S1'),
-('larry.ng.2009', 19.00, 'IS100', 'S1'),
-('maggie.ng.2009', 20.00, 'IS100', 'S1'),
-('neilson.ng.2009', 21.00, 'IS100', 'S1'),
-('olivia.ng.2009', 22.00, 'IS100', 'S1'),
-('parker.ng.2009', 24.00, 'IS100', 'S1'),
-('quiten.ng.2009', 24.00, 'IS100', 'S1'),
-('ricky.ng.2009', 24.00, 'IS100', 'S1'),
-('steven.ng.2009', 26.00, 'IS100', 'S1'),
-('timothy.ng.2009', 27.00, 'IS100', 'S1'),
-('ursala.ng.2009', 28.00, 'IS100', 'S1'),
-('valarie.ng.2009', 29.00, 'IS100', 'S1'),
-('winston.ng.2009', 30.00, 'IS100', 'S1'),
-('xavier.ng.2009', 31.00, 'IS100', 'S1'),
-('yasir.ng.2009', 32.00, 'IS100', 'S1'),
-('zac.ng.2009', 33.00, 'IS100', 'S1');
+INSERT INTO `student` (`userid`, `password`, `name`, `school`, `edollar`) VALUES
+('amy.ng.2009', 'qwerty128', 'Amy NG', 'SIS', 200.00),
+('ben.ng.2009', 'qwerty129', 'Ben NG', 'SIS', 200.00),
+('calvin.ng.2009', 'qwerty130', 'Calvin NG', 'SIS', 200.00),
+('dawn.ng.2009', 'qwerty131', 'Dawn NG', 'SIS', 200.00),
+('eddy.ng.2009', 'qwerty132', 'Eddy NG', 'SIS', 200.00),
+('fred.ng.2009', 'qwerty133', 'Fred NG', 'SIS', 200.00),
+('gary.ng.2009', 'qwerty134', 'Gary NG', 'SIS', 200.00),
+('harry.ng.2009', 'qwerty135', 'Harry NG', 'SIS', 200.00),
+('ian.ng.2009', 'qwerty136', 'Ian NG', 'SIS', 200.00),
+('jerry.ng.2009', 'qwerty137', 'Jerry NG', 'SIS', 200.00),
+('kelly.ng.2009', 'qwerty138', 'Kelly NG', 'SIS', 200.00),
+('larry.ng.2009', 'qwerty139', 'Larry NG', 'SIS', 200.00),
+('maggie.ng.2009', 'qwerty140', 'Maggie NG', 'SIS', 200.00),
+('neilson.ng.2009', 'qwerty141', 'Neilson NG', 'SIS', 200.00),
+('olivia.ng.2009', 'qwerty142', 'Olivia NG', 'SIS', 200.00),
+('parker.ng.2009', 'qwerty143', 'Parker NG', 'SOE', 200.00),
+('quiten.ng.2009', 'qwerty144', 'Quiten NG', 'SOE', 200.00),
+('ricky.ng.2009', 'qwerty145', 'Ricky NG', 'SOE', 200.00),
+('steven.ng.2009', 'qwerty146', 'Steven NG', 'SOE', 200.00),
+('timothy.ng.2009', 'qwerty147', 'Timothy NG', 'SOE', 200.00),
+('ursala.ng.2009', 'qwerty148', 'Ursala NG', 'SOE', 200.00),
+('valarie.ng.2009', 'qwerty149', 'Valarie NG', 'SOB', 200.00),
+('winston.ng.2009', 'qwerty150', 'Winston NG', 'SOB', 200.00),
+('xavier.ng.2009', 'qwerty151', 'Xavier NG', 'SOB', 200.00),
+('yasir.ng.2009', 'qwerty152', 'Yasir NG', 'SOB', 200.00),
+('zac.ng.2009', 'qwerty153', 'Zac NG', 'SOB', 200.00);
 
 --
 -- Dumping data for table `section`
@@ -147,36 +141,48 @@ INSERT INTO `section` (`course`, `section`, `day`, `start`, `end`, `instructor`,
 ('MGMT002', 'S1', 3, '15:30:00', '18:45:00', 'Bob KHOO', 'Seminar Rm 2-37', 10);
 
 --
--- Dumping data for table `student`
+-- Dumping data for table `course_completed`
 --
 
-INSERT INTO `student` (`userid`, `password`, `name`, `school`, `edollar`) VALUES
-('amy.ng.2009', 'qwerty128', 'Amy NG', 'SIS', 200.00),
-('ben.ng.2009', 'qwerty129', 'Ben NG', 'SIS', 200.00),
-('calvin.ng.2009', 'qwerty130', 'Calvin NG', 'SIS', 200.00),
-('dawn.ng.2009', 'qwerty131', 'Dawn NG', 'SIS', 200.00),
-('eddy.ng.2009', 'qwerty132', 'Eddy NG', 'SIS', 200.00),
-('fred.ng.2009', 'qwerty133', 'Fred NG', 'SIS', 200.00),
-('gary.ng.2009', 'qwerty134', 'Gary NG', 'SIS', 200.00),
-('harry.ng.2009', 'qwerty135', 'Harry NG', 'SIS', 200.00),
-('ian.ng.2009', 'qwerty136', 'Ian NG', 'SIS', 200.00),
-('jerry.ng.2009', 'qwerty137', 'Jerry NG', 'SIS', 200.00),
-('kelly.ng.2009', 'qwerty138', 'Kelly NG', 'SIS', 200.00),
-('larry.ng.2009', 'qwerty139', 'Larry NG', 'SIS', 200.00),
-('maggie.ng.2009', 'qwerty140', 'Maggie NG', 'SIS', 200.00),
-('neilson.ng.2009', 'qwerty141', 'Neilson NG', 'SIS', 200.00),
-('olivia.ng.2009', 'qwerty142', 'Olivia NG', 'SIS', 200.00),
-('parker.ng.2009', 'qwerty143', 'Parker NG', 'SOE', 200.00),
-('quiten.ng.2009', 'qwerty144', 'Quiten NG', 'SOE', 200.00),
-('ricky.ng.2009', 'qwerty145', 'Ricky NG', 'SOE', 200.00),
-('steven.ng.2009', 'qwerty146', 'Steven NG', 'SOE', 200.00),
-('timothy.ng.2009', 'qwerty147', 'Timothy NG', 'SOE', 200.00),
-('ursala.ng.2009', 'qwerty148', 'Ursala NG', 'SOE', 200.00),
-('valarie.ng.2009', 'qwerty149', 'Valarie NG', 'SOB', 200.00),
-('winston.ng.2009', 'qwerty150', 'Winston NG', 'SOB', 200.00),
-('xavier.ng.2009', 'qwerty151', 'Xavier NG', 'SOB', 200.00),
-('yasir.ng.2009', 'qwerty152', 'Yasir NG', 'SOB', 200.00),
-('zac.ng.2009', 'qwerty153', 'Zac NG', 'SOB', 200.00);
+INSERT INTO `course_completed` (`userid`, `code`) VALUES
+('amy.ng.2009', 'IS100'),
+('gary.ng.2009', 'IS100'),
+('ben.ng.2009', 'IS102'),
+('ben.ng.2009', 'IS103');
+
+
+--
+-- Dumping data for table `round1_bid`
+--
+
+INSERT INTO `round1_bid` (`userid`, `amount`, `code`, `section`) VALUES
+('ben.ng.2009', 11.00, 'IS100', 'S1'),
+('calvin.ng.2009', 12.00, 'IS100', 'S1'),
+('dawn.ng.2009', 13.00, 'IS100', 'S1'),
+('eddy.ng.2009', 14.00, 'IS100', 'S1'),
+('fred.ng.2009', 15.00, 'IS100', 'S1'),
+('gary.ng.2009', 16.00, 'IS100', 'S1'),
+('harry.ng.2009', 17.00, 'IS100', 'S1'),
+('ian.ng.2009', 18.00, 'IS100', 'S1'),
+('larry.ng.2009', 19.00, 'IS100', 'S1'),
+('maggie.ng.2009', 20.00, 'IS100', 'S1'),
+('neilson.ng.2009', 21.00, 'IS100', 'S1'),
+('olivia.ng.2009', 22.00, 'IS100', 'S1'),
+('parker.ng.2009', 24.00, 'IS100', 'S1'),
+('quiten.ng.2009', 24.00, 'IS100', 'S1'),
+('ricky.ng.2009', 24.00, 'IS100', 'S1'),
+('steven.ng.2009', 26.00, 'IS100', 'S1'),
+('timothy.ng.2009', 27.00, 'IS100', 'S1'),
+('ursala.ng.2009', 28.00, 'IS100', 'S1'),
+('valarie.ng.2009', 29.00, 'IS100', 'S1'),
+('winston.ng.2009', 30.00, 'IS100', 'S1'),
+('xavier.ng.2009', 31.00, 'IS100', 'S1'),
+('yasir.ng.2009', 32.00, 'IS100', 'S1'),
+('zac.ng.2009', 33.00, 'IS100', 'S1');
+
+
+
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
