@@ -1,5 +1,5 @@
 <?php
-require_once 'common.php';
+require_once 'include/common.php';
 
 function doBootstrap() {		
 
@@ -20,7 +20,7 @@ function doBootstrap() {
     $section_processed = 0;
     $student_processed = 0;
 
-	# check file size
+    # check file size
 	if ($_FILES["bootstrap-file"]["size"] <= 0) {
 		$errors[] = "input files not found";
 
@@ -39,6 +39,7 @@ function doBootstrap() {
             $prerequisite_path = "$temp_dir/prerequisite.csv";
             $section_path = "$temp_dir/section.csv";
             $student_path = "$temp_dir/student.csv";
+
 
             $bid_file = @fopen($bid_path, "r");
             $course_file = @fopen($course_path, "r");
@@ -495,17 +496,20 @@ function doBootstrap() {
                 fclose($bid_file);
                 unlink($bid_path);
             }
+        } else {
+            $errors[] = "input files not found";
         }
     }
 
-    if(!in_array("input files not found", $errors)){
 
+    if(!in_array("input files not found", $errors)){
         $biddingrounddao = new BiddingRoundDAO();
         $biddingrounddao->addBiddingRound(1);
+        return [$num_record_loaded, $errors];
     }
-
-    return [$num_record_loaded, $errors];
+    return "failed";
 }
+
 
 
 	# Sample code for returning JSON format errors. remember this is only for the JSON API. Humans should not get JSON errors.
