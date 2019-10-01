@@ -5,7 +5,6 @@
 <?php
     require_once 'include/common.php';
     require_once 'round1_closing.php';
-    require_once 'round2_closing.php';
     require_once 'include/protect_token.php';
 
     if(isset($_GET["token"])) {
