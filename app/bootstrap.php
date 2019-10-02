@@ -511,7 +511,7 @@ function doBootstrap() {
                         }
 
                         //section limit reached
-                        $pending_bidded_sections = $biddao->get_pending_bidded_sections(1);
+                        $pending_bidded_sections = $biddao->get_pending_bidded_sections_bootstrap(1, $userid);
                         if(!$max_course_check_success = count($pending_bidded_sections) < 5) {
                             array_push($errors, "section limit reached");
                         }

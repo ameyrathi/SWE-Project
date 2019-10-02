@@ -91,7 +91,4 @@ class CourseCompletedDAO {
     }
 }
 
-$CourseCompletedDAO = new CourseCompletedDAO();
-var_dump($CourseCompletedDAO->get_completed_courses());
-
 ?>
