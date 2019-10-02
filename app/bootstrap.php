@@ -295,7 +295,12 @@ function doBootstrap() {
                         }
 
                         // invalid day check
-                        if((int)$day < 1 || (int)$day > 7){
+                        if(is_numeric($day)){
+                            if((int)$day < 1 || (int)$day > 7){
+                                array_push($section_row_errors, "invalid day");
+                            }
+                        }
+                        else{
                             array_push($section_row_errors, "invalid day");
                         }
 
@@ -320,7 +325,12 @@ function doBootstrap() {
                         }
 
                         // invalid size check
-                        if((int)$size < 0){
+                        if(is_numeric($size)){
+                            if((int)$size < 0){
+                                array_push($section_row_errors, "invalid size");
+                            }
+                        }
+                        else{
                             array_push($section_row_errors, "invalid size");
                         }
                     }
@@ -471,7 +481,12 @@ function doBootstrap() {
                         }
 
                         //invalid amount check
-                        if((int)$amount < 10 || strlen(substr(strrchr($amount, "."), 1)) > 2){
+                        if(is_numeric($amount)){
+                            if((int)$amount < 10 || strlen(substr(strrchr($amount, "."), 1)) > 2){
+                                array_push($bid_row_errors, "invalid amount");
+                            }
+                        }
+                        else{
                             array_push($bid_row_errors, "invalid amount");
                         }
 
@@ -486,6 +501,69 @@ function doBootstrap() {
                                 array_push($bid_row_errors, "invalid section");
                             }
                         }
+
+                        $biddingrounddao = new BiddingRoundDAO();
+                        //not own school course
+                        if($biddingrounddao->checkBiddingRound() != FALSE){
+                            if($coursedao->get_school($code) != $studentdao->get_school_bootstrap($userid)) {
+                                array_push($bid_row_errors, "not own school course");
+                            }
+                        }
+
+                        //section limit reached
+                        $pending_bidded_sections = $biddao->get_pending_bidded_sections(1);
+                        if(!$max_course_check_success = count($pending_bidded_sections) < 5) {
+                            array_push($errors, "section limit reached");
+                        }
+
+                        //class timetable clash
+                        //exam timetable clash
+                        $no_clash_check_success = true;
+                        if($sectiondao->is_valid_section($code, $section)){
+                            $bidding_class = $sectiondao->get_class_day_start_end($code, $section);
+                            foreach($pending_bidded_sections as $this_list) {
+                                $existing_courseid = $this_list[0];
+                                $existing_section = $this_list[1];
+                
+                                $existing_class = $sectiondao->get_class_day_start_end($existing_courseid, $existing_section);
+                                $class_clash_check = dont_clash($bidding_class[0], $bidding_class[1], $bidding_class[2], $existing_class[0], $existing_class[1], $existing_class[2]);
+                
+                                $bidding_exam = $coursedao->get_exam_date_start_end($courseid);
+                                $existing_exam = $coursedao->get_exam_date_start_end($existing_courseid);
+                                $exam_clash_check = dont_clash($bidding_exam[0], $bidding_exam[1], $bidding_exam[2], $existing_exam[0], $existing_exam[1], $existing_exam[2]);
+                
+                                $no_clash_check_success = $class_clash_check && $exam_clash_check;
+                
+                                if(!$no_clash_check_success) {
+                                    $no_clash_check_success = false;
+                                    if(!$class_clash_check) {
+                                        array_push($errors, "class timetable clash");
+                                    }
+                                    if(!$exam_clash_check) {
+                                        array_push($errors, "exam timetable clash");
+                                    }
+                                }
+                            }
+                        }
+
+                        //incomplete prerequisites
+                        $prerequisites_needed = $prerequisitedao->get_prerequisite_courses($code);
+                        $student_completed_courses = $coursecompleteddao->get_completed_courses_bootstrap($userid);
+                        foreach($prerequisites_needed as $this_prerequisite) {
+                            if(!in_array($this_prerequisite, $student_completed_courses)) {
+                                array_push($bid_row_errors, "incomplete prerequisites");
+                            }
+                        }
+
+                        //student has already completed this course
+                        if(in_array($code, $student_completed_courses)){
+                            array_push($bid_row_errors, "course completed");
+                        }
+
+                        //not enough e-dollar
+                        if($amount > $studentdao->get_balance_boostrap($userid)){
+                            array_push($bid_row_errors, "not enough e-dollar");
+                        }
                     }
 
                     if(empty($bid_row_errors)) {
@@ -498,6 +576,7 @@ function doBootstrap() {
 
                         if($success) {
                             $bid_processed++;
+                            $studentdao->deduct_balance_bootstrap($amount, $userid);
                         } else {
                             echo "BID ROW VALID BUT FAILED TO ADD - DEBUG";
                         }

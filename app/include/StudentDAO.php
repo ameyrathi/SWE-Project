@@ -225,6 +225,73 @@ class StudentDAO {
         }
         return $result;
     }
+
+    function get_balance_boostrap($userid) {
+        /**
+         * retrieve e-$ of student
+         * @param string $userid user id
+         * @return double e-$ balance of student, or false if not found
+         */
+    
+            $connection_manager = new connection_manager();
+            $conn = $connection_manager->connect();
+    
+            $stmt = $conn->prepare("SELECT edollar FROM student WHERE userid=:userid");
+    
+            $stmt->bindParam(":userid", $userid);
+    
+            $stmt->execute();
+    
+            if($balance = $stmt->fetch()[0]) {
+                return $balance;
+            }
+    }
+
+    function deduct_balance_bootstrap($amount, $userid) {
+        /**
+         * deduct e-$ of student by amount
+         * @param string $amount amount to be deducted
+         * @return boolean success of balance deduction
+         */
+            $original_balance = $this->get_balance_boostrap($userid);
+            $balance_after_deduction = $original_balance - $amount;
+    
+            $connection_manager = new connection_manager();
+            $conn = $connection_manager->connect();
+    
+            $stmt = $conn->prepare("UPDATE student SET edollar = :balance WHERE userid = :userid");
+    
+            $stmt->bindParam(":balance", $balance_after_deduction);
+            $stmt->bindParam(":userid", $userid);
+    
+            $success = $stmt->execute();
+    
+            return $success;
+    
+    }
+
+    function get_school_bootstrap($userid) {
+        /**
+         * retrieve school of student
+         * @param string $userid user id
+         * @return string school of student
+         */
+    
+            $connection_manager = new connection_manager();
+            $conn = $connection_manager->connect();
+    
+            $stmt = $conn->prepare("SELECT school FROM student WHERE userid=:userid");
+    
+            $stmt->bindParam(":userid", $userid);
+    
+            $stmt->execute();
+    
+            if($school = $stmt->fetch()[0]) {
+                return $school;
+            } else {
+                return false;
+            }
+    }
 }
 
 ?>
