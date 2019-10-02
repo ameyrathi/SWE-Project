@@ -242,6 +242,37 @@ class BidDAO {
         return $result;
     }
 
+    function get_pending_bidded_sections($current_round) {
+        /**
+         * retrieve course codes and sections of all successful bids placed by a student
+         * @return array of bidded courses & sections, eg. [["IS100", "S1"], ["ECON001", "S2"]]
+         */
+    
+            $connection_manager = new connection_manager();
+            $conn = $connection_manager->connect();
+    
+            if($current_round == 1) {
+                $table = "round1_bid";
+            } elseif($current_round == 2) {
+                $table = "round2_bid";
+            }
+    
+            $stmt = $conn->prepare("SELECT code, section FROM $table WHERE userid=:userid");
+    
+            $stmt->bindParam(":userid", $_SESSION["userid"]);
+    
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    
+            $stmt->execute();
+    
+            $result = [];
+    
+            while($row = $stmt->fetch()) {
+                array_push($result, array_values($row));
+            }
+            return $result;
+        }
+
     function get_pending_bidded_sections_bootstrap($current_round, $userid) {
         /**
          * retrieve course codes and sections of all successful bids placed by a student
