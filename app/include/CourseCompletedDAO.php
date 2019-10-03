@@ -7,13 +7,13 @@ class CourseCompletedDAO {
      * retrieve course codes of all courses completed by a student
      * @return array of course codes of all courses completed by a student
      */
-    function get_completed_courses() {   
+    function get_completed_courses($userid) {   
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
         $stmt = $conn->prepare("SELECT code FROM course_completed WHERE userid=:userid");
 
-        $stmt->bindParam(":userid", $_SESSION["userid"]);
+        $stmt->bindParam(":userid", $userid);
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
         $stmt->execute();
@@ -63,29 +63,6 @@ class CourseCompletedDAO {
         $conn = null;
 
         return $success;
-    }
-
-    function get_completed_courses_bootstrap($userid) {   
-        $connection_manager = new connection_manager();
-        $conn = $connection_manager->connect();
-
-        $stmt = $conn->prepare("SELECT code FROM course_completed WHERE userid=:userid");
-
-        $stmt->bindParam(":userid", $userid);
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-
-        $stmt->execute();
-
-        $result = [];
-
-        while($row = $stmt->fetch()) {
-            array_push($result, $row["code"]);
-        }
-
-        $stmt = null;
-        $conn = null;
-        
-        return $result;
     }
 }
 

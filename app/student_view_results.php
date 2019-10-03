@@ -20,6 +20,7 @@
   <a href="student_home.php?token=<?php echo $token?>">Home</a>
   <a href="student_add_bid.php?token=<?php echo $token?>">Bid</a>
   <a href="student_drop_bid.php?token=<?php echo $token?>">Drop Bid</a>
+  <a href="student_drop_section.php?token=<?php echo $token?>">Drop Section</a>
   <a class="active" href="student_view_results.php?token=<?php echo $token?>">View Results</a>
   <a href="sign_out.php?token=<?php echo $token?>">Sign Out</a>
 </div>
@@ -50,7 +51,7 @@
         ";
 
         if($current_round == 1) {
-            $round1_bids = $biddao->get_bids_by_student(1);
+            $round1_bids = $biddao->get_bids_by_student($_SESSION["userid"], 1);
             foreach($round1_bids as $this_bid) {
                 [$course, $section, $amount] = $this_bid;
                 echo "<tr>
@@ -61,8 +62,8 @@
                     </tr>";  
             }      
         } elseif($current_round == 2) {
-            $round1_bids = $biddao->get_bids_by_student(1);
-            $round2_bids = $biddao->get_bids_by_student(2);
+            $round1_bids = $biddao->get_bids_by_student($_SESSION["userid"], 1);
+            $round2_bids = $biddao->get_bids_by_student($_SESSION["userid"], 2);
 
             $pending_courses = [];
 

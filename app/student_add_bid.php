@@ -20,6 +20,7 @@
   <a href="student_home.php?token=<?php echo $token?>">Home</a>
   <a class="active" href="student_add_bid.php?token=<?php echo $token?>">Bid</a>
   <a href="student_drop_bid.php?token=<?php echo $token?>">Drop Bid</a>
+  <a href="student_drop_section.php?token=<?php echo $token?>">Drop Section</a>
   <a href="student_view_results.php?token=<?php echo $token?>">View Results</a>
   <a href="sign_out.php?token=<?php echo $token?>">Sign Out</a>
 </div>
@@ -123,7 +124,7 @@
                 }
             }
 
-            $list_of_bidded_courses = $BidDAO->get_bidded_courses($current_round);
+            $list_of_bidded_courses = $BidDAO->get_bidded_courses($_SESSION["userid"], $current_round);
 
             if (!($enough_balance_check_success = $_SESSION["balance"] >= $amount)) {
                 $amount_shortage = $amount - $_SESSION["balance"];
@@ -180,7 +181,7 @@
 
 
             $prerequisite_courses = $PrerequisiteDAO->get_prerequisite_courses($courseid);
-            $completed_courses = $CourseCompletedDAO->get_completed_courses();
+            $completed_courses = $CourseCompletedDAO->get_completed_courses($_SESSION["userid"]);
 
             $prerequisite_check_success = true; # assume fulfill prerequisites first
 
@@ -194,13 +195,13 @@
             
             if(!empty($errors)) {
                 $error_count = 1;
-                echo "<strong>Errors:</strong><br><br>";
+                echo "<strong><span id='error'>Errors:</span></strong><br><br>";
                 foreach($errors as $error) {
-                    echo "$error_count. $error<br>";
+                    echo "<span id='error'>$error_count. $error</span><br>";
                     $error_count++;
                 }
             } else {
-                if($add_bid_success = ($BidDAO->add_bid($amount, $courseid, $section, $current_round)) && $StudentDAO->deduct_balance($_SESSION["userid"], $amount)) {
+                if($add_bid_success = ($BidDAO->add_bid($_SESSION["userid"], $amount, $courseid, $section, $current_round)) && $StudentDAO->deduct_balance($_SESSION["userid"], $amount)) {
                     echo "<strong>Congratulations! Your bid of $$amount for $courseid $section has been submitted.<br>";
                     $balance = $StudentDAO->get_balance($_SESSION["userid"]);
                     echo "Your balance e-$ is $$balance.<strong>";

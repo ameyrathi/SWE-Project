@@ -23,10 +23,16 @@ p, form {
     color: black;
 }
 
-#error {
+#error, #fail {
     font-family: "Arial", sans-serif;
     font-size: 16px;
     color: red;
+}
+
+#success {
+    font-family: "Arial", sans-serif;
+    font-size: 16px;
+    color: limegreen;
 }
 
 #view_results {

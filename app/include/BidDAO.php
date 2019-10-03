@@ -3,7 +3,7 @@ require_once("connection_manager.php");
 
 class BidDAO {
 
-    function add_bid($amount, $courseid, $section, $current_round) {
+    function add_bid($userid, $amount, $courseid, $section, $current_round) {
     /**
      * adds bid to system
      * @param double $amount e-$ student wants to bid with
@@ -23,7 +23,7 @@ class BidDAO {
 
         $stmt = $conn->prepare("INSERT INTO $table VALUES(:userid, :amount, :code, :section)");
         
-        $stmt->bindParam(":userid", $_SESSION["userid"]);
+        $stmt->bindParam(":userid", $userid);
         $stmt->bindParam(":amount", $amount);
         $stmt->bindParam(":code", $courseid);
         $stmt->bindParam(":section", $section);
@@ -33,10 +33,10 @@ class BidDAO {
         return $success;
     }
 
-    function get_bids_by_student($current_round) {
+    function get_bids_by_student($userid, $current_round) {
     /**
-     * retrieve course code, section and amount for all bids placed by student
-     * @return array of course code, section, amount for all bids placed by student
+     * retrieve course code, section and amount for all bids placed by student in stated round
+     * @return array of course code, section, amount for all bids placed by student in stated round
      */
 
         $connection_manager = new connection_manager();
@@ -50,7 +50,7 @@ class BidDAO {
 
         $stmt = $conn->prepare("SELECT code, section, amount FROM $table WHERE userid=:userid");
 
-        $stmt->bindParam(":userid", $_SESSION["userid"]);
+        $stmt->bindParam(":userid", $userid);
 
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
@@ -68,7 +68,7 @@ class BidDAO {
         return $result;
     }
 
-    function drop_bid($courseid, $current_round) {
+    function drop_bid($userid, $courseid, $current_round) {
     /**
      * drops bid for a course
      * @param string $courseid course id
@@ -86,17 +86,18 @@ class BidDAO {
         $stmt = $conn->prepare("DELETE FROM $table WHERE code=:code AND userid=:userid");
 
         $stmt->bindParam(":code", $courseid);
-        $stmt->bindParam(":userid", $_SESSION["userid"]);
+        $stmt->bindParam(":userid", $userid);
 
         $success = $stmt->execute();
 
         return $success;
     }
 
-    function get_bidded_courses($current_round) {
+    function get_bidded_courses($userid, $current_round) {
     /**
-     * retrieve course codes and sections of all successful bids placed by a student
-     * @return array of bidded courses & sections, eg. [["IS100", "S1"], ["ECON001", "S2"]]
+     * retrieve course codes and sections of all bids placed by a student in stated round
+     * eg. [["IS100", "S1"], ["ECON001", "S2"]]
+     * @return array of bidded courses & sections by student in stated round
      */
 
         $connection_manager = new connection_manager();
@@ -110,7 +111,7 @@ class BidDAO {
 
         $stmt = $conn->prepare("SELECT code, section FROM $table WHERE userid=:userid");
 
-        $stmt->bindParam(":userid", $_SESSION["userid"]);
+        $stmt->bindParam(":userid", $userid);
 
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
@@ -139,30 +140,6 @@ class BidDAO {
         $count = $stmt->rowCount();
     } 
 
-    function add_bid_for_bootstrap($userid, $amount, $courseid, $section) {
-        /**
-         * adds bid to system
-         * @param double $amount e-$ student wants to bid with
-         * @param string $courseid course code student wants to bid for
-         * @param string $section section student wants to bid for
-         * @return bool success of the bid creation for the course and section
-         */
-    
-            $connection_manager = new connection_manager();
-            $conn = $connection_manager->connect();
-    
-            $stmt = $conn->prepare("INSERT INTO round1_bid VALUES(:userid, :amount, :code, :section)");
-            
-            $stmt->bindParam(":userid", $userid);
-            $stmt->bindParam(":amount", $amount);
-            $stmt->bindParam(":code", $courseid);
-            $stmt->bindParam(":section", $section);
-    
-            $success = $stmt->execute();
-    
-            return $success;
-    }
-
     function update_bid_for_bootstrap($userid, $amount, $courseid, $section) {
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
@@ -179,7 +156,7 @@ class BidDAO {
         return $success;
     }
 
-    function retrieve_all_bids($current_round){
+    function retrieve_and_sort_bids($current_round){
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
@@ -242,38 +219,7 @@ class BidDAO {
         return $result;
     }
 
-    function get_pending_bidded_sections($current_round) {
-        /**
-         * retrieve course codes and sections of all successful bids placed by a student
-         * @return array of bidded courses & sections, eg. [["IS100", "S1"], ["ECON001", "S2"]]
-         */
-    
-            $connection_manager = new connection_manager();
-            $conn = $connection_manager->connect();
-    
-            if($current_round == 1) {
-                $table = "round1_bid";
-            } elseif($current_round == 2) {
-                $table = "round2_bid";
-            }
-    
-            $stmt = $conn->prepare("SELECT code, section FROM $table WHERE userid=:userid");
-    
-            $stmt->bindParam(":userid", $_SESSION["userid"]);
-    
-            $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    
-            $stmt->execute();
-    
-            $result = [];
-    
-            while($row = $stmt->fetch()) {
-                array_push($result, array_values($row));
-            }
-            return $result;
-        }
-
-    function get_pending_bidded_sections_bootstrap($current_round, $userid) {
+    function get_pending_bidded_sections($userid, $current_round) {
         /**
          * retrieve course codes and sections of all successful bids placed by a student
          * @return array of bidded courses & sections, eg. [["IS100", "S1"], ["ECON001", "S2"]]
@@ -302,13 +248,19 @@ class BidDAO {
                 array_push($result, array_values($row));
             }
             return $result;
-    }
+        }
 
-    function bootstrap_bid_already_exists($userid, $courseid, $section) {
+    function bid_already_exists($userid, $courseid, $section, $current_round) {
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
-        $stmt = $conn->prepare("SELECT * FROM round1_bid WHERE userid=:userid AND code=:courseid AND section=:section");
+        if($current_round == 1) {
+            $table = "round1_bid";
+        } elseif($current_round == 2) {
+            $table = "round2_bid";
+        }
+
+        $stmt = $conn->prepare("SELECT * FROM $table WHERE userid=:userid AND code=:courseid AND section=:section");
 
         $stmt->bindParam(":userid", $userid);
         $stmt->bindParam(":courseid", $courseid);
@@ -321,6 +273,6 @@ class BidDAO {
 }
 
 // $BidDAO = new BidDAO();
-// var_dump($BidDAO->retrieve_all_bids(1));
+// var_dump($BidDAO->retrieve_and_sort_bids(1));
 
 ?>

@@ -430,7 +430,7 @@ function doBootstrap() {
 
                         //prerequisite fulfilled check
                         $prerequisites_needed = $prerequisitedao->get_prerequisite_courses($code);
-                        $student_completed_courses = $coursecompleteddao->get_completed_courses_bootstrap($userid);
+                        $student_completed_courses = $coursecompleteddao->get_completed_courses($userid);
                         foreach($prerequisites_needed as $this_prerequisite) {
                             if(!in_array($this_prerequisite, $student_completed_courses)) {
                                 array_push($course_completed_row_errors, "invalid course completed");
@@ -511,7 +511,7 @@ function doBootstrap() {
                         }
 
                         //section limit reached
-                        $pending_bidded_sections = $biddao->get_pending_bidded_sections_bootstrap(1, $userid);
+                        $pending_bidded_sections = $biddao->get_pending_bidded_sections($userid, 1);
                         if(!$max_course_check_success = count($pending_bidded_sections) < 5) {
                             array_push($errors, "section limit reached");
                         }
@@ -548,7 +548,7 @@ function doBootstrap() {
 
                         //incomplete prerequisites
                         $prerequisites_needed = $prerequisitedao->get_prerequisite_courses($code);
-                        $student_completed_courses = $coursecompleteddao->get_completed_courses_bootstrap($userid);
+                        $student_completed_courses = $coursecompleteddao->get_completed_courses($userid);
                         foreach($prerequisites_needed as $this_prerequisite) {
                             if(!in_array($this_prerequisite, $student_completed_courses)) {
                                 array_push($bid_row_errors, "incomplete prerequisites");
@@ -568,10 +568,10 @@ function doBootstrap() {
 
                     if(empty($bid_row_errors)) {
                         $success = false;
-                        if($biddao->bootstrap_bid_already_exists($userid, $code, $section)) {
+                        if($biddao->bid_already_exists($userid, $code, $section, 1)) {
                             $success = $biddao->update_bid_for_bootstrap($userid, $amount, $code, $section);
                         } else {
-                            $success = $biddao->add_bid_for_bootstrap($userid, $amount, $code, $section);
+                            $success = $biddao->add_bid($userid, $amount, $code, $section, 1);
                         }
 
                         if($success) {

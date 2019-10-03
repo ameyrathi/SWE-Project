@@ -26,7 +26,7 @@ function close_bidding_round1(){
 
     // obtains an array of bids
     // $temp_arr = [ "IS100, S1" => [ ['ben.ng.2009','11'], ['calvin.ng.2009','12'] ], ... ]
-    $temp_arr = $biddao->retrieve_all_bids(1);
+    $temp_arr = $biddao->retrieve_and_sort_bids(1);
 
     foreach($temp_arr as $course_section_str=>$array_of_bids){
         $course = explode(", ", $course_section_str)[0];
@@ -70,7 +70,7 @@ function close_bidding_round1(){
                         User: $userid<br>
                         Bid Amount: $amount<br>
                         Clearing Type: Section Just Nice Full<br>
-                        Status: Fail, refunded $amount<br>
+                        Status: <span id='fail'>Fail</span>, refunded $amount<br>
                         ------------------------------------------------------------<br>                   
                         ";
                     } else {
@@ -81,7 +81,7 @@ function close_bidding_round1(){
                         User: $userid<br>
                         Bid Amount: $amount<br>
                         Clearing Type: Section Just Nice Full<br>
-                        Status: Success<br>
+                        Status: <span id='success'>Success</span><br>
                         ------------------------------------------------------------<br>                   
                         ";
                         $num_successful_bids++;
@@ -97,7 +97,7 @@ function close_bidding_round1(){
                     User: $userid<br>
                     Bid Amount: $amount<br>
                     Clearing Type: Section Just Nice Full<br>
-                    Status: Success<br>
+                    Status: <span id='success'>Success</span><br>
                     ------------------------------------------------------------<br>                   
                     ";
                     $num_successful_bids++;
@@ -134,7 +134,7 @@ function close_bidding_round1(){
                         User: $userid<br>
                         Bid Amount: $amount<br>
                         Clearing Type: Section Overbooked<br>
-                        Status: Fail, refunded $amount<br>
+                        Status: <span id='fail'>Fail</span>, refunded $amount<br>
                         ------------------------------------------------------------<br>                   
                         ";
                     } else { // if this bid amount > clearing price
@@ -145,7 +145,7 @@ function close_bidding_round1(){
                         User: $userid<br>
                         Bid Amount: $amount<br>
                         Clearing Type: Section Overbooked<br>
-                        Status: Success<br>
+                        Status: <span id='success'>Success</span><br>
                         ------------------------------------------------------------<br>                   
                         ";
                         $num_successful_bids++;
@@ -161,7 +161,7 @@ function close_bidding_round1(){
                     User: $userid<br>
                     Bid Amount: $amount<br>
                     Clearing Type: Section Overbooked<br>
-                    Status: Success<br>
+                    Status: <span id='success'>Success</span><br>
                     ------------------------------------------------------------<br>                   
                     ";
                     $num_successful_bids++;
@@ -176,7 +176,7 @@ function close_bidding_round1(){
                     User: $userid<br>
                     Bid Amount: $amount<br>
                     Clearing Type: Section Overbooked<br>
-                    Status: Fail, refunded $amount<br>
+                    Status: <span id='fail'>Fail</span>, refunded $amount<br>
                     ------------------------------------------------------------<br>                   
                     ";
                 }
@@ -196,7 +196,7 @@ function close_bidding_round1(){
                 User: $userid<br>
                 Bid Amount: $amount<br>
                 Clearing Type: Section Underbooked<br>
-                Status: Success<br>
+                Status: <span id='success'>Success</span><br>
                 ------------------------------------------------------------<br>                   
                 ";
             }

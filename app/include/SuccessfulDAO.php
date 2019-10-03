@@ -49,6 +49,48 @@ class SuccessfulDAO{
 
         return $stmt->fetch();
     }
+
+    function get_successful_bids_and_amount($userid, $closed_round) {
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        if($closed_round == 1) {
+            $stmt = $conn->prepare("SELECT * FROM round1_successful WHERE userid=:userid");
+        } elseif($closed_round == 2) {
+            $stmt = $conn->prepare("SELECT * FROM round1_successful WHERE userid=:userid UNION SELECT * FROM $round2_successful WHERE userid=:userid");
+        }
+        
+        $stmt->bindParam(":userid", $userid);
+
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            [$userid, $amount, $course, $section] = array_values($row);
+            $result[] = [$course, $section, $amount];
+        }
+
+        return $result;
+    }
+
+    function drop_section($userid, $course, $section) {
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        if($this->check_success($userid, $course, $section, 1) != false) { // in round1_successful
+            $stmt = $conn->prepare("DELETE FROM round1_successful WHERE code=:course AND userid=:userid");
+        } elseif ($this->check_success($userid, $course, $section, 2) != false) { // in round2_successful
+            $stmt = $conn->prepare("DELETE FROM round2_successful WHERE code=:course AND userid=:userid");
+        }        
+
+        $stmt->bindParam(":course", $course);
+        $stmt->bindParam(":userid", $userid);
+
+        $success = $stmt->execute();
+
+        return $success;
+    }
 }
 
 ?>
