@@ -1,8 +1,6 @@
 <?php
 require_once("connection_manager.php");
 
-$_SESSION["userid"] = "ben.ng.2009";
-
 class CourseCompletedDAO {
 
     /**

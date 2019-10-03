@@ -45,7 +45,7 @@
 
         $errors = [];
         $is_valid_section = true;
-        $balance = $StudentDAO->get_balance();
+        $balance = $StudentDAO->get_balance($_SESSION["userid"]);
 
         if(!$SectionDAO->is_valid_section($courseid, $section)) {
             $is_valid_section = false;
@@ -53,7 +53,7 @@
         }
 
         // "For bidding round 1, the student can only bid for courses offered by his/her own school."
-        if($CourseDAO->get_school($courseid) != $StudentDAO->get_school()) {
+        if($CourseDAO->get_school($courseid) != $StudentDAO->get_school($_SESSION["userid"])) {
             array_push($errors, "$courseid is not offered by your school.");
         }
 
@@ -126,7 +126,7 @@
         }
 
         if(empty($errors)) {
-            if($add_bid_success = ($BidDAO->add_bid($amount, $courseid, $section, 1)) && $StudentDAO->deduct_balance($amount)) {
+            if($add_bid_success = ($BidDAO->add_bid($amount, $courseid, $section, 1)) && $StudentDAO->deduct_balance($_SESSION["userid"], $amount)) {
                 return "success";
             }
         }

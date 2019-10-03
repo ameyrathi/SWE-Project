@@ -118,7 +118,7 @@
 
             // "For bidding round 1, the student can only bid for courses offered by his/her own school."
             if($current_round == 1) {
-                if($CourseDAO->get_school($courseid) != $StudentDAO->get_school()) {
+                if($CourseDAO->get_school($courseid) != $StudentDAO->get_school($_SESSION["userid"])) {
                     array_push($errors, "$courseid is not offered by your school.");
                 }
             }
@@ -200,9 +200,9 @@
                     $error_count++;
                 }
             } else {
-                if($add_bid_success = ($BidDAO->add_bid($amount, $courseid, $section, $current_round)) && $StudentDAO->deduct_balance($amount)) {
+                if($add_bid_success = ($BidDAO->add_bid($amount, $courseid, $section, $current_round)) && $StudentDAO->deduct_balance($_SESSION["userid"], $amount)) {
                     echo "<strong>Congratulations! Your bid of $$amount for $courseid $section has been submitted.<br>";
-                    $balance = $StudentDAO->get_balance();
+                    $balance = $StudentDAO->get_balance($_SESSION["userid"]);
                     echo "Your balance e-$ is $$balance.<strong>";
                     return true;
                 } else {

@@ -30,7 +30,7 @@
     $biddingrounddao = new BiddingRoundDAO();
     $current_round = $biddingrounddao->checkBiddingRound();
     $_SESSION["name"] = $StudentDAO->get_name($_SESSION["userid"]);
-    $balance = $StudentDAO->get_balance();
+    $balance = $StudentDAO->get_balance($_SESSION["userid"]);
 ?>
 
 

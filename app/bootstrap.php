@@ -430,7 +430,7 @@ function doBootstrap() {
 
                         //prerequisite fulfilled check
                         $prerequisites_needed = $prerequisitedao->get_prerequisite_courses($code);
-                        $student_completed_courses = $coursecompleteddao->get_completed_courses();
+                        $student_completed_courses = $coursecompleteddao->get_completed_courses_bootstrap($userid);
                         foreach($prerequisites_needed as $this_prerequisite) {
                             if(!in_array($this_prerequisite, $student_completed_courses)) {
                                 array_push($course_completed_row_errors, "invalid course completed");
@@ -505,7 +505,7 @@ function doBootstrap() {
                         $biddingrounddao = new BiddingRoundDAO();
                         //not own school course
                         if($biddingrounddao->checkBiddingRound() != FALSE){
-                            if($coursedao->get_school($code) != $studentdao->get_school_bootstrap($userid)) {
+                            if($coursedao->get_school($code) != $studentdao->get_school($userid)) {
                                 array_push($bid_row_errors, "not own school course");
                             }
                         }
@@ -561,7 +561,7 @@ function doBootstrap() {
                         }
 
                         //not enough e-dollar
-                        if($amount > $studentdao->get_balance_boostrap($userid)){
+                        if($amount > $studentdao->get_balance($userid)){
                             array_push($bid_row_errors, "not enough e-dollar");
                         }
                     }
@@ -576,7 +576,7 @@ function doBootstrap() {
 
                         if($success) {
                             $bid_processed++;
-                            $studentdao->deduct_balance_bootstrap($amount, $userid);
+                            $studentdao->deduct_balance($userid, $amount);
                         } else {
                             echo "BID ROW VALID BUT FAILED TO ADD - DEBUG";
                         }

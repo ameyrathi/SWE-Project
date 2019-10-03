@@ -74,8 +74,8 @@
             if($bid_valid) {
                 $BidDAO = new BidDAO();
                 $StudentDAO = new StudentDAO();
-                $drop_success = $BidDAO->drop_bid($drop_courseid, $current_round) && $StudentDAO->add_balance($this_amount);
-                $new_balance = $StudentDAO->get_balance();
+                $drop_success = $BidDAO->drop_bid($drop_courseid, $current_round) && $StudentDAO->add_balance($_SESSION["userid"], $this_amount);
+                $new_balance = $StudentDAO->get_balance($_SESSION["userid"]);
                 if($drop_success) {
                     echo "<strong>Your bid for $drop_courseid $drop_section has been successfully dropped.<br>";
                     echo "You have been refunded $$this_amount. Your current e$ balance is $$new_balance.</strong>";

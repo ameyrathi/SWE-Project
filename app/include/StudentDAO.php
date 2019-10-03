@@ -2,7 +2,7 @@
 require_once("connection_manager.php");
 
 class StudentDAO {
-    function get_name() {
+    function get_name($userid) {
     /**
      * retrieve name of a student
      * @param string $userid user id
@@ -14,14 +14,14 @@ class StudentDAO {
 
         $stmt = $conn->prepare("SELECT name FROM student WHERE userid=:userid");
 
-        $stmt->bindParam(":userid", $_SESSION["userid"]);
+        $stmt->bindParam(":userid", $userid);
 
         $stmt->execute();
 
-        return $stmt->fetch()[0];
+        return $stmt->fetch()["name"];
     }
 
-    function get_school() {
+    function get_school($userid) {
     /**
      * retrieve school of student
      * @param string $userid user id
@@ -33,7 +33,7 @@ class StudentDAO {
 
         $stmt = $conn->prepare("SELECT school FROM student WHERE userid=:userid");
 
-        $stmt->bindParam(":userid", $_SESSION["userid"]);
+        $stmt->bindParam(":userid", $userid);
 
         $stmt->execute();
 
@@ -44,7 +44,7 @@ class StudentDAO {
         }
     }
 
-    function get_balance() {
+    function get_balance($userid) {
     /**
      * retrieve e-$ of student
      * @param string $userid user id
@@ -56,7 +56,7 @@ class StudentDAO {
 
         $stmt = $conn->prepare("SELECT edollar FROM student WHERE userid=:userid");
 
-        $stmt->bindParam(":userid", $_SESSION["userid"]);
+        $stmt->bindParam(":userid", $userid);
 
         $stmt->execute();
 
@@ -65,13 +65,13 @@ class StudentDAO {
         }
     }
 
-    function deduct_balance($amount) {
+    function deduct_balance($userid, $amount) {
     /**
      * deduct e-$ of student by amount
      * @param string $amount amount to be deducted
      * @return boolean success of balance deduction
      */
-        $original_balance = $this->get_balance();
+        $original_balance = $this->get_balance($userid);
         $balance_after_deduction = $original_balance - $amount;
 
         $connection_manager = new connection_manager();
@@ -80,7 +80,7 @@ class StudentDAO {
         $stmt = $conn->prepare("UPDATE student SET edollar = :balance WHERE userid = :userid");
 
         $stmt->bindParam(":balance", $balance_after_deduction);
-        $stmt->bindParam(":userid", $_SESSION["userid"]);
+        $stmt->bindParam(":userid", $userid);
 
         $success = $stmt->execute();
 
@@ -88,13 +88,13 @@ class StudentDAO {
 
     }
 
-    function add_balance($amount) {
+    function add_balance($userid, $amount) {
         /**
          * add e-$ of student by amount
          * @param string $amount amount to be added
          * @return boolean success of balance addition
          */
-            $original_balance = $this->get_balance();
+            $original_balance = $this->get_balance($userid);
             $balance_after_addition = $original_balance + $amount;
     
             $connection_manager = new connection_manager();
@@ -103,7 +103,7 @@ class StudentDAO {
             $stmt = $conn->prepare("UPDATE student SET edollar = :balance WHERE userid = :userid");
     
             $stmt->bindParam(":balance", $balance_after_addition);
-            $stmt->bindParam(":userid", $_SESSION["userid"]);
+            $stmt->bindParam(":userid", $userid);
     
             $success = $stmt->execute();
     
@@ -143,6 +143,7 @@ class StudentDAO {
         $conn = null;        
         return $password;
     }
+
     public function validUser($userid){
         /**
          * checks if the username is Valid
@@ -224,73 +225,6 @@ class StudentDAO {
             array_push($result, $this_bid_list);
         }
         return $result;
-    }
-
-    function get_balance_boostrap($userid) {
-        /**
-         * retrieve e-$ of student
-         * @param string $userid user id
-         * @return double e-$ balance of student, or false if not found
-         */
-    
-            $connection_manager = new connection_manager();
-            $conn = $connection_manager->connect();
-    
-            $stmt = $conn->prepare("SELECT edollar FROM student WHERE userid=:userid");
-    
-            $stmt->bindParam(":userid", $userid);
-    
-            $stmt->execute();
-    
-            if($balance = $stmt->fetch()[0]) {
-                return $balance;
-            }
-    }
-
-    function deduct_balance_bootstrap($amount, $userid) {
-        /**
-         * deduct e-$ of student by amount
-         * @param string $amount amount to be deducted
-         * @return boolean success of balance deduction
-         */
-            $original_balance = $this->get_balance_boostrap($userid);
-            $balance_after_deduction = $original_balance - $amount;
-    
-            $connection_manager = new connection_manager();
-            $conn = $connection_manager->connect();
-    
-            $stmt = $conn->prepare("UPDATE student SET edollar = :balance WHERE userid = :userid");
-    
-            $stmt->bindParam(":balance", $balance_after_deduction);
-            $stmt->bindParam(":userid", $userid);
-    
-            $success = $stmt->execute();
-    
-            return $success;
-    
-    }
-
-    function get_school_bootstrap($userid) {
-        /**
-         * retrieve school of student
-         * @param string $userid user id
-         * @return string school of student
-         */
-    
-            $connection_manager = new connection_manager();
-            $conn = $connection_manager->connect();
-    
-            $stmt = $conn->prepare("SELECT school FROM student WHERE userid=:userid");
-    
-            $stmt->bindParam(":userid", $userid);
-    
-            $stmt->execute();
-    
-            if($school = $stmt->fetch()[0]) {
-                return $school;
-            } else {
-                return false;
-            }
     }
 }
 

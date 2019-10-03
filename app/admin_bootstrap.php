@@ -16,6 +16,7 @@
     require_once "bootstrap.php";
     $biddingrounddao = new BiddingRoundDAO();
     $current_round = $biddingrounddao->checkBiddingRound();
+
 ?>
 
 <!-- The sidebar -->

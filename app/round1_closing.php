@@ -6,6 +6,7 @@ function close_bidding_round1(){
     $sectionresultsdao = new SectionResultsDAO();
     $biddingrounddao = new BiddingRoundDAO();
     $successfuldao = new SuccessfulDAO();
+    $studentdao = new StudentDAO();
 
     $sectionresultsdao->removeAll(1);
     $cs = $sectiondao->retrieve_all_course_section();
@@ -38,56 +39,80 @@ function close_bidding_round1(){
         // $no_of_bids = count($value);
         // echo "Number of bids: $no_";
 
-        if($capacity == count($array_of_bids)) { // if section is just nice full
-            $vacancies = 0;
-            
-            usort(
-                $array_of_bids, 
-                function($a, $b) {
-                    $result = 0;
-                    if ($a[1] < $b[1]) {
-                        $result = 1;
-                    } else if ($a[1] > $b[1]) {
-                        $result = -1;
-                    }
-                    return $result; 
+        // sort $array_of_bids by descending bid amount
+        usort(
+            $array_of_bids, 
+            function($a, $b) {
+                $result = 0;
+                if ($a[1] < $b[1]) {
+                    $result = 1;
+                } else if ($a[1] > $b[1]) {
+                    $result = -1;
                 }
-            );
+                return $result; 
+            }
+        );
+
+        if($capacity == count($array_of_bids)) { // if section is just nice full
 
             $clearing_price = $array_of_bids[$capacity-1][1];
+
+            $num_successful_bids = 0;
 
             if($array_of_bids[$capacity-2][1] == $clearing_price) { // if more than 1 clearing price bid
-                for($i=0; $i<$capacity; $i++) {
-                    if($array_of_bids[$i][1] == $clearing_price) { // if this bid amount = clearing price
-                        unset($array_of_bids[$i]);
-                        $vacancies++;
+                for($i=0; $i<count($array_of_bids); $i++) {
+                    [$userid, $amount] = $array_of_bids[$i];
+                    if($amount == $clearing_price) { // if this bid amount = clearing price, bid fails
+                        $studentdao->add_balance($userid,$amount); // bid fail, so refund
+                        echo "
+                        Course: $course<br>
+                        Section: $section<br>
+                        User: $userid<br>
+                        Bid Amount: $amount<br>
+                        Clearing Type: Section Just Nice Full<br>
+                        Status: Fail, refunded $amount<br>
+                        ------------------------------------------------------------<br>                   
+                        ";
+                    } else {
+                        $successfuldao->add_success($userid, $amount, $course, $section, 1); // bid success
+                        echo "
+                        Course: $course<br>
+                        Section: $section<br>
+                        User: $userid<br>
+                        Bid Amount: $amount<br>
+                        Clearing Type: Section Just Nice Full<br>
+                        Status: Success<br>
+                        ------------------------------------------------------------<br>                   
+                        ";
+                        $num_successful_bids++;
                     }
+                }
+            } else { // if only 1 clearing price bid, aka all bids succeed
+                for($i=0; $i<count($array_of_bids); $i++) {
+                    [$userid, $amount] = $array_of_bids[$i];
+                    $successfuldao->add_success($userid, $amount, $course, $section, 1); // bid success
+                    echo "
+                    Course: $course<br>
+                    Section: $section<br>
+                    User: $userid<br>
+                    Bid Amount: $amount<br>
+                    Clearing Type: Section Just Nice Full<br>
+                    Status: Success<br>
+                    ------------------------------------------------------------<br>                   
+                    ";
+                    $num_successful_bids++;
                 }
             }
 
-            foreach($array_of_bids as $idx => [$userid, $amount]) {
-                $successfuldao->add_success($userid, $amount, $course, $section, 1);
-            }
+            $vacancies = $capacity - $num_successful_bids;
+
         } elseif($capacity < count($array_of_bids)) { // if section is OVER booked
-            $vacancies = 0;
-
-            usort(
-                $array_of_bids, 
-                function($a, $b) {
-                    $result = 0;
-                    if ($a[1] < $b[1]) {
-                        $result = 1;
-                    } else if ($a[1] > $b[1]) {
-                        $result = -1;
-                    }
-                    return $result; 
-                }
-            );
 
             $clearing_price = $array_of_bids[$capacity-1][1];
 
-            $first_cut_successful = array_slice($array_of_bids, 0, $capacity);
+            $num_successful_bids = 0;
 
+            // find out number of bids with amount = clearing price
             $number_of_clearing_price_bids = 0;
             foreach($array_of_bids as $idx => [$userid, $amount]) {
                 if($amount == $clearing_price) {
@@ -98,40 +123,85 @@ function close_bidding_round1(){
                 }
             }
 
-            if($number_of_clearing_price_bids > 1) {
-                for($i=0; $i<$capacity; $i++) {
-                    if($first_cut_successful[$i][1] == $clearing_price) { // if this bid amount = clearing price
-                        unset($first_cut_successful[$i]);
-                        $vacancies++;
+            if($number_of_clearing_price_bids > 1) { // if more than 1 bid at clearing price
+                for($i=0; $i<count($array_of_bids); $i++) { // loop through all bids
+                    [$userid, $amount] = $array_of_bids[$i];
+                    if($amount <= $clearing_price) { // if this bid amount <= clearing price
+                        $studentdao->add_balance($userid, $amount); // bid fail, so refund
+                        echo "
+                        Course: $course<br>
+                        Section: $section<br>
+                        User: $userid<br>
+                        Bid Amount: $amount<br>
+                        Clearing Type: Section Overbooked<br>
+                        Status: Fail, refunded $amount<br>
+                        ------------------------------------------------------------<br>                   
+                        ";
+                    } else { // if this bid amount > clearing price
+                        $successfuldao->add_success($userid, $amount, $course, $section, 1); // bid succeed
+                        echo "
+                        Course: $course<br>
+                        Section: $section<br>
+                        User: $userid<br>
+                        Bid Amount: $amount<br>
+                        Clearing Type: Section Overbooked<br>
+                        Status: Success<br>
+                        ------------------------------------------------------------<br>                   
+                        ";
+                        $num_successful_bids++;
                     }
+                }
+            } else { // if only 1 bid at clearing price
+                for($i=0; $i<$capacity; $i++) { // all bids within $capacity will be successful
+                    [$userid, $amount] = $array_of_bids[$i];
+                    $successfuldao->add_success($userid, $amount, $course, $section, 1); // bid succeed
+                    echo "
+                    Course: $course<br>
+                    Section: $section<br>
+                    User: $userid<br>
+                    Bid Amount: $amount<br>
+                    Clearing Type: Section Overbooked<br>
+                    Status: Success<br>
+                    ------------------------------------------------------------<br>                   
+                    ";
+                    $num_successful_bids++;
+                }
+                
+                for($i=$capacity; $i<count($array_of_bids); $i++) { // all bids outside $capacity will fail
+                    [$userid, $amount] = $array_of_bids[$i];
+                    $studentdao->add_balance($userid, $amount); // bid fail, so refund
+                    echo "
+                    Course: $course<br>
+                    Section: $section<br>
+                    User: $userid<br>
+                    Bid Amount: $amount<br>
+                    Clearing Type: Section Overbooked<br>
+                    Status: Fail, refunded $amount<br>
+                    ------------------------------------------------------------<br>                   
+                    ";
                 }
             }
 
-            foreach($first_cut_successful as $idx => [$userid, $amount]) {
-                $successfuldao->add_success($userid, $amount, $course, $section, 1);
-            }
+            $vacancies = $capacity - $num_successful_bids;
 
         } else { // if section is UNDER booked, aka everyone succeeded
-            $vacancies = $capacity - count($array_of_bids);
-
-            usort(
-                $array_of_bids, 
-                function($a, $b) {
-                    $result = 0;
-                    if ($a[1] < $b[1]) {
-                        $result = 1;
-                    } else if ($a[1] > $b[1]) {
-                        $result = -1;
-                    }
-                    return $result; 
-                }
-            );
 
             $clearing_price = $array_of_bids[count($array_of_bids)-1][1];
 
             foreach($array_of_bids as $idx => [$userid, $amount]) {
                 $successfuldao->add_success($userid, $amount, $course, $section, 1);
+                echo "
+                Course: $course<br>
+                Section: $section<br>
+                User: $userid<br>
+                Bid Amount: $amount<br>
+                Clearing Type: Section Underbooked<br>
+                Status: Success<br>
+                ------------------------------------------------------------<br>                   
+                ";
             }
+
+            $vacancies = $capacity - count($array_of_bids);
         }
 
         $sectionresultsdao->update_results($course, $section, $clearing_price, $vacancies, 1);
