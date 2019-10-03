@@ -78,11 +78,11 @@ class SuccessfulDAO{
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
+        // only need to check for round1_successful, not round2_successful
+        // wiki: "success bids from round 2 are final and cannot be dropped"
         if($this->check_success($userid, $course, $section, 1) != false) { // in round1_successful
             $stmt = $conn->prepare("DELETE FROM round1_successful WHERE code=:course AND userid=:userid");
-        } elseif ($this->check_success($userid, $course, $section, 2) != false) { // in round2_successful
-            $stmt = $conn->prepare("DELETE FROM round2_successful WHERE code=:course AND userid=:userid");
-        }        
+        }     
 
         $stmt->bindParam(":course", $course);
         $stmt->bindParam(":userid", $userid);
