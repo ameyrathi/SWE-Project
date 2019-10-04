@@ -32,6 +32,7 @@
     $studentdao = new StudentDAO();
     $biddingrounddao = new BiddingRoundDAO();
     $successfuldao = new SuccessfulDAO();
+    $biddao = new BidDAO();
     $current_round = $biddingrounddao->checkBiddingRound();
 
     if($current_round == null) {
@@ -71,14 +72,14 @@
                 }
             }
 
-            if($drop_valid) {
-                $drop_success = $successfuldao->drop_section($_SESSION["userid"], $drop_courseid, $drop_section);
+            if($drop_valid) { // must also delete from round1_bid (else view results will show as unsuccessful)
+                $drop_success = $successfuldao->drop_section($_SESSION["userid"], $drop_courseid, $drop_section) && $biddao->drop_bid($_SESSION["userid"], $drop_courseid, 1);
                 if($drop_success) {
                     $refund_success = $studentdao->add_balance($_SESSION["userid"], $successful_amount);
                     if($refund_success) {
                         $new_balance = $studentdao->get_balance($_SESSION["userid"]);
                         echo "<strong>You have successfully dropped $drop_courseid $drop_section.<br>";
-                        echo "You have been refunded $$amount. Your current e$ balance is $$new_balance.</strong>";
+                        echo "You have been refunded $$successful_amount. Your current e$ balance is $$new_balance.</strong>";
                     }
                 }
             } else { // if section student wants to drop isn't in successful tables

@@ -51,7 +51,7 @@
         ";
 
         if($current_round == 1) {
-            $round1_bids = $biddao->get_bids_by_student($_SESSION["userid"], 1);
+            $round1_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 1);
             foreach($round1_bids as $this_bid) {
                 [$course, $section, $amount] = $this_bid;
                 echo "<tr>
@@ -62,12 +62,13 @@
                     </tr>";  
             }      
         } elseif($current_round == 2) {
-            $round1_bids = $biddao->get_bids_by_student($_SESSION["userid"], 1);
-            $round2_bids = $biddao->get_bids_by_student($_SESSION["userid"], 2);
+            $round1_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 1);
+            $round2_pending_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 2);
 
             $pending_courses = [];
 
-            foreach($round2_bids as $this_bid) {
+
+            foreach($round2_pending_bids as $this_bid) {
                 [$course, $section, $amount] = $this_bid;
 
                 echo "<tr>

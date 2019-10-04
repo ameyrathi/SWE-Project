@@ -58,7 +58,7 @@
         ";
 
         $BidDAO = new BidDAO();
-        $list_of_bids = $BidDAO->get_bids_by_student($_SESSION["userid"], $current_round);
+        $list_of_bids = $BidDAO->get_pending_bids_and_amount($_SESSION["userid"], $current_round);
 
         $bid_valid = false;
 

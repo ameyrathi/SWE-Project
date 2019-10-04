@@ -8,13 +8,7 @@ class SectionResultsDAO{
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
-        if($closed_round == 1) {
-            $table = "round1_results";
-        } elseif($closed_round == 2) {
-            $table = "round2_results";
-        }
-
-        $stmt = $conn->prepare("INSERT INTO $table VALUES(:course, :section, :min_bid, :vacancies)");
+        $stmt = $conn->prepare("INSERT INTO section_results VALUES(:course, :section, :min_bid, :vacancies)");
         
         $stmt->bindParam(":course", $course);
         $stmt->bindParam(":section", $section);
@@ -33,13 +27,7 @@ class SectionResultsDAO{
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
-        if($closed_round == 1) {
-            $table = "round1_results";
-        } elseif($closed_round == 2) {
-            $table = "round2_results";
-        }
-
-        $stmt = $conn->prepare("UPDATE $table SET min_bid = :min_bid, vacancies = :vacancies WHERE course = :course AND section = :section");
+        $stmt = $conn->prepare("UPDATE section_results SET min_bid = :min_bid, vacancies = :vacancies WHERE course = :course AND section = :section");
 
         $stmt->bindParam(":min_bid", $min_bid);
         $stmt->bindParam(":vacancies", $vacancies);
@@ -53,7 +41,7 @@ class SectionResultsDAO{
 
     function removeAll($closed_round){
         if($closed_round == 1) {
-            $table = "round1_results";
+            $table = "";
         } elseif($closed_round == 2) {
             $table = "round2_results";
         }

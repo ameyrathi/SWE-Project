@@ -20,7 +20,7 @@ function close_bidding_round1(){
         $section = $cs[$i][1];
         $max_size = $cs[$i][2];
 
-        // add all possible course-sections into round1_results table, default min_bid assume 10
+        // add all possible course-sections into section_results table, default min_bid assume 10
         $sectionresultsdao->add_results($course, $section, $min_bid, $max_size, 1);
     } 
 
@@ -204,7 +204,7 @@ function close_bidding_round1(){
             $vacancies = $capacity - count($array_of_bids);
         }
 
-        $sectionresultsdao->update_results($course, $section, $clearing_price, $vacancies, 1);
+        $sectionresultsdao->update_results($course, $section, 10, $vacancies, 1);
     }
 
     $update_bidding_round_success = $biddingrounddao->updateBiddingRound(2);
