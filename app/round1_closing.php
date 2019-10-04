@@ -8,7 +8,7 @@ function close_bidding_round1(){
     $successfuldao = new SuccessfulDAO();
     $studentdao = new StudentDAO();
 
-    $sectionresultsdao->removeAll(1);
+    $sectionresultsdao->removeAll();
     $cs = $sectiondao->retrieve_all_course_section();
 
     $min_bid = 10;
@@ -21,12 +21,12 @@ function close_bidding_round1(){
         $max_size = $cs[$i][2];
 
         // add all possible course-sections into section_results table, default min_bid assume 10
-        $sectionresultsdao->add_results($course, $section, $min_bid, $max_size, 1);
+        $sectionresultsdao->add_results($course, $section, 10, $max_size, 1);
     } 
 
     // obtains an array of bids
     // $temp_arr = [ "IS100, S1" => [ ['ben.ng.2009','11'], ['calvin.ng.2009','12'] ], ... ]
-    $temp_arr = $biddao->retrieve_and_sort_bids(1);
+    $temp_arr = $biddao->retrieve_sort_bids(1);
 
     foreach($temp_arr as $course_section_str=>$array_of_bids){
         $course = explode(", ", $course_section_str)[0];
@@ -204,7 +204,7 @@ function close_bidding_round1(){
             $vacancies = $capacity - count($array_of_bids);
         }
 
-        $sectionresultsdao->update_results($course, $section, 10, $vacancies, 1);
+        $sectionresultsdao->update_results($course, $section, 10, $vacancies);
     }
 
     $update_bidding_round_success = $biddingrounddao->updateBiddingRound(2);

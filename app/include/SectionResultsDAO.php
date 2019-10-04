@@ -23,7 +23,7 @@ class SectionResultsDAO{
         return $success;
     }
 
-    function update_results($course, $section, $min_bid , $vacancies, $closed_round){
+    function update_results($course, $section, $min_bid , $vacancies) {
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
@@ -39,14 +39,55 @@ class SectionResultsDAO{
         return $success;
     }
 
-    function removeAll($closed_round){
-        if($closed_round == 1) {
-            $table = "";
-        } elseif($closed_round == 2) {
-            $table = "round2_results";
-        }
+    function update_min_bid($course, $section, $min_bid) {
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
 
-        $sql = 'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE $table';
+        $stmt = $conn->prepare("UPDATE section_results SET min_bid = :min_bid WHERE course = :course AND section = :section");
+
+        $stmt->bindParam(":min_bid", $min_bid);
+        $stmt->bindParam(":course", $course); 
+        $stmt->bindParam(":section", $section);
+
+        $success = $stmt->execute();
+
+        return $success;
+    }
+
+    function get_available_seats($course, $section) {
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("SELECT vacancies FROM section_results WHERE course=:course AND section=:section");
+
+        $stmt->bindParam(":course", $course); 
+        $stmt->bindParam(":section", $section);
+
+        $stmt->execute();
+
+        if($row = $stmt->fetch()) {
+            return $row["vacancies"];
+        }
+    }
+
+    function get_min_bid($course, $section) {
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("SELECT min_bid FROM section_results WHERE course=:course AND section=:section");
+
+        $stmt->bindParam(":course", $course); 
+        $stmt->bindParam(":section", $section);
+
+        $stmt->execute();
+
+        if($row = $stmt->fetch()) {
+            return $row["min_bid"];
+        }
+    }
+
+    function removeAll(){
+        $sql = 'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE section_results';
         
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();

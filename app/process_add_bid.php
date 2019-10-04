@@ -142,6 +142,7 @@
         $coursecompleteddao = new CourseCompletedDAO();
         $studentdao = new StudentDAO();
         $successfuldao = new SuccessfulDAO();
+        $sectionresultsdao = new SectionResultsDAO();
 
         $errors = [];
         $is_valid_section = true;
@@ -255,18 +256,23 @@
                 }           
             } 
 
-        $prerequisite_courses = $prerequisitedao->get_prerequisite_courses($courseid);
-        $completed_courses = $coursecompleteddao->get_completed_courses($_SESSION["userid"]);
+            $prerequisite_courses = $prerequisitedao->get_prerequisite_courses($courseid);
+            $completed_courses = $coursecompleteddao->get_completed_courses($_SESSION["userid"]);
 
-        $prerequisite_check_success = true; # assume fulfill prerequisites first
+            $prerequisite_check_success = true; # assume fulfill prerequisites first
 
-        foreach($prerequisite_courses as $this_prerequisite) {
-            if(!in_array($this_prerequisite, $completed_courses)) {
-                $prerequisite_check_success = false;
-                array_push($errors, "You have not completed prerequisite course: $this_prerequisite.");
+            foreach($prerequisite_courses as $this_prerequisite) {
+                if(!in_array($this_prerequisite, $completed_courses)) {
+                    $prerequisite_check_success = false;
+                    array_push($errors, "You have not completed prerequisite course: $this_prerequisite.");
+                }
+            }
+
+            $min_bid = $sectionresultsdao->get_min_bid($courseid, $section);
+            if($amount < $min_bid) {
+                $errors[] = "Please bid higher than the minimum bid of $$min_bid.";
             }
         }
-    }
 
         if(empty($errors)) {
             if($add_bid_success = ($biddao->add_bid($_SESSION["userid"], $amount, $courseid, $section, 2)) && $studentdao->deduct_balance($_SESSION["userid"], $amount)) {

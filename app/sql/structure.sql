@@ -99,11 +99,11 @@ CREATE TABLE IF NOT EXISTS `round1_bid` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `round1_results`
+-- Table structure for table `section_results`
 --
 
-DROP TABLE IF EXISTS `round1_results`;
-CREATE TABLE IF NOT EXISTS `round1_results` (
+DROP TABLE IF EXISTS `section_results`;
+CREATE TABLE IF NOT EXISTS `section_results` (
   `course` varchar(255) NOT NULL,
   `section` varchar(255) NOT NULL,
   `min_bid` double(8,2) NOT NULL,
@@ -188,10 +188,10 @@ ALTER TABLE `round1_bid`
   ADD CONSTRAINT `FK2_round1_bid` FOREIGN KEY (`code`,`section`) REFERENCES `section` (`course`, `section`);
 
 --
--- Constraints for table `round1_results`
+-- Constraints for table `section_results`
 --
-ALTER TABLE `round1_results`
-  ADD CONSTRAINT `FK1_round1_results` FOREIGN KEY (`course`,`section`) REFERENCES `section` (`course`, `section`);
+ALTER TABLE `section_results`
+  ADD CONSTRAINT `FK1_section_results` FOREIGN KEY (`course`,`section`) REFERENCES `section` (`course`, `section`);
 
 --
 -- Constraints for table `round1_successful`

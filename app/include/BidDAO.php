@@ -21,7 +21,7 @@ class BidDAO {
             $table = "round2_bid";
         }
 
-        $stmt = $conn->prepare("INSERT INTO $table VALUES(:userid, :amount, :code, :section)");
+        $stmt = $conn->prepare("INSERT INTO $table (userid, amount, code, section) VALUES(:userid, :amount, :code, :section)");
         
         $stmt->bindParam(":userid", $userid);
         $stmt->bindParam(":amount", $amount);
@@ -89,7 +89,7 @@ class BidDAO {
         return $success;
     }
 
-    function retrieve_and_sort_bids($current_round){
+    function retrieve_sort_bids($current_round){
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
@@ -152,6 +152,54 @@ class BidDAO {
         return $result;
     }
 
+    function retrieve_sort_this_section_bids($course, $section, $closed_round){
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        if($closed_round == 1) {
+            $table = "round1_bid";
+        } elseif($closed_round == 2) {
+            $table = "round2_bid";
+        }
+
+        $stmt = $conn->prepare("SELECT userid, amount FROM $table WHERE code=:course AND section=:section");
+
+        $stmt->bindParam(":course", $course);
+        $stmt->bindParam(":section", $section);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            $this_bid_list = [];
+            foreach($row as $idx => $value) {
+                array_push($this_bid_list, $value);
+            }
+            array_push($result, $this_bid_list);
+        }
+
+        // $result is now in this format:
+            // [ ['ben.ng.2009', '11'], ['calvin.ng.2009', '12'], ... ]
+        
+        usort(
+            $result, 
+            function($a, $b) {
+                $sorting = 0;
+                if ($a[1] < $b[1]) {
+                    $sorting = 1;
+                } else if ($a[1] > $b[1]) {
+                    $sorting = -1;
+                }
+                return $sorting; 
+            }
+        );
+
+        return $result;
+    }
+
     function get_pending_bids_and_amount($userid, $current_round) {
         /**
          * retrieve course codes, sections, amounts of all successful bids placed by a student in stated round
@@ -203,9 +251,40 @@ class BidDAO {
 
         return $stmt->fetch();
     }
+
+    function update_round2_bid_status($userid, $course, $status) {
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("UPDATE round2_bid SET status=:status WHERE userid=:userid AND code=:course");
+        
+        $stmt->bindParam(":userid", $userid);
+        $stmt->bindParam(":course", $course);
+        $stmt->bindParam(":status", $status);
+
+        $success = $stmt->execute();
+
+        return $success;
+    }
+
+    function get_round2_bid_status($userid, $course) {
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("SELECT status FROM $table WHERE userid=:userid AND code=:course");
+
+        $stmt->bindParam(":userid", $userid);
+        $stmt->bindParam(":course", $course);
+
+        $stmt->execute();
+
+        if($row = $stmt->fetch()) {
+            return $row["status"];
+        }
+    }
 }
 
 // $BidDAO = new BidDAO();
-// var_dump($BidDAO->retrieve_and_sort_bids(1));
+// var_dump($BidDAO->retrieve_sort_this_section_bids("IS100", "S1", 1));
 
 ?>

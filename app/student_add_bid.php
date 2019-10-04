@@ -37,12 +37,12 @@
         echo "<h2>Round 1 has not started.</h2>";
     } else {
 
-        $bid_courseid = "";
+        $bid_course = "";
         $bid_section = "";
         $bid_amount = "";
 
         if(isset($_GET["bid_courseid"])) {
-            $bid_courseid = strtoupper($_GET["bid_courseid"]);
+            $bid_course = strtoupper($_GET["bid_courseid"]);
         }
         if(isset($_GET["bid_section"])) {
             $bid_section = strtoupper($_GET["bid_section"]);
@@ -56,7 +56,7 @@
         <form>
             <input type='hidden' name='token' value=$token>
 
-            Course: <input type='text' name='bid_courseid' value=$bid_courseid><br><br>
+            Course: <input type='text' name='bid_courseid' value=$bid_course><br><br>
             Section: <input type='text' name='bid_section' value=$bid_section><br><br>
             Bid Amount: <input type='text' name='bid_amount' value=$bid_amount><br><br>
             <input type='submit'/>
@@ -67,12 +67,12 @@
         $StudentDAO = new StudentDAO();
 
                
-        if(!in_array("", [$bid_amount, $bid_courseid, $bid_section])) {
+        if(!in_array("", [$bid_amount, $bid_course, $bid_section])) {
             if($current_round == 1) {
-                $bid_check_success = round1_bid_check($bid_amount, $bid_courseid, $bid_section);
+                $bid_check_success = round1_bid_check($bid_amount, $bid_course, $bid_section);
                 if($bid_check_success == "success") {
                     $balance = $StudentDAO->get_balance($_SESSION["userid"]);
-                    echo "You have successfully bidded $$bid_amount for $bid_courseid $bid_section.<br>
+                    echo "You have successfully bidded $$bid_amount for $bid_course $bid_section.<br>
                         Your currently balance is $balance.";
                 } else { // return errors
                     echo "<strong><span id='error'>Errors:</span></strong><br>";
@@ -82,11 +82,25 @@
                     }
                 }
             } elseif($current_round == 2) {
-                $bid_check_success = round2_bid_check($bid_amount, $bid_courseid, $bid_section);
+                $bid_check_success = round2_bid_check($bid_amount, $bid_course, $bid_section);
                 if($bid_check_success == "success") {
                     $balance = $StudentDAO->get_balance($_SESSION["userid"]);
-                    echo "You have successfully bidded $$bid_amount for $bid_courseid $bid_section.<br>
-                        Your currently balance is $balance.";
+                    echo "You have successfully bidded $$bid_amount for $bid_course $bid_section.<br>
+                        Your currently balance is $balance.<br>";
+                    
+                    // real time information
+                    $sectionresultsdao = new SectionResultsDAO();
+                    $total_available_seats = $sectionresultsdao->get_available_seats($bid_course, $bid_section);
+
+                    echo 
+                        "<h2>Real-time Bid Information:<br>
+                        Course: $bid_course<br>
+                        Section: $bid_section<br>
+                        Total Available Seats: $total_available_seats<br>
+                        Minimum Bid: 
+                        ";
+                        /////////////////////// TO CONTINUEEEEEEEEEE /////////////////////////
+                        
                 } else { // return errors
                     echo "<strong><span id='error'>Errors:</span></strong><br>";
                     $error_counter = 1;

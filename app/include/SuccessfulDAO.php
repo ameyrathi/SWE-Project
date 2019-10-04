@@ -14,11 +14,11 @@ class SuccessfulDAO{
             $table = "round2_successful";
         }
 
-        $stmt = $conn->prepare("INSERT INTO $table VALUES(:userid, :amount, :course, :section)");
+        $stmt = $conn->prepare("INSERT INTO $table VALUES(:userid, :amount, :code, :section)");
         
         $stmt->bindParam(":userid", $userid);
         $stmt->bindParam(":amount", $amount);
-        $stmt->bindParam(":course", $course);
+        $stmt->bindParam(":code", $course);
         $stmt->bindParam(":section", $section);
 
         $success = $stmt->execute();
@@ -39,10 +39,10 @@ class SuccessfulDAO{
             $table = "round2_successful";
         }
 
-        $stmt = $conn->prepare("SELECT * FROM $table WHERE userid=:userid AND course=:course AND section=:section");
+        $stmt = $conn->prepare("SELECT * FROM $table WHERE userid=:userid AND code=:course AND section=:section");
         
         $stmt->bindParam(":userid", $userid);
-        $stmt->bindParam(":course", $course);
+        $stmt->bindParam(":code", $course);
         $stmt->bindParam(":section", $section);
 
         $stmt->execute();
@@ -93,6 +93,119 @@ class SuccessfulDAO{
 
         return $success;
     }
+
+    function retrieve_sort_bids($closed_round){
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        if($closed_round == 1) {
+            $table = "round1_successful";
+        } elseif($closed_round == 2) {
+            $table = "round2_successful";
+        }
+
+        $stmt = $conn->prepare("SELECT * FROM $table");
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $raw_bids = [];
+
+        while($row = $stmt->fetch()) {
+            $this_bid_list = [];
+            foreach($row as $idx => $value) {
+                array_push($this_bid_list, $value);
+            }
+            array_push($raw_bids, $this_bid_list);
+        }
+
+        // $result is now in this format:
+            // [ ['ben.ng.2009', '11', 'IS100', 'S1'], ['calvin.ng.2009', '12', 'IS100', 'S1'], ... ]
+
+        // but we want it to be in this format:
+            // [ "IS100, S1" => [ ['ben.ng.2009','11'], ['calvin.ng.2009','12'] ], ... ]
+
+        $result = [];
+
+        foreach($raw_bids as $this_bid) {
+            [$userid, $amount, $course, $section] = $this_bid;
+            $course_section_concat = $course . ", " . $section;
+
+            if(!array_key_exists($course_section_concat, $result)) { // if course_section not a key in $result yet
+                $result[$course_section_concat] = [[$userid, $amount]];
+            } else { // if course_section already exists as a key in $result
+                $result[$course_section_concat][] = [$userid, $amount];
+            }
+        }
+
+        foreach($result as $course_section_concat => &$this_bid_list) { // pass by reference so usort will modify it
+            usort(
+                $this_bid_list, 
+                function($a, $b) {
+                    $sorting = 0;
+                    if ($a[1] < $b[1]) {
+                        $sorting = 1;
+                    } else if ($a[1] > $b[1]) {
+                        $sorting = -1;
+                    }
+                    return $sorting; 
+                }
+            );
+        }
+        return $result;
+    }
+
+    function retrieve_sort_this_section_bids($course, $section, $closed_round){
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        if($closed_round == 1) {
+            $table = "round1_successful";
+        } elseif($closed_round == 2) {
+            $table = "round2_successful";
+        }
+
+        $stmt = $conn->prepare("SELECT userid, amount FROM $table WHERE code=:course AND section=:section");
+
+        $stmt->bindParam(":course", $course);
+        $stmt->bindParam(":section", $section);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            $this_bid_list = [];
+            foreach($row as $idx => $value) {
+                array_push($this_bid_list, $value);
+            }
+            array_push($result, $this_bid_list);
+        }
+
+        // $result is now in this format:
+            // [ ['ben.ng.2009', '11', 'IS100', 'S1'], ['calvin.ng.2009', '12', 'IS100', 'S1'], ... ]
+        
+        usort(
+            $result, 
+            function($a, $b) {
+                $sorting = 0;
+                if ($a[1] < $b[1]) {
+                    $sorting = 1;
+                } else if ($a[1] > $b[1]) {
+                    $sorting = -1;
+                }
+                return $sorting; 
+            }
+        );
+
+        return $result;
+    }
 }
+
+// $successfuldao = new SuccessfulDAO();
+// var_dump($successfuldao->retrieve_sort_this_section_bids("IS100", "S1", 1));
 
 ?>
