@@ -45,7 +45,7 @@
 
         $errors = [];
         $is_valid_section = true;
-        $balance = $StudentDAO->get_balance();
+        $balance = $StudentDAO->get_balance($_SESSION["userid"]);
 
         if(!$SectionDAO->is_valid_section($courseid, $section)) {
             $is_valid_section = false;
@@ -53,11 +53,11 @@
         }
 
         // "For bidding round 1, the student can only bid for courses offered by his/her own school."
-        if($CourseDAO->get_school($courseid) != $StudentDAO->get_school()) {
+        if($CourseDAO->get_school($courseid) != $StudentDAO->get_school($_SESSION["userid"])) {
             array_push($errors, "$courseid is not offered by your school.");
         }
 
-        $pending_bidded_sections = $BidDAO->get_pending_bidded_sections(1);
+        $pending_bidded_sections = $BidDAO->get_pending_bidded_sections($_SESSION["userid"], 1);
 
         if (!($enough_balance_check_success = $balance >= $amount)) {
             $amount_shortage = $amount - $balance;
@@ -114,7 +114,7 @@
 
 
         $prerequisite_courses = $PrerequisiteDAO->get_prerequisite_courses($courseid);
-        $completed_courses = $CourseCompletedDAO->get_completed_courses();
+        $completed_courses = $CourseCompletedDAO->get_completed_courses($_SESSION["userid"]);
 
         $prerequisite_check_success = true; # assume fulfill prerequisites first
 
@@ -126,7 +126,7 @@
         }
 
         if(empty($errors)) {
-            if($add_bid_success = ($BidDAO->add_bid($amount, $courseid, $section, 1)) && $StudentDAO->deduct_balance($amount)) {
+            if($add_bid_success = ($BidDAO->add_bid($_SESSION["userid"], $amount, $courseid, $section, 1)) && $StudentDAO->deduct_balance($_SESSION["userid"], $amount)) {
                 return "success";
             }
         }

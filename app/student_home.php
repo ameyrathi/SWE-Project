@@ -21,6 +21,7 @@
   <a class="active" href="student_home.php?token=<?php echo $token?>">Home</a>
   <a href="student_add_bid.php?token=<?php echo $token?>">Bid</a>
   <a href="student_drop_bid.php?token=<?php echo $token?>">Drop Bid</a>
+  <a href="student_drop_section.php?token=<?php echo $token?>">Drop Section</a>
   <a href="student_view_results.php?token=<?php echo $token?>">View Results</a>
   <a href="sign_out.php">Sign Out</a>
 </div>
@@ -30,7 +31,7 @@
     $biddingrounddao = new BiddingRoundDAO();
     $current_round = $biddingrounddao->checkBiddingRound();
     $_SESSION["name"] = $StudentDAO->get_name($_SESSION["userid"]);
-    $balance = $StudentDAO->get_balance();
+    $balance = $StudentDAO->get_balance($_SESSION["userid"]);
 ?>
 
 

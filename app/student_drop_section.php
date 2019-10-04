@@ -19,8 +19,8 @@
 <div class="sidebar">
   <a href="student_home.php?token=<?php echo $token?>">Home</a>
   <a href="student_add_bid.php?token=<?php echo $token?>">Bid</a>
-  <a class="active" href="student_drop_bid.php?token=<?php echo $token?>">Drop Bid</a>
-  <a href="student_drop_section.php?token=<?php echo $token?>">Drop Section</a>
+  <a href="student_drop_bid.php?token=<?php echo $token?>">Drop Bid</a>
+  <a class="active" href="student_drop_section.php?token=<?php echo $token?>">Drop Section</a>
   <a href="student_view_results.php?token=<?php echo $token?>">View Results</a>
   <a href="sign_out.php">Sign Out</a>
 </div>
@@ -29,13 +29,16 @@
 
 <?php
 
-    $StudentDAO = new StudentDAO();
+    $studentdao = new StudentDAO();
     $biddingrounddao = new BiddingRoundDAO();
+    $successfuldao = new SuccessfulDAO();
     $current_round = $biddingrounddao->checkBiddingRound();
 
     if($current_round == null) {
         echo "<h2>Round 1 has not started.</h2>";
-    } else {
+    } elseif($current_round == 1) {
+        echo "<h2>Round 1 is still ongoing.</h2>";
+    } elseif($current_round == 2) {
         $drop_courseid = "";
         $drop_section = "";
 
@@ -45,9 +48,9 @@
         if(isset($_GET["drop_section"])) {
             $drop_section = strtoupper($_GET["drop_section"]);
         }
-        
+
         echo "
-        <h1>Current bidding round: $current_round<br><br></h1>
+        <h1>Drop a section:<br><br></h1>
         <form>
             <input type='hidden' name='token' value=$token>
 
@@ -57,44 +60,34 @@
         </form><br>
         ";
 
-        $BidDAO = new BidDAO();
-        $list_of_bids = $BidDAO->get_bids_by_student($_SESSION["userid"], $current_round);
-
-        $bid_valid = false;
-
         if($drop_courseid != "" && $drop_section != "") {
-            foreach($list_of_bids as $this_list) {
-                $this_courseid = $this_list[0];
-                $this_section = $this_list[1];
-                if($drop_courseid == $this_courseid && $drop_section == $this_section) {
-                    $bid_valid = true;
-                    $this_amount = $this_list[2];
+            $successful_bids = $successfuldao->get_successful_bids_and_amount($_SESSION["userid"], 1);
+            $drop_valid = false;
+
+            foreach($successful_bids as $idx => [$successful_course, $successful_section, $successful_amount]) {
+                if($successful_course == $drop_courseid && $successful_section == $drop_section) {
+                    $drop_valid = true;
                     break;
                 }
             }
-            if($bid_valid) {
-                $BidDAO = new BidDAO();
-                $StudentDAO = new StudentDAO();
-                $drop_success = $BidDAO->drop_bid($_SESSION["userid"], $drop_courseid, $current_round) && $StudentDAO->add_balance($_SESSION["userid"], $this_amount);
-                $new_balance = $StudentDAO->get_balance($_SESSION["userid"]);
+
+            if($drop_valid) {
+                $drop_success = $successfuldao->drop_section($_SESSION["userid"], $drop_courseid, $drop_section);
                 if($drop_success) {
-                    echo "<strong>Your bid for $drop_courseid $drop_section has been successfully dropped.<br>";
-                    echo "You have been refunded $$this_amount. Your current e$ balance is $$new_balance.</strong>";
+                    $refund_success = $studentdao->add_balance($_SESSION["userid"], $successful_amount);
+                    if($refund_success) {
+                        $new_balance = $studentdao->get_balance($_SESSION["userid"]);
+                        echo "<strong>You have successfully dropped $drop_courseid $drop_section.<br>";
+                        echo "You have been refunded $$amount. Your current e$ balance is $$new_balance.</strong>";
+                    }
                 }
-            } else {
+            } else { // if section student wants to drop isn't in successful tables
                 echo "<strong><span id='error'>Error:</span></strong><br><br>";
                 echo "<span id='error'>$drop_courseid $drop_section is not a course you have bidded for.</span>";
             }
         }
     }
-
-
-
-
 ?>
-
-</p>
-
 
 </div>
 </html>

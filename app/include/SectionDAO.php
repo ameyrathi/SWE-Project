@@ -105,8 +105,8 @@ class SectionDAO {
 
         $stmt->execute();
 
-        if($size = $stmt->fetch()) {
-            return $size;
+        if($row = $stmt->fetch()) {
+            return $row["size"];
         }
 
     }
