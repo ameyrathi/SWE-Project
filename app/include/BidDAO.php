@@ -3,7 +3,7 @@ require_once("connection_manager.php");
 
 class BidDAO {
 
-    function add_bid($userid, $amount, $courseid, $section, $current_round) {
+    function add_bid($userid, $amount, $courseid, $section, $current_round, $status='') {
     /**
      * adds bid to system
      * @param double $amount e-$ student wants to bid with
@@ -16,12 +16,11 @@ class BidDAO {
         $conn = $connection_manager->connect();
 
         if($current_round == 1) {
-            $table = "round1_bid";
+            $stmt = $conn->prepare("INSERT INTO round1_bid VALUES(:userid, :amount, :code, :section)");
         } elseif($current_round == 2) {
-            $table = "round2_bid";
+            $stmt = $conn->prepare("INSERT INTO round2_bid VALUES(:userid, :amount, :code, :section, :status)");
+            $stmt->bindParam(":status", $section);
         }
-
-        $stmt = $conn->prepare("INSERT INTO $table (userid, amount, code, section) VALUES(:userid, :amount, :code, :section)");
         
         $stmt->bindParam(":userid", $userid);
         $stmt->bindParam(":amount", $amount);
@@ -271,7 +270,7 @@ class BidDAO {
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
-        $stmt = $conn->prepare("SELECT status FROM $table WHERE userid=:userid AND code=:course");
+        $stmt = $conn->prepare("SELECT status FROM round2_bid WHERE userid=:userid AND code=:course");
 
         $stmt->bindParam(":userid", $userid);
         $stmt->bindParam(":course", $course);

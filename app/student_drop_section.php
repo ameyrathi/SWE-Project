@@ -32,6 +32,7 @@
     $studentdao = new StudentDAO();
     $biddingrounddao = new BiddingRoundDAO();
     $successfuldao = new SuccessfulDAO();
+    $sectionresultsdao = new SectionResultsDAO();
     $biddao = new BidDAO();
     $current_round = $biddingrounddao->checkBiddingRound();
 
@@ -73,7 +74,8 @@
             }
 
             if($drop_valid) { // must also delete from round1_bid (else view results will show as unsuccessful)
-                $drop_success = $successfuldao->drop_section($_SESSION["userid"], $drop_courseid, $drop_section) && $biddao->drop_bid($_SESSION["userid"], $drop_courseid, 1);
+                $drop_success = $successfuldao->drop_section($_SESSION["userid"], $drop_courseid, $drop_section) && $biddao->drop_bid($_SESSION["userid"], $drop_courseid, 1) && $sectionresultsdao->add_one_seat($drop_courseid, $drop_section);
+                
                 if($drop_success) {
                     $refund_success = $studentdao->add_balance($_SESSION["userid"], $successful_amount);
                     if($refund_success) {

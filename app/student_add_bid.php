@@ -31,6 +31,8 @@
 <?php 
     $StudentDAO = new StudentDAO();
     $biddingrounddao = new BiddingRoundDAO();
+    $biddao = new BidDAO();
+    $sectionresultsdao = new SectionResultsDAO();
     $current_round = $biddingrounddao->checkBiddingRound();
 
     if($current_round == null) {
@@ -86,21 +88,7 @@
                 if($bid_check_success == "success") {
                     $balance = $StudentDAO->get_balance($_SESSION["userid"]);
                     echo "You have successfully bidded $$bid_amount for $bid_course $bid_section.<br>
-                        Your currently balance is $balance.<br>";
-                    
-                    // real time information
-                    $sectionresultsdao = new SectionResultsDAO();
-                    $total_available_seats = $sectionresultsdao->get_available_seats($bid_course, $bid_section);
-
-                    echo 
-                        "<h2>Real-time Bid Information:<br>
-                        Course: $bid_course<br>
-                        Section: $bid_section<br>
-                        Total Available Seats: $total_available_seats<br>
-                        Minimum Bid: 
-                        ";
-                        /////////////////////// TO CONTINUEEEEEEEEEE /////////////////////////
-                        
+                        Your currently balance is $balance.<br>";                        
                 } else { // return errors
                     echo "<strong><span id='error'>Errors:</span></strong><br>";
                     $error_counter = 1;
@@ -108,6 +96,42 @@
                         echo "<span id='error'>$error_counter. $error</span><br>";
                     }
                 }
+            }
+        }
+
+        $round2_pending_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 2);
+
+        if($round2_pending_bids != []) {
+            echo "<br><strong>Real-time Bid Information:</strong><br><br>";
+            echo "
+            <table id='real_time_bids'>
+            <tr>
+                <th>Course</th>
+                <th>Section</th>
+                <th>Available Seats</th>
+                <th>Minimum Bid</th>
+                <th>Your Bid</th>
+                <th>Bid Status</th>
+            </tr>
+            ";
+
+            foreach($round2_pending_bids as $this_bid) {
+                [$this_course, $this_section, $this_amount] = $this_bid;
+
+                $total_available_seats = $sectionresultsdao->get_available_seats($this_course, $this_section);
+                $min_bid = $sectionresultsdao->get_min_bid($this_course, $this_section);
+                $bid_status = $biddao->get_round2_bid_status($_SESSION["userid"], $this_course);
+
+                echo "
+                <tr>
+                    <td>$this_course</td>
+                    <td>$this_section</td>
+                    <td>$total_available_seats</td>
+                    <td>$$min_bid</td>
+                    <td>$$this_amount</td>
+                    <td>$bid_status</td>
+                </tr>
+                ";
             }
         }
     }

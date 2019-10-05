@@ -18,13 +18,13 @@ function process_min_bid($course, $section) {
 
     $num_round2_pending_bids = count($round2_pending_bids);
 
-    echo "<h2>Round 2 list of bids:</h2>";
-    var_dump($round2_pending_bids);
+    // echo "<h2>Round 2 list of bids:</h2>";
+    // var_dump($round2_pending_bids);
 
-    echo "<br>";
+    // echo "<br>";
 
-    echo "Round 2 bids: $num_round2_pending_bids<br>";
-    echo "Round 2 available seats: $current_available_seats<br>";
+    // echo "Round 2 bids: $num_round2_pending_bids<br>";
+    // echo "Round 2 available seats: $current_available_seats<br>";
 
     // Case 1: If there are less than N bids for the section (where N is the total available seats)
     // The minimum bid value remains the same
@@ -114,6 +114,6 @@ function process_min_bid($course, $section) {
     }
 }
 
-echo "New Min Bid: " . process_min_bid("IS100", "S1");
+// echo "New Min Bid: " . process_min_bid("IS100", "S1");
 
 ?>

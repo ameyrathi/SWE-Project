@@ -70,6 +70,32 @@ class SectionResultsDAO{
         }
     }
 
+    function add_one_seat($course, $section) {
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("SELECT vacancies FROM section_results WHERE course=:course AND section=:section");
+
+        $stmt->bindParam(":course", $course); 
+        $stmt->bindParam(":section", $section);
+
+        $stmt->execute();
+
+        if($row = $stmt->fetch()) {
+            $vacancies = $row["vacancies"];
+            $vacancies++;
+
+            $stmt = $conn->prepare("UPDATE section_results SET vacancies=$vacancies WHERE course=:course AND section=:section");
+
+            $stmt->bindParam(":course", $course); 
+            $stmt->bindParam(":section", $section);
+
+            $success = $stmt->execute();
+
+            return $success;
+        }
+    }
+
     function get_min_bid($course, $section) {
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();

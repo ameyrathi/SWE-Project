@@ -135,6 +135,8 @@
     }
 
     function round2_bid_check($amount, $courseid, $section) {
+        require_once 'process_min_bid.php';
+
         $coursedao = new CourseDAO();
         $sectiondao = new SectionDAO();
         $biddao = new BidDAO();
@@ -276,6 +278,7 @@
 
         if(empty($errors)) {
             if($add_bid_success = ($biddao->add_bid($_SESSION["userid"], $amount, $courseid, $section, 2)) && $studentdao->deduct_balance($_SESSION["userid"], $amount)) {
+                $min_bid = process_min_bid($courseid, $section);
                 return "success";
             }
         }
