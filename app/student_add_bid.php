@@ -35,7 +35,9 @@
     $sectionresultsdao = new SectionResultsDAO();
     $current_round = $biddingrounddao->checkBiddingRound();
 
-    if($current_round == null) {
+    if($current_round == 3) {
+        echo "<h2>Round 2 has ended.</h2>";
+    } elseif($current_round == null) {
         echo "<h2>Round 1 has not started.</h2>";
     } else {
 
@@ -75,7 +77,7 @@
                 if($bid_check_success == "success") {
                     $balance = $StudentDAO->get_balance($_SESSION["userid"]);
                     echo "You have successfully bidded $$bid_amount for $bid_course $bid_section.<br>
-                        Your currently balance is $balance.";
+                        Your current balance is $$balance.";
                 } else { // return errors
                     echo "<strong><span id='error'>Errors:</span></strong><br>";
                     $error_counter = 1;
@@ -88,7 +90,7 @@
                 if($bid_check_success == "success") {
                     $balance = $StudentDAO->get_balance($_SESSION["userid"]);
                     echo "You have successfully bidded $$bid_amount for $bid_course $bid_section.<br>
-                        Your currently balance is $balance.<br>";                        
+                        Your current balance is $$balance.<br>";                        
                 } else { // return errors
                     echo "<strong><span id='error'>Errors:</span></strong><br>";
                     $error_counter = 1;

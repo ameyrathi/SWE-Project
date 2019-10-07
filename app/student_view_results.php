@@ -99,8 +99,46 @@
                     echo "</tr>";
                 }
             }
+        } elseif($current_round == 3) {
+            $round1_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 1);
+            $round2_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 2);
+
+            foreach($round1_bids as $this_bid) {
+                [$course, $section, $amount] = $this_bid;
+
+                echo "<tr>
+                <td>$course</td>
+                <td>$section</td>
+                <td>$amount</td>";
+
+                if($successfuldao->check_success($_SESSION["userid"], $course, $section, 1) != false) {
+                    echo "<td>Successful</td>";
+                } else {
+                    echo "<td>Unsuccessful</td>";
+                }
+
+                echo "</tr>";
+            }
+
+            foreach($round2_bids as $this_bid) {
+                [$course, $section, $amount] = $this_bid;
+
+                echo "<tr>
+                <td>$course</td>
+                <td>$section</td>
+                <td>$amount</td>";
+
+                if($successfuldao->check_success($_SESSION["userid"], $course, $section, 2) != false) {
+                    echo "<td>Successful</td>";
+                } else {
+                    echo "<td>Unsuccessful</td>";
+                }
+
+                echo "</tr>";
+            }
         }
     } 
 ?>
 
+</table>
 </div>

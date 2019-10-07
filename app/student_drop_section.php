@@ -36,7 +36,9 @@
     $biddao = new BidDAO();
     $current_round = $biddingrounddao->checkBiddingRound();
 
-    if($current_round == null) {
+    if($current_round == 3) {
+        echo "<h2>Round 2 has ended.</h2>";
+    } elseif($current_round == null) {
         echo "<h2>Round 1 has not started.</h2>";
     } elseif($current_round == 1) {
         echo "<h2>Round 1 is still ongoing.</h2>";

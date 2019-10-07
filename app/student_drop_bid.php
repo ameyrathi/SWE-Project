@@ -13,6 +13,8 @@
     }
 
     token_gateway($token);
+
+    require_once 'process_min_bid.php';
 ?>
 
 <!-- The sidebar -->
@@ -33,7 +35,9 @@
     $biddingrounddao = new BiddingRoundDAO();
     $current_round = $biddingrounddao->checkBiddingRound();
 
-    if($current_round == null) {
+    if($current_round == 3) {
+        echo "<h2>Round 2 has ended.</h2>";
+    } elseif($current_round == null) {
         echo "<h2>Round 1 has not started.</h2>";
     } else {
         $drop_courseid = "";
@@ -80,6 +84,10 @@
                 if($drop_success) {
                     echo "<strong>Your bid for $drop_courseid $drop_section has been successfully dropped.<br>";
                     echo "You have been refunded $$this_amount. Your current e$ balance is $$new_balance.</strong>";
+
+                    if($current_round == 2) {
+                        process_min_bid($drop_courseid, $drop_section);
+                    }
                 }
             } else {
                 echo "<strong><span id='error'>Error:</span></strong><br><br>";

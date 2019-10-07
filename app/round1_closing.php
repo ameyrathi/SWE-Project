@@ -68,9 +68,9 @@ function close_bidding_round1(){
                         Course: $course<br>
                         Section: $section<br>
                         User: $userid<br>
-                        Bid Amount: $amount<br>
+                        Bid Amount: $$amount<br>
                         Clearing Type: Section Just Nice Full<br>
-                        Status: <span id='fail'>Fail</span>, refunded $amount<br>
+                        Status: <span id='fail'>Fail</span>, refunded $$amount<br>
                         ------------------------------------------------------------<br>                   
                         ";
                     } else {
@@ -79,7 +79,7 @@ function close_bidding_round1(){
                         Course: $course<br>
                         Section: $section<br>
                         User: $userid<br>
-                        Bid Amount: $amount<br>
+                        Bid Amount: $$amount<br>
                         Clearing Type: Section Just Nice Full<br>
                         Status: <span id='success'>Success</span><br>
                         ------------------------------------------------------------<br>                   
@@ -95,7 +95,7 @@ function close_bidding_round1(){
                     Course: $course<br>
                     Section: $section<br>
                     User: $userid<br>
-                    Bid Amount: $amount<br>
+                    Bid Amount: $$amount<br>
                     Clearing Type: Section Just Nice Full<br>
                     Status: <span id='success'>Success</span><br>
                     ------------------------------------------------------------<br>                   
@@ -132,9 +132,9 @@ function close_bidding_round1(){
                         Course: $course<br>
                         Section: $section<br>
                         User: $userid<br>
-                        Bid Amount: $amount<br>
+                        Bid Amount: $$amount<br>
                         Clearing Type: Section Overbooked<br>
-                        Status: <span id='fail'>Fail</span>, refunded $amount<br>
+                        Status: <span id='fail'>Fail</span>, refunded $$amount<br>
                         ------------------------------------------------------------<br>                   
                         ";
                     } else { // if this bid amount > clearing price
@@ -143,7 +143,7 @@ function close_bidding_round1(){
                         Course: $course<br>
                         Section: $section<br>
                         User: $userid<br>
-                        Bid Amount: $amount<br>
+                        Bid Amount: $$amount<br>
                         Clearing Type: Section Overbooked<br>
                         Status: <span id='success'>Success</span><br>
                         ------------------------------------------------------------<br>                   
@@ -159,7 +159,7 @@ function close_bidding_round1(){
                     Course: $course<br>
                     Section: $section<br>
                     User: $userid<br>
-                    Bid Amount: $amount<br>
+                    Bid Amount: $$amount<br>
                     Clearing Type: Section Overbooked<br>
                     Status: <span id='success'>Success</span><br>
                     ------------------------------------------------------------<br>                   
@@ -174,9 +174,9 @@ function close_bidding_round1(){
                     Course: $course<br>
                     Section: $section<br>
                     User: $userid<br>
-                    Bid Amount: $amount<br>
+                    Bid Amount: $$amount<br>
                     Clearing Type: Section Overbooked<br>
-                    Status: <span id='fail'>Fail</span>, refunded $amount<br>
+                    Status: <span id='fail'>Fail</span>, refunded $$amount<br>
                     ------------------------------------------------------------<br>                   
                     ";
                 }
@@ -194,7 +194,7 @@ function close_bidding_round1(){
                 Course: $course<br>
                 Section: $section<br>
                 User: $userid<br>
-                Bid Amount: $amount<br>
+                Bid Amount: $$amount<br>
                 Clearing Type: Section Underbooked<br>
                 Status: <span id='success'>Success</span><br>
                 ------------------------------------------------------------<br>                   

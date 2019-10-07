@@ -5,6 +5,7 @@
 <?php
     require_once 'include/common.php';
     require_once 'round1_closing.php';
+    require_once 'round2_closing.php';
     require_once 'include/protect_token.php';
 
     if(isset($_GET["token"])) {
@@ -41,15 +42,19 @@
 
     $current_round = $BiddingRoundDAO->checkBiddingRound();
 
-    if($current_round != null) {
-        echo "<h1>Bidding Round $current_round is ongoing.</h1><br>
-        <form>
-        <input type='hidden' name='token' value=$token>
-        
-        <input type='submit' value='Close Round $current_round' name='close_round'>
-        </form><br>";
-    } else { // before round 1, ie. bootstrapping not done yet
-        echo "<h1>Please conduct bootstrapping to open Round 1 bidding.</h1>";
+    if($current_round == 3) {
+        echo "<h1>Round 2 has ended.</h1><br>";
+    } else {
+        if($current_round != null) {
+            echo "<h1>Bidding Round $current_round is ongoing.</h1><br>
+            <form>
+            <input type='hidden' name='token' value=$token>
+            
+            <input type='submit' value='Close Round $current_round' name='close_round'>
+            </form><br>";
+        } else { // before round 1, ie. bootstrapping not done yet
+            echo "<h1>Please conduct bootstrapping to open Round 1 bidding.</h1>";
+        }
     }
 
     // closing message is placed here bc it must be after "Bidding Round X is ongoing" message

@@ -123,29 +123,43 @@ class BidDAO {
         $result = [];
 
         foreach($raw_bids as $this_bid) {
-            [$userid, $amount, $course, $section] = $this_bid;
-            $course_section_concat = $course . ", " . $section;
 
-            if(!array_key_exists($course_section_concat, $result)) { // if course_section not a key in $result yet
-                $result[$course_section_concat] = [[$userid, $amount]];
-            } else { // if course_section already exists as a key in $result
-                $result[$course_section_concat][] = [$userid, $amount];
-            }
-        }
+            if($current_round == 1) {
+                [$userid, $amount, $course, $section] = $this_bid;
+                $course_section_concat = $course . ", " . $section;
 
-        foreach($result as $course_section_concat => &$this_bid_list) { // pass by reference so usort will modify it
-            usort(
-                $this_bid_list, 
-                function($a, $b) {
-                    $sorting = 0;
-                    if ($a[1] < $b[1]) {
-                        $sorting = 1;
-                    } else if ($a[1] > $b[1]) {
-                        $sorting = -1;
-                    }
-                    return $sorting; 
+                if(!array_key_exists($course_section_concat, $result)) { // if course_section not a key in $result yet
+                    $result[$course_section_concat] = [[$userid, $amount]];
+                } else { // if course_section already exists as a key in $result
+                    $result[$course_section_concat][] = [$userid, $amount];
                 }
-            );
+
+                foreach($result as $course_section_concat => &$this_bid_list) { // pass by reference so usort will modify it
+                    usort(
+                        $this_bid_list, 
+                        function($a, $b) {
+                            $sorting = 0;
+                            if ($a[1] < $b[1]) {
+                                $sorting = 1;
+                            } else if ($a[1] > $b[1]) {
+                                $sorting = -1;
+                            }
+                            return $sorting; 
+                        }
+                    );
+                }
+            }
+
+            elseif($current_round == 2) {
+                [$userid, $amount, $course, $section, $status] = $this_bid;
+                $course_section_concat = $course . ", " . $section;
+
+                if(!array_key_exists($course_section_concat, $result)) { // if course_section not a key in $result yet
+                    $result[$course_section_concat] = [[$userid, $amount, $status]];
+                } else { // if course_section already exists as a key in $result
+                    $result[$course_section_concat][] = [$userid, $amount, $status];
+                }
+            }
         }
 
         return $result;
@@ -229,6 +243,26 @@ class BidDAO {
             }
             return $result;
         }
+
+    function get_round2_successful_bids($userid) {
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("SELECT status FROM round2_bid WHERE userid=:userid");
+
+        $stmt->bindParam(":userid", $userid);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            array_push($result, array_values($row));
+        }
+        return $result;
+    }
 
     function bid_already_exists($userid, $courseid, $section, $current_round) {
         $connection_manager = new connection_manager();

@@ -186,7 +186,7 @@ class SuccessfulDAO{
         }
 
         // $result is now in this format:
-            // [ ['ben.ng.2009', '11', 'IS100', 'S1'], ['calvin.ng.2009', '12', 'IS100', 'S1'], ... ]
+            // [ ['ben.ng.2009', '11'], ['calvin.ng.2009', '12'], ... ]
         
         usort(
             $result, 
