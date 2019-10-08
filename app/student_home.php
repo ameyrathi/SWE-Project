@@ -29,7 +29,7 @@
 <?php
     $StudentDAO = new StudentDAO();
     $biddingrounddao = new BiddingRoundDAO();
-    $current_round = $biddingrounddao->checkBiddingRound();
+    $round_message = $biddingrounddao->get_round_message();
     $_SESSION["name"] = $StudentDAO->get_name($_SESSION["userid"]);
     $balance = $StudentDAO->get_balance($_SESSION["userid"]);
 ?>
@@ -41,15 +41,7 @@
     <h2>Your e$ balance is $<?php echo $balance; ?>.</h2><br><br><br>
 
 <?php
-    echo "<h2>";
-    if($current_round == 1 || $current_round == 2) { // if a current bidding round is ongoing
-        echo "Round $current_round of bidding is currently ongoing.";
-    } elseif($current_round == 3) { // if round 2 has ended
-        echo "Round 2 has ended.";
-    } else { // if round 1 hasn't started
-        echo "Round 1 has not started.";
-    }
-    echo "</h2><br>";
+    echo "<h1>$round_message</h1>";
 ?>
 </div>
 
