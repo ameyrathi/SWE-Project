@@ -604,33 +604,4 @@ function doBootstrap() {
     return "failed";
 }
 
-
-
-	# Sample code for returning JSON format errors. remember this is only for the JSON API. Humans should not get JSON errors.
-
-	// if (!isEmpty($errors))
-	// {	
-	// 	$sortclass = new Sort();
-	// 	$errors = $sortclass->sort_it($errors,"bootstrap");
-	// 	$result = [ 
-	// 		"status" => "error",
-	// 		"messages" => $errors
-	// 	];
-	// }
-
-	// else
-	// {	
-	// 	$result = [ 
-	// 		"status" => "success",
-	// 		"num-record-loaded" => [
-	// 			"pokemon.csv" => $pokemon_processed,
-	// 			"pokemon_type.csv" => $pokemon_type_processed,
-	// 			"user.csv" => $User_processed
-	// 		]
-	// 	];
-    // }
-    
-	// header('Content-Type: application/json');
-    // echo json_encode($result, JSON_PRETTY_PRINT);
-
 ?>
