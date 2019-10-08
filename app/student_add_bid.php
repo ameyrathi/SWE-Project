@@ -83,8 +83,8 @@
                     $error_counter = 1;
                     foreach($bid_check_success as $error) {
                         echo "<span id='error'>$error_counter. $error</span><br>";
+                        $error_counter++;
                     }
-                    $error_counter++;
                 }
             } elseif($current_round == 2) {
                 $bid_check_success = round2_bid_check($bid_amount, $bid_course, $bid_section);
@@ -97,8 +97,8 @@
                     $error_counter = 1;
                     foreach($bid_check_success as $error) {
                         echo "<span id='error'>$error_counter. $error</span><br>";
+                        $error_counter++;
                     }
-                    $error_counter++;
                 }
             }
         }
