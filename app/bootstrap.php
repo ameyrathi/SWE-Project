@@ -528,7 +528,7 @@ function doBootstrap() {
                                 $existing_class = $sectiondao->get_class_day_start_end($existing_courseid, $existing_section);
                                 $class_clash_check = dont_clash($bidding_class[0], $bidding_class[1], $bidding_class[2], $existing_class[0], $existing_class[1], $existing_class[2]);
                 
-                                $bidding_exam = $coursedao->get_exam_date_start_end($courseid);
+                                $bidding_exam = $coursedao->get_exam_date_start_end($code);
                                 $existing_exam = $coursedao->get_exam_date_start_end($existing_courseid);
                                 $exam_clash_check = dont_clash($bidding_exam[0], $bidding_exam[1], $bidding_exam[2], $existing_exam[0], $existing_exam[1], $existing_exam[2]);
                 
