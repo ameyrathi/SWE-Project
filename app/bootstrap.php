@@ -504,7 +504,7 @@ function doBootstrap() {
 
                         $biddingrounddao = new BiddingRoundDAO();
                         //not own school course
-                        if($biddingrounddao->checkBiddingRound() == FALSE){
+                        if($biddingrounddao->get_current_round() == 0.5){
                             if($coursedao->get_school($code) != $studentdao->get_school($userid)) {
                                 array_push($bid_row_errors, "not own school course");
                             }
@@ -598,7 +598,7 @@ function doBootstrap() {
 
     if(!in_array("input files not found", $errors)){
         $biddingrounddao = new BiddingRoundDAO();
-        $biddingrounddao->addBiddingRound(1);
+        $biddingrounddao->start_round(1);
         return [$num_record_loaded, $errors];
     }
     return "failed";

@@ -34,15 +34,14 @@
     $successfuldao = new SuccessfulDAO();
     $sectionresultsdao = new SectionResultsDAO();
     $biddao = new BidDAO();
-    $current_round = $biddingrounddao->checkBiddingRound();
 
-    if($current_round == 3) {
-        echo "<h2>Round 2 has ended.</h2>";
-    } elseif($current_round == null) {
-        echo "<h2>Round 1 has not started.</h2>";
-    } elseif($current_round == 1) {
-        echo "<h2>Round 1 is still ongoing.</h2>";
-    } elseif($current_round == 2) {
+    $current_round = $biddingrounddao->get_current_round();
+    $round_message = $biddingrounddao->get_round_message();
+
+
+    if($current_round == 0.5 || $current_round == 1 || $current_round == 2.5) {
+        echo "<h1>$round_message</h1>";
+    } elseif($current_round == 1.5 || $current_round == 2) {
         $drop_courseid = "";
         $drop_section = "";
 

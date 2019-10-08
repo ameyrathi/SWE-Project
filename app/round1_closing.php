@@ -207,14 +207,6 @@ function close_bidding_round1(){
 
         $sectionresultsdao->update_results($course, $section, 10, $vacancies);
     }
-
-    $update_bidding_round_success = $biddingrounddao->updateBiddingRound(2);
-    if($update_bidding_round_success) {
-        $current_round = $biddingrounddao->checkBiddingRound();
-        return "Round <strong>1</strong> has been successfuly closed.<br>Round <strong>$current_round</strong> has begun.";
-    } else {
-        return "ROUND 1 CLOSING FAILED";
-    }
 }
 
 ?>
