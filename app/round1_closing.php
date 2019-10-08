@@ -15,6 +15,7 @@ function close_bidding_round1(){
 
     // adding all course+section to round 1 results 
     // (using min_bid = 10 and vacancies = maximum section size
+
     for($i=0; $i<count($cs); $i++){ // $cs = [[IS110, S1, 45] , [IS110, S2, 45], ... ]
         $course = $cs[$i][0];
         $section = $cs[$i][1];
