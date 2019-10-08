@@ -101,6 +101,8 @@ class SuccessfulDAO{
         if($closed_round == 1) {
             $table = "round1_successful";
         } elseif($closed_round == 2) {
+            // this scenario won't happen though
+            // viewing results of round 2 is done through check_success() function
             $table = "round2_successful";
         }
 
