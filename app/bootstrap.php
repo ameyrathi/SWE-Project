@@ -504,7 +504,7 @@ function doBootstrap() {
 
                         $biddingrounddao = new BiddingRoundDAO();
                         //not own school course
-                        if($biddingrounddao->checkBiddingRound() != FALSE){
+                        if($biddingrounddao->checkBiddingRound() == FALSE){
                             if($coursedao->get_school($code) != $studentdao->get_school($userid)) {
                                 array_push($bid_row_errors, "not own school course");
                             }

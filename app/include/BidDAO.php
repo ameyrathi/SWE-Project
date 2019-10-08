@@ -150,7 +150,7 @@ class BidDAO {
                 }
             }
 
-            elseif($current_round == 2) {
+            elseif($current_round == 2) { // extra column 'status'
                 [$userid, $amount, $course, $section, $status] = $this_bid;
                 $course_section_concat = $course . ", " . $section;
 
