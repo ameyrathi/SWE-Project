@@ -45,6 +45,10 @@
             array_push($errors, "$courseid $section does not exist.");
         }
 
+        if($amount < 10) {
+            array_push($errors, "Minimum bid cannot be less than $10.");
+        }
+
         if($is_valid_section) {
 
             $courses_completed = $coursecompleteddao->get_completed_courses($_SESSION["userid"]);
