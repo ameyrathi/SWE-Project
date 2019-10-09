@@ -55,11 +55,13 @@ class SuccessfulDAO{
         $conn = $connection_manager->connect();
 
         if($closed_round == 1) {
-            $stmt = $conn->prepare("SELECT * FROM round1_successful WHERE userid=:userid");
+            $table = "round1_successful";
         } elseif($closed_round == 2) {
-            $stmt = $conn->prepare("SELECT * FROM round1_successful WHERE userid=:userid UNION SELECT * FROM $round2_successful WHERE userid=:userid");
+            $table = "round2_successful";
         }
-        
+
+        $stmt = $conn->prepare("SELECT * from $table WHERE userid=:userid");
+
         $stmt->bindParam(":userid", $userid);
 
         $stmt->setFetchMode(PDO::FETCH_ASSOC);

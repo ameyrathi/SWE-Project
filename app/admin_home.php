@@ -9,6 +9,9 @@
     }
 
     token_gateway($token);
+
+    $biddingrounddao = new BiddingRoundDAO();
+    $round_message = $biddingrounddao->get_round_message();
 ?>
 
 <html>
@@ -28,6 +31,9 @@
 <body>
 <p>
 <h1>Welcome, Admin!</h1>
+<?php
+    echo "<br><h1>$round_message</h1>";
+?>
 </p>
 </body>
 </div>

@@ -26,9 +26,15 @@ function process_min_bid($course, $section) {
     // echo "Round 2 bids: $num_round2_pending_bids<br>";
     // echo "Round 2 available seats: $current_available_seats<br>";
 
+    // if 0 vacancies in course
+    if($current_available_seats == 0) {
+        foreach($round2_pending_bids as [$this_userid, $this_amount]) {
+            $biddao->update_round2_bid_status($this_userid, $course, "Pending, fail");
+        }
+        
     // Case 1: If there are less than N bids for the section (where N is the total available seats)
     // The minimum bid value remains the same
-    if($num_round2_pending_bids < $current_available_seats) { // if num of round 2 bids < round 2 available seats
+    } elseif($num_round2_pending_bids < $current_available_seats) { // if num of round 2 bids < round 2 available seats
         foreach($round2_pending_bids as [$this_userid, $this_amount]) {
             $biddao->update_round2_bid_status($this_userid, $course, "Pending, successful");
         }
@@ -72,7 +78,7 @@ function process_min_bid($course, $section) {
             return $current_min_bid;
         }
 
-    } else { // if num of round 2 bids > round 2 available seats
+    } else { // if num of round 2 bids > round 2 available seats (but vacancies > 0)
         $clearing_price = $round2_pending_bids[$current_available_seats-1][1];
 
         $num_clearing_price_bids = 0;

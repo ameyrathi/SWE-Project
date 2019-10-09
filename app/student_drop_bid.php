@@ -38,7 +38,7 @@
 
     if($current_round == 0.5 || $current_round == 1.5 || $current_round == 2.5) {
         echo "<h1>$round_message</h1>";
-    } elseif($current_round == 1 || $current_round == 2) {
+    } elseif($current_round == 1 || $current_round == 2) { // round 1 ongoing or round 2 ongoing
         $drop_courseid = "";
         $drop_section = "";
 

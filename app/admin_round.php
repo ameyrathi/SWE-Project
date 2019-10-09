@@ -83,7 +83,7 @@
             </form>
             ";
     } elseif($round_status == 2.5) {
-        if(isset($_GET['run_end_round2'])) {
+        if(isset($_GET['run_stop_round2'])) {
             require_once 'round2_closing.php';
 
             close_bidding_round2();

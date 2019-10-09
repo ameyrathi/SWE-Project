@@ -41,7 +41,7 @@
 
     if($current_round == 0.5 || $current_round == 1 || $current_round == 2.5) {
         echo "<h1>$round_message</h1>";
-    } elseif($current_round == 1.5 || $current_round == 2) {
+    } elseif($current_round == 1.5 || $current_round == 2) { // round 1 ended, round 2 not started OR round 2 ongoing
         $drop_courseid = "";
         $drop_section = "";
 
@@ -75,7 +75,7 @@
             }
 
             if($drop_valid) { // must also delete from round1_bid (else view results will show as unsuccessful)
-                $drop_success = $successfuldao->drop_section($_SESSION["userid"], $drop_courseid, $drop_section) && $biddao->drop_bid($_SESSION["userid"], $drop_courseid, 1) && $sectionresultsdao->add_one_seat($drop_courseid, $drop_section);
+                $drop_success = $successfuldao->drop_section($_SESSION["userid"], $drop_courseid, $drop_section) && $biddao->drop_bid($_SESSION["userid"], $drop_courseid, 1) && $sectionresultsdao->add_one_seat($drop_courseid, $drop_section) && process_min_bid($drop_courseid, $drop_section);
                 
                 if($drop_success) {
                     $refund_success = $studentdao->add_balance($_SESSION["userid"], $successful_amount);
