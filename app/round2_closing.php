@@ -37,9 +37,6 @@ function close_bidding_round2(){
             }
         }
     }
-
-    $update_bidding_round_success = $biddingrounddao->updateBiddingRound(3);
-    return "Round <strong>2</strong> has been successfuly closed.";
 }
 
 ?>

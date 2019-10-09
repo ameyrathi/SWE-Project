@@ -15,7 +15,11 @@
 
     require_once "bootstrap.php";
     $biddingrounddao = new BiddingRoundDAO();
-    $current_round = $biddingrounddao->checkBiddingRound();
+
+    $current_round = "TO CHANGE?";
+
+    $round1_not_started = ($biddingrounddao->get_round() == 1) && ($biddingrounddao->get_status() == "Not Started");
+    
 
 ?>
 
@@ -30,8 +34,8 @@
 <div class="content">
 
 <?php
-if($current_round == null) {
-    if(isset($_FILES["bootstrap-file"])) {
+if($round1_not_started) { // if round 1 not started
+    if(isset($_FILES["bootstrap-file"])) { // round 1 not started and admin uploads bootstrap file
         $bootstrap_success = doBootstrap();
 
         if($bootstrap_success != "failed") {

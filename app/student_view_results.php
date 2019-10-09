@@ -32,10 +32,11 @@
 
     $StudentDAO = new StudentDAO();
     $biddingrounddao = new BiddingRoundDAO();
-    $current_round = $biddingrounddao->checkBiddingRound();
+    $current_round = $biddingrounddao->get_current_round();
+    $round_message = $biddingrounddao->get_round_message();
 
-    if($current_round == null) {
-        echo "<h2>Round 1 has not started.</h2>";
+    if($current_round == 0.5) {
+        echo "<h1>$round_message</h1>";
     } else {
         $biddao = new BidDAO();
         $successfuldao = new SuccessfulDAO();
@@ -60,7 +61,26 @@
                         <td>$amount</td>
                         <td>Pending</td>
                     </tr>";  
-            }      
+            }     
+        } elseif($current_round == 1.5) {
+            $round1_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 1);
+
+            foreach($round1_bids as $this_bid) {
+                [$course, $section, $amount] = $this_bid;
+
+                echo "<tr>
+                <td>$course</td>
+                <td>$section</td>
+                <td>$amount</td>";
+
+                if($successfuldao->check_success($_SESSION["userid"], $course, $section, 1) != false) {
+                    echo "<td>Successful</td>";
+                } else {
+                    echo "<td>Unsuccessful</td>";
+                }
+
+                echo "</tr>";
+            }
         } elseif($current_round == 2) {
             $round1_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 1);
             $round2_pending_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 2);
@@ -99,7 +119,7 @@
                     echo "</tr>";
                 }
             }
-        } elseif($current_round == 3) {
+        } elseif($current_round == 2.5) {
             $round1_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 1);
             $round2_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 2);
 
