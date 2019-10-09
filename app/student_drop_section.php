@@ -28,7 +28,8 @@
 <div class="content">
 
 <?php
-
+    require_once 'process_min_bid.php';
+    
     $studentdao = new StudentDAO();
     $biddingrounddao = new BiddingRoundDAO();
     $successfuldao = new SuccessfulDAO();
