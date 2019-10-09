@@ -40,6 +40,7 @@
     } else {
         $biddao = new BidDAO();
         $successfuldao = new SuccessfulDAO();
+        $unsuccessfuldao = new UnsuccessfulDAO();
 
         echo "
         <table id='view_results'>
@@ -51,7 +52,7 @@
         </tr>
         ";
 
-        if($current_round == 1) {
+        if($current_round == 1) { // round 1 ongoing
             $round1_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 1);
             foreach($round1_bids as $this_bid) {
                 [$course, $section, $amount] = $this_bid;
@@ -62,102 +63,147 @@
                         <td>Pending</td>
                     </tr>";  
             }     
-        } elseif($current_round == 1.5) {
-            $round1_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 1);
+        } elseif($current_round == 1.5) { // round 1 ended, round 2 hasn't started
 
-            foreach($round1_bids as $this_bid) {
-                [$course, $section, $amount] = $this_bid;
+            $round1_successful_bids = $successfuldao->get_successful_bids_and_amount($_SESSION["userid"], 1);
 
-                echo "<tr>
-                <td>$course</td>
-                <td>$section</td>
-                <td>$amount</td>";
+            $round1_unsuccessful_bids = $unsuccessfuldao->get_unsuccessful_bids_and_amount($_SESSION["userid"], 1);
 
-                if($successfuldao->check_success($_SESSION["userid"], $course, $section, 1) != false) {
-                    echo "<td>Successful</td>";
-                } else {
-                    echo "<td>Unsuccessful</td>";
-                }
-
-                echo "</tr>";
-            }
-        } elseif($current_round == 2) {
-            $round1_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 1);
-            $round2_pending_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 2);
-
-            $pending_courses = [];
-
-
-            foreach($round2_pending_bids as $this_bid) {
-                [$course, $section, $amount] = $this_bid;
-
-                echo "<tr>
-                <td>$course</td>
-                <td>$section</td>
-                <td>$amount</td>
-                <td>Pending</td>
-                </tr>";
-
-                array_push($pending_courses, $course);
-            }
-
-            foreach($round1_bids as $this_bid) {
-                [$course, $section, $amount] = $this_bid;
-
-                if(!in_array($course, $pending_courses)) {
-                    echo "<tr>
+            foreach($round1_successful_bids as [$course, $section, $amount]) {
+                echo 
+                "
+                <tr>
                     <td>$course</td>
                     <td>$section</td>
-                    <td>$amount</td>";
-    
-                    if($successfuldao->check_success($_SESSION["userid"], $course, $section, 1) != false) {
-                        echo "<td>Successful</td>";
-                    } else {
-                        echo "<td>Unsuccessful</td>";
-                    }
-    
-                    echo "</tr>";
-                }
+                    <td>$amount</td>
+                    <td>Successful (Round 1)</td>
+                </tr>
+                ";
             }
+
+            foreach($round1_unsuccessful_bids as [$course, $section, $amount]) {
+                echo 
+                "
+                <tr>
+                    <td>$course</td>
+                    <td>$section</td>
+                    <td>$amount</td>
+                    <td>Unsuccessful (Round 1)</td>
+                </tr>
+                ";
+            }
+        } elseif($current_round == 2) { // round 2 ongoing
+            $round2_pending_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 2);
+
+            $round2_pending_courses = array_column($round2_pending_bids, 0);
+
+            $round1_successful_bids = $successfuldao->get_successful_bids_and_amount($_SESSION["userid"], 1);
+
+            $round1_unsuccessful_bids = $unsuccessfuldao->get_unsuccessful_bids_and_amount($_SESSION["userid"], 1);
+
+            foreach($round2_pending_bids as [$course, $section, $amount]) {
+                echo 
+                "
+                <tr>
+                    <td>$course</td>
+                    <td>$section</td>
+                    <td>$amount</td>
+                    <td>Pending</td>
+                </tr>
+                ";
+            }
+
+            foreach($round1_successful_bids as [$course, $section, $amount]) {
+                echo 
+                "
+                <tr>
+                    <td>$course</td>
+                    <td>$section</td>
+                    <td>$amount</td>
+                    <td>Successful (Round 1)</td>
+                </tr>
+                ";
+            }
+
+            foreach($round1_unsuccessful_bids as [$course, $section, $amount]) {
+                if(!in_array($course, $round2_pending_courses)) {
+                    echo 
+                    "
+                    <tr>
+                        <td>$course</td>
+                        <td>$section</td>
+                        <td>$amount</td>
+                        <td>Unsuccessful (Round 1)</td>
+                    </tr>
+                    ";
+                }
+            }     
         } elseif($current_round == 2.5) {
-            $round1_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 1);
-            $round2_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 2);
+            $round1_successful_bids = $successfuldao->get_successful_bids_and_amount($_SESSION["userid"], 1);
 
-            foreach($round1_bids as $this_bid) {
-                [$course, $section, $amount] = $this_bid;
+            $round1_unsuccessful_bids = $unsuccessfuldao->get_unsuccessful_bids_and_amount($_SESSION["userid"], 1);
 
-                echo "<tr>
-                <td>$course</td>
-                <td>$section</td>
-                <td>$amount</td>";
+            $round2_successful_bids = $successfuldao->get_successful_bids_and_amount($_SESSION["userid"], 2);
 
-                if($successfuldao->check_success($_SESSION["userid"], $course, $section, 1) != false) {
-                    echo "<td>Successful</td>";
-                } else {
-                    echo "<td>Unsuccessful</td>";
-                }
+            $round2_unsuccessful_bids = $unsuccessfuldao->get_unsuccessful_bids_and_amount($_SESSION["userid"], 2);
 
-                echo "</tr>";
+            $round2_successful_courses = array_column($round2_successful_bids, 0);
+            $round2_unsuccessful_courses = array_column($round2_unsuccessful_bids, 0);
+
+
+            foreach($round1_successful_bids as [$course, $section, $amount]) {
+                echo 
+                "
+                <tr>
+                    <td>$course</td>
+                    <td>$section</td>
+                    <td>$amount</td>
+                    <td>Successful (Round 1)</td>
+                </tr>
+                ";
             }
 
-            foreach($round2_bids as $this_bid) {
-                [$course, $section, $amount] = $this_bid;
-
-                echo "<tr>
-                <td>$course</td>
-                <td>$section</td>
-                <td>$amount</td>";
-
-                if($successfuldao->check_success($_SESSION["userid"], $course, $section, 2) != false) {
-                    echo "<td>Successful</td>";
-                } else {
-                    echo "<td>Unsuccessful</td>";
-                }
-
-                echo "</tr>";
+            foreach($round2_successful_bids as [$course, $section, $amount]) {
+                echo 
+                "
+                <tr>
+                    <td>$course</td>
+                    <td>$section</td>
+                    <td>$amount</td>
+                    <td>Successful (Round 2)</td>
+                </tr>
+                ";
             }
+
+            foreach($round2_unsuccessful_bids as [$course, $section, $amount]) {
+                if(!in_array($course, $round2_unsuccessful_bids)) {
+                    echo 
+                    "
+                    <tr>
+                        <td>$course</td>
+                        <td>$section</td>
+                        <td>$amount</td>
+                        <td>Unsuccessful (Round 2)</td>
+                    </tr>
+                    ";
+                }
+            }    
+
+            foreach($round1_unsuccessful_bids as [$course, $section, $amount]) {
+                if(!in_array($course, $round2_successful_courses) && !in_array($course, $round2_unsuccessful_courses)) {
+                    echo 
+                    "
+                    <tr>
+                        <td>$course</td>
+                        <td>$section</td>
+                        <td>$amount</td>
+                        <td>Unsuccessful (Round 1)</td>
+                    </tr>
+                    ";
+                }
+            }     
         }
-    } 
+    }
 ?>
 
 </table>

@@ -6,6 +6,7 @@ function close_bidding_round1(){
     $sectionresultsdao = new SectionResultsDAO();
     $biddingrounddao = new BiddingRoundDAO();
     $successfuldao = new SuccessfulDAO();
+    $unsuccessfuldao = new UnsuccessfulDAO();
     $studentdao = new StudentDAO();
 
     $sectionresultsdao->removeAll();
@@ -65,6 +66,7 @@ function close_bidding_round1(){
                     [$userid, $amount] = $array_of_bids[$i];
                     if($amount == $clearing_price) { // if this bid amount = clearing price, bid fails
                         $studentdao->add_balance($userid,$amount); // bid fail, so refund
+                        $unsuccessfuldao->add_unsuccessful($userid, $amount, $course, $section, 1);
                         echo "
                         Course: $course<br>
                         Section: $section<br>
@@ -129,6 +131,7 @@ function close_bidding_round1(){
                     [$userid, $amount] = $array_of_bids[$i];
                     if($amount <= $clearing_price) { // if this bid amount <= clearing price
                         $studentdao->add_balance($userid, $amount); // bid fail, so refund
+                        $unsuccessfuldao->add_unsuccessful($userid, $amount, $course, $section, 1);
                         echo "
                         Course: $course<br>
                         Section: $section<br>
@@ -171,6 +174,7 @@ function close_bidding_round1(){
                 for($i=$capacity; $i<count($array_of_bids); $i++) { // all bids outside $capacity will fail
                     [$userid, $amount] = $array_of_bids[$i];
                     $studentdao->add_balance($userid, $amount); // bid fail, so refund
+                    $unsuccessfuldao->add_unsuccessful($userid, $amount, $course, $section, 1);
                     echo "
                     Course: $course<br>
                     Section: $section<br>
