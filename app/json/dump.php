@@ -32,7 +32,7 @@
                 $successfuldao = new SuccessfulDAO();
 
                 $round = $biddingrounddao->get_round();
-                $statu = $biddingrounddao->get_status();
+                $status = $biddingrounddao->get_status();
                 
                 $courses = $coursedao->retrieve_all_courses();
                 $students = $studentdao->retrieve_all_students();
