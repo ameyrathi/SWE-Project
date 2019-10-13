@@ -59,6 +59,28 @@ class PrerequisiteDAO {
         return $success;
     }
 
+    function retrieve_all_prerequisites(){
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("SELECT * FROM prerequisite");
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            $prerequisites_list = [];
+            foreach($row as $idx => $value) {
+                array_push($prerequisites_list, $value);
+            }
+            array_push($result, $prerequisites_list);
+        }
+        return $result;
+    }
+
 }
 
 // $PrerequisiteDAO = new PrerequisiteDAO();

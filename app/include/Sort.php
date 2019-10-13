@@ -48,23 +48,22 @@ class Sort {
 	}
 
 	function course_completed($a, $b){
-		if($a["code"] == $b["code"]){
+		if($a["course"] == $b["course"]){
 			if ($a["userid"] > $b["userid"]){
 				return 1;
 			}
 		}
-		return $a["code"] > $b["code"] ? 1 : -1;
+		return $a["course"] > $b["course"] ? 1 : -1;
 	}
 
 	function bid($a, $b){
-		
-		if($a["code"] == $b["code"]){
+		if($a["course"] == $b["course"]){
 			if ($a["section"] > $b["section"]){
 				return 1;
 			}
 			else{
 				if($a["section"] == $b["section"]){
-					if ($a["amount"] > $b["amount"]){
+					if ($a["amount"] < $b["amount"]){
 						return 1;
 					}
 					else{
@@ -77,8 +76,21 @@ class Sort {
 				}
 			}
 		}
+		return $a["course"] > $b["course"] ? 1 : -1;
+	}
 
-		return $a["code"] > $b["code"] ? 1 : -1;
+	function bid_dump($a, $b){
+		if($a[1] == $b[1]){
+			if($a[0] > $b[0]){
+				return 1;
+			}
+		}
+		return ($a[1] < $b[1]) ? 1 : -1;
+	}
+
+	function section_dump($a, $b){
+
+		return ($a[0] > $b[0]) ? 1 : -1;
 	}
 
 }

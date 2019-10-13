@@ -88,6 +88,28 @@ class BidDAO {
         return $success;
     }
 
+    function update_bid($userid, $amount, $courseid, $section, $current_round) {
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        if($current_round == 1) {
+            $table = "round1_bid";
+        } elseif($current_round == 2) {
+            $table = "round2_bid";
+        }
+
+        $stmt = $conn->prepare("UPDATE $table SET amount=:amount WHERE userid=:userid AND code=:courseid AND section=:section");
+        
+        $stmt->bindParam(":userid", $userid);
+        $stmt->bindParam(":amount", $amount);
+        $stmt->bindParam(":courseid", $courseid);
+        $stmt->bindParam(":section", $section);
+
+        $success = $stmt->execute();
+
+        return $success;
+    }
+
     function retrieve_sort_bids($current_round){
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
@@ -314,6 +336,78 @@ class BidDAO {
         if($row = $stmt->fetch()) {
             return $row["status"];
         }
+    }
+
+    function retireve_all_bids($current_round){
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        if($current_round == 1) {
+            $table = "round1_bid";
+        } elseif($current_round == 2) {
+            $table = "round2_bid";
+        }
+
+        $stmt = $conn->prepare("SELECT * FROM $table");
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            $student_list = [];
+            foreach($row as $idx => $value) {
+                array_push($bids_list, $value);
+            }
+            array_push($result, $bids_list);
+        }
+        return $result;
+    }
+
+    function get_amount($userid, $course, $section, $current_round){
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        if($current_round == 1) {
+            $table = "round1_bid";
+        } elseif($current_round == 2) {
+            $table = "round2_bid";
+        }
+
+        $stmt = $conn->prepare("SELECT * FROM $table WHERE userid=:userid AND code=:courseid AND section=:section");
+    }
+
+    function retrieve_course_section_bids($course, $section, $current_round){
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        if($current_round == 1) {
+            $table = "round1_bid";
+        } elseif($current_round == 2) {
+            $table = "round2_bid";
+        }
+
+        $stmt = $conn->prepare("SELECT * FROM $table WHERE code=:course AND section=:section");
+
+        $stmt->bindParam(":course", $course);
+        $stmt->bindParam(":section", $section);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            $this_bid_list = [];
+            foreach($row as $idx => $value) {
+                array_push($this_bid_list, $value);
+            }
+            array_push($result, $this_bid_list);
+        }
+        return $result;
     }
 }
 

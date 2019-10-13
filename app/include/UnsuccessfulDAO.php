@@ -56,6 +56,37 @@ class UnsuccessfulDAO{
 
         return $result;
     }
+
+    function retrieve_unsuccessful_bids($course, $section, $closed_round){
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        if($closed_round == 1) {
+            $table = "round1_unsuccessful";
+        } elseif($closed_round == 2) {
+            $table = "round2_unsuccessful";
+        }
+
+        $stmt = $conn->prepare("SELECT * FROM $table WHERE code=:course AND section=:section");
+
+        $stmt->bindParam(":course", $course);
+        $stmt->bindParam(":section", $section);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            $this_bid_list = [];
+            foreach($row as $idx => $value) {
+                array_push($this_bid_list, $value);
+            }
+            array_push($result, $this_bid_list);
+        }
+        return $result;
+    }
 }
 
 // $unsuccessfuldao = new UnsuccessfulDAO();

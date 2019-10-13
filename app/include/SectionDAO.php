@@ -132,6 +132,28 @@ class SectionDAO {
         }
         return $result;
     }
+
+    public function retrieve_all_sections() {
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("SELECT * FROM section");
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            $section_list = [];
+            foreach($row as $idx => $value) {
+                array_push($section_list, $value);
+            }
+            array_push($result, $section_list);
+        }
+        return $result;
+    }
 }
 
 

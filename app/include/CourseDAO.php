@@ -133,6 +133,28 @@ class CourseDAO {
 
         return $stmt->fetch()[0];
     }
+
+    function retrieve_all_courses(){
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("SELECT * FROM course");
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            $course_list = [];
+            foreach($row as $idx => $value) {
+                array_push($course_list, $value);
+            }
+            array_push($result, $course_list);
+        }
+        return $result;
+    }
 }
 
 // $CourseDAO = new CourseDAO();

@@ -218,13 +218,39 @@ class StudentDAO {
         $result = [];
 
         while($row = $stmt->fetch()) {
-            $this_bid_list = [];
+            $student_list = [];
             foreach($row as $idx => $value) {
-                array_push($this_bid_list, $value);
+                array_push($student_list, $value);
             }
-            array_push($result, $this_bid_list);
+            array_push($result, $student_list);
         }
         return $result;
+    }
+
+    public function delete_student($userid){
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("DELETE FROM student WHERE userid=:userid");
+
+        $stmt->bindParam(":userid", $userid);
+
+        $success = $stmt->execute();
+
+        return $success;
+    }
+
+    public function retrieve_student($userid){
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("SELECT * FROM student WHERE userid=:userid");
+
+        $stmt->bindParam(":userid", $userid);
+
+        $stmt->execute();
+
+        return $stmt->fetch();
     }
 }
 

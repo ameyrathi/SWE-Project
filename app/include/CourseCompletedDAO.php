@@ -64,6 +64,29 @@ class CourseCompletedDAO {
 
         return $success;
     }
+
+    function retrieve_all_completed_courses(){
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("SELECT * FROM course_completed");
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            $completed_courses_list = [];
+            foreach($row as $idx => $value) {
+                array_push($completed_courses_list, $value);
+            }
+            array_push($result, $completed_courses_list);
+        }
+        return $result;
+    }
+
 }
 
 ?>
