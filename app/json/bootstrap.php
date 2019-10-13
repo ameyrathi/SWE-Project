@@ -531,6 +531,7 @@
                                     if($coursedao->get_school($code) != $studentdao->get_school($userid)) {
                                         array_push($bid_row_errors, "not own school course");
                                     }
+                                }
     
                                 //section limit reached
                                 $pending_bidded_sections = $biddao->get_pending_bids_and_amount($userid, 1);
@@ -606,7 +607,8 @@
                                     array_push($json_errors, $error);
                                 }
                                 $bid_row_count++;
-                            }
+                                }
+
                             array_push($num_record_loaded, array('bid.csv' => $bid_processed));
                             fclose($bid_file);
                             unlink($bid_path);
@@ -639,6 +641,5 @@
 
     header('Content-Type: application/json');
     echo json_encode($result, JSON_PRETTY_PRINT);
-}
 
 ?>
