@@ -629,7 +629,6 @@
                                         "status" => "success",
                                         "num-record-loaded" => $num_record_loaded
                                     ];
-                                }
                             }
                         }
                     }
@@ -640,5 +639,6 @@
 
     header('Content-Type: application/json');
     echo json_encode($result, JSON_PRETTY_PRINT);
+}
 
 ?>
