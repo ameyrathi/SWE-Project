@@ -31,8 +31,7 @@
                 $biddingrounddao = new BiddingRoundDAO();
                 $successfuldao = new SuccessfulDAO();
 
-                $round = $biddingrounddao->get_round();
-                $status = $biddingrounddao->get_status();
+                $current_round = $biddingrounddao->get_current_round();
                 
                 $courses = $coursedao->retrieve_all_courses();
                 $students = $studentdao->retrieve_all_students();
@@ -40,23 +39,14 @@
                 $prerequisites = $prerequisitedao->retrieve_all_prerequisites();
                 $courses_completed = $coursecompleteddao->retrieve_all_completed_courses();
 
-                if($status == "Ended" || $status == "Ongoing"){
-                    $bids = $biddao->retrieve_all_bids($round);
-                }
-                else{
-                    if($status == "Not started"){
-                        if($round == 1){
-                            $result = [
-                                "status" => "error",
-                                "message" => ["no bids available"]
-                            ];
-                        }
-                        else{
-                            if($round == 2){
-                                $bids = $biddao->retrieve_all_bids(1);
-                            }
-                        }
-                    }
+                if($current_round == 0.5) { // Round 1 hasn't started
+                    $bids = [];
+                } elseif($current_round == 1 || $current_round == 2) {
+                    $bids = $biddao->retrieve_all_bids($current_round);
+                } elseif($current_round == 1.5) {
+                    $bids = $biddao->retrieve_all_bids(1);
+                } elseif($current_round == 2.5) {
+                    $bids = $biddao->retrieve_all_bids(2);
                 }
 
                 $courseJSON = [];
@@ -179,9 +169,13 @@
                 $bidJSON = $sortclass->sort_it($bidJSON, "bid");
                 $completed_courseJSON = $sortclass->sort_it($completed_courseJSON, "course_completed");
 
-                if($round == 2){
+                if($current_round == 1.5 || $current_round == 2 || $current_round == 2.5){
 
-                    $successful_bids = $successfuldao->retrieve_all_bids($round);
+                    if($current_round == 1.5 || $current_round == 2) {
+                        $successful_bids = $successfuldao->retrieve_all_bids(1);
+                    } else {
+                        $successful_bids = $successfuldao->retrieve_all_bids(2);
+                    }
 
                     for($i=0; $i<count($successful_bids); $i++){
                         $userid = $successful_bids[$i][0];
