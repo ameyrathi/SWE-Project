@@ -502,9 +502,10 @@ function doBootstrap() {
                             }
                         }
 
-                        $biddingrounddao = new BiddingRoundDAO();
                         //not own school course
-                        if($biddingrounddao->get_current_round() == 0.5){
+                        $biddingrounddao = new BiddingRoundDAO();
+                        $round = $biddingrounddao->get_current_round();
+                        if($round == 0.5 || $round == 1){
                             if($coursedao->get_school($code) != $studentdao->get_school($userid)) {
                                 array_push($bid_row_errors, "not own school course");
                             }

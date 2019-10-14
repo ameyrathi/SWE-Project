@@ -525,9 +525,10 @@
                                     }
                                 }
 
-                                $biddingrounddao = new BiddingRoundDAO();
                                 //not own school course
-                                if($biddingrounddao->get_current_round() == 0.5){
+                                $biddingrounddao = new BiddingRoundDAO();
+                                $round = $biddingrounddao->get_current_round();
+                                if($round == 0.5 || $round == 1){
                                     if($coursedao->get_school($code) != $studentdao->get_school($userid)) {
                                         array_push($bid_row_errors, "not own school course");
                                     }
@@ -619,18 +620,22 @@
                                 $num_record_loaded = $sortclass->sort_it($num_record_loaded, "filename");
                                 
                                 $result = [
-                                        "status" => "error",
-                                        "num-record-loaded" => $num_record_loaded,
-                                        "error" => $json_errors
-                                    ];
+                                    "status" => "error",
+                                    "num-record-loaded" => $num_record_loaded,
+                                    "error" => $json_errors
+                                ];
+
+                                $biddingrounddao->start_round(1);
                             }
                             else{
                                 $sortclass = new Sort();
                                 $num_record_loaded = $sortclass->sort_it($num_record_loaded, "filename");
                                 $result = [
-                                        "status" => "success",
-                                        "num-record-loaded" => $num_record_loaded
-                                    ];
+                                    "status" => "success",
+                                    "num-record-loaded" => $num_record_loaded
+                                ];
+                                
+                                $biddingrounddao->start_round(1);
                             }
                         }
                     }

@@ -77,6 +77,12 @@
                 }
             }
         }
+        else{
+            $result =[
+                "status" => "error",
+                "message" => ["HTTP REQUEST NOT FOUND"]
+            ];
+        }
     }
 
     header('Content-Type: application/json');

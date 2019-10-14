@@ -14,8 +14,8 @@
         ];
     }
     else{
-        if(isset($_POST["token"])) {
-            if(!verify_token($_POST["token"])) { // if invalid token
+        if(isset($_GET["token"])) {
+            if(!verify_token($_GET["token"])) { // if invalid token
                 $result = [
                     "status" => "error",
                     "message" => ["invalid token"]
@@ -139,17 +139,62 @@
                                 ];
                             }
                             else{
-                                if($status == "Not Started" && $round == 1){
-                                    $result =[
-                                        "status" => "error",
-                                        "message" => ["no active round"]
-                                    ];
+                                if($status == "Not Started"){
+                                    if($round == 1){
+                                        $result =[
+                                            "status" => "error",
+                                            "message" => ["no active round"]
+                                        ];
+                                    }
+                                    else{
+                                        $successful_bids = $successfuldao->retrieve_successful_bids($course, $section, 1);
+        
+                                        for($i=0; $i<count($successful_bids); $i++){
+                                            array_push($successful_bids[$i], "in");
+                                        }
+                
+                                        $unsuccessful_bids = $unsuccessfuldao->retrieve_unsuccessful_bids($course, $section, 1);
+                
+                                        for($i=0; $i<count($unsuccessful_bids); $i++){
+                                            array_push($unsuccessful_bids[$i], "out");
+                                        }
+                
+                                        $bids = array_merge($successful_bids, $unsuccessful_bids);
+                                        $sortclass = new Sort();
+                                        
+                                        $bids = $sortclass->sort_it($bids, "bid_dump");
+                                        for($i=0; $i<count($bids); $i++){
+                                            $userid = $bids[$i][0];
+                                            $amount = $bids[$i][1];
+                                            $result = $bids[$i][4];
+                
+                                            $res = [
+                                                "row" => $i+1,
+                                                "userid" => $userid,
+                                                "amount" => $amount,
+                                                "result" => $result
+                                            ];
+                
+                                            array_push($success, $res);
+                                        }
+                
+                                        $result =[
+                                            "status" => "success",
+                                            "bids" => $success
+                                        ];
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+        }
+        else{
+            $result =[
+                "status" => "error",
+                "message" => ["HTTP REQUEST NOT FOUND"]
+            ];
         }
     }
 
