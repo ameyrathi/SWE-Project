@@ -38,6 +38,7 @@
 
         $errors = [];
         $is_valid_section = true;
+        $is_numeric = true;
         $balance = $studentdao->get_balance($_SESSION["userid"]);
 
         if(!$sectiondao->is_valid_section($courseid, $section)) {
@@ -45,11 +46,16 @@
             array_push($errors, "$courseid $section does not exist.");
         }
 
-        if($amount < 10) {
-            array_push($errors, "Minimum bid cannot be less than $10.");
+        if(!is_numeric($amount)) {
+            $is_numeric = false;
+            $errors[] = "Please enter a numeric amount";
         }
 
-        if($is_valid_section) {
+        if($is_valid_section && $is_numeric) {
+
+            if($amount < 10) {
+                array_push($errors, "Minimum bid cannot be less than $10.");
+            }
 
             $courses_completed = $coursecompleteddao->get_completed_courses($_SESSION["userid"]);
             foreach($courses_completed as $course_completed) {
