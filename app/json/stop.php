@@ -37,17 +37,18 @@
                 else if($status == "Ongoing"){
                     $stop = $biddingrounddao->stop_round($round);
                     if($stop){
-
                         if($round == 1){
                             close_bidding_round1();
+                            $result = [
+                                "status" => "success"
+                            ];
                         }
                         else{
                             close_bidding_round2();
+                            $result = [
+                                "status" => "success"
+                            ];
                         }
-
-                        $result = [
-                            "status" => "success",
-                        ];
                     }
                 }
                 else{
