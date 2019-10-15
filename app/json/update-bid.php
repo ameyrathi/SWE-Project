@@ -28,7 +28,7 @@
                     $tempArr = json_decode($_GET["r"], true);
             
                     $errors = [];
-            
+                    
                     foreach($tempArr as $key => $value){
                         if(str_replace(' ', '' , $value) == ''){
                             array_push($errors, "blank $key");
@@ -114,33 +114,35 @@
 
                             //class timetable clash
                             //exam timetable clash
-                            $no_clash_check_success = true;
-                            if($sectiondao->is_valid_section($course, $section)){
-                                $bidding_class = $sectiondao->get_class_day_start_end($course, $section);
-                                foreach($pending_bidded_sections as $this_list) {
-                                    $existing_courseid = $this_list[0];
-                                    $existing_section = $this_list[1];
-                    
-                                    $existing_class = $sectiondao->get_class_day_start_end($existing_courseid, $existing_section);
-                                    $class_clash_check = dont_clash($bidding_class[0], $bidding_class[1], $bidding_class[2], $existing_class[0], $existing_class[1], $existing_class[2]);
-                    
-                                    $bidding_exam = $coursedao->get_exam_date_start_end($course);
-                                    $existing_exam = $coursedao->get_exam_date_start_end($existing_courseid);
-                                    $exam_clash_check = dont_clash($bidding_exam[0], $bidding_exam[1], $bidding_exam[2], $existing_exam[0], $existing_exam[1], $existing_exam[2]);
-                    
-                                    $no_clash_check_success = $class_clash_check && $exam_clash_check;
-                    
-                                    if(!$no_clash_check_success) {
-                                        $no_clash_check_success = false;
-                                        if(!$class_clash_check) {
-                                            array_push($errors, "class timetable clash");
-                                        }
-                                        if(!$exam_clash_check) {
-                                            array_push($errors, "exam timetable clash");
+                            if(!$biddao->bid_already_exists($userid, $course, $section, $round)){
+                                $no_clash_check_success = true;
+                                if($sectiondao->is_valid_section($course, $section)){
+                                    $bidding_class = $sectiondao->get_class_day_start_end($course, $section);
+                                    foreach($pending_bidded_sections as $this_list) {
+                                        $existing_courseid = $this_list[0];
+                                        $existing_section = $this_list[1];
+                        
+                                        $existing_class = $sectiondao->get_class_day_start_end($existing_courseid, $existing_section);
+                                        $class_clash_check = dont_clash($bidding_class[0], $bidding_class[1], $bidding_class[2], $existing_class[0], $existing_class[1], $existing_class[2]);
+                        
+                                        $bidding_exam = $coursedao->get_exam_date_start_end($course);
+                                        $existing_exam = $coursedao->get_exam_date_start_end($existing_courseid);
+                                        $exam_clash_check = dont_clash($bidding_exam[0], $bidding_exam[1], $bidding_exam[2], $existing_exam[0], $existing_exam[1], $existing_exam[2]);
+                        
+                                        $no_clash_check_success = $class_clash_check && $exam_clash_check;
+                        
+                                        if(!$no_clash_check_success) {
+                                            $no_clash_check_success = false;
+                                            if(!$class_clash_check) {
+                                                array_push($errors, "class timetable clash");
+                                            }
+                                            if(!$exam_clash_check) {
+                                                array_push($errors, "exam timetable clash");
+                                            }
                                         }
                                     }
                                 }
-                            }
+                            }     
             
                             //incomplete prerequisites
                             $prerequisites_needed = $prerequisitedao->get_prerequisite_courses($course);
@@ -199,9 +201,9 @@
                             else{
                                 if($biddao->bid_already_exists($userid, $course, $section, $round)){
                                     $success = $biddao->update_bid($userid, $amount, $course, $section, $round);
-                                    if($sucess){
+                                    if($success){
                                         $studentdao->deduct_balance($userid, $amount);
-                                        $result =[
+                                        $result = [
                                             "status" => "success"
                                         ];
                                     }
