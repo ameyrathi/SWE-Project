@@ -114,6 +114,8 @@
                             $sectiondao = new SectionDAO();
                             $studentdao = new StudentDAO();
                             $biddingrounddao = new BiddingRoundDAO();
+                            $successfuldao = new SuccessfulDAO();
+                            $unsuccessfuldao = new UnsuccessfulDAO();
             
                             $biddao->removeAll();
                             $coursedao->removeAll();
@@ -121,6 +123,8 @@
                             $prerequisitedao->removeAll();
                             $sectiondao->removeAll();
                             $studentdao->removeAll();
+                            $successfuldao->removeAll();
+                            $unsuccessfuldao->removeAll();
             
                             // student.csv
                             $student_headers_list = fgetcsv($student_file); # skip header
