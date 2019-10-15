@@ -116,7 +116,9 @@
                             $biddingrounddao = new BiddingRoundDAO();
                             $successfuldao = new SuccessfulDAO();
                             $unsuccessfuldao = new UnsuccessfulDAO();
-            
+                            $sectionresultsdao = new SectionResultsDAO();
+                            
+                            # truncate current SQL tables
                             $biddao->removeAll();
                             $coursedao->removeAll();
                             $coursecompleteddao->removeAll();
@@ -125,6 +127,8 @@
                             $studentdao->removeAll();
                             $successfuldao->removeAll();
                             $unsuccessfuldao->removeAll();
+                            $sectionresultsdao->removeAll();
+
             
                             // student.csv
                             $student_headers_list = fgetcsv($student_file); # skip header
