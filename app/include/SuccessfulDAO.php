@@ -298,7 +298,7 @@ class SuccessfulDAO{
     }
 
     public function removeAll() {
-        $sql = 'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE round1_successful; TRUNCATE TABLE round2_successful';
+        $sql = 'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE round1_successful; TRUNCATE TABLE round2_successful;';
         
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();

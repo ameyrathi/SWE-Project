@@ -89,7 +89,7 @@ class UnsuccessfulDAO{
     }
 
     public function removeAll() {
-        $sql = 'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE round1_unsuccessful; TRUNCATE TABLE round2_unsuccessful';
+        $sql = 'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE round1_unsuccessful; TRUNCATE TABLE round2_unsuccessful;';
         
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
