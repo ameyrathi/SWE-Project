@@ -92,6 +92,7 @@ function doBootstrap() {
                 $prerequisitedao = new PrerequisiteDAO();
                 $sectiondao = new SectionDAO();
                 $studentdao = new StudentDAO();
+                $biddingrounddao = new BiddingRoundDAO();
                 
                 # truncate current SQL tables
                 $biddao->removeAll();
@@ -503,12 +504,8 @@ function doBootstrap() {
                         }
 
                         //not own school course
-                        $biddingrounddao = new BiddingRoundDAO();
-                        $round = $biddingrounddao->get_current_round();
-                        if($round == 0.5 || $round == 1){
-                            if($coursedao->get_school($code) != $studentdao->get_school($userid)) {
-                                array_push($bid_row_errors, "not own school course");
-                            }
+                        if($coursedao->get_school($code) != $studentdao->get_school($userid)) {
+                            array_push($bid_row_errors, "not own school course");
                         }
 
                         //section limit reached
@@ -598,7 +595,6 @@ function doBootstrap() {
 
 
     if(!in_array("input files not found", $errors)){
-        $biddingrounddao = new BiddingRoundDAO();
         $biddingrounddao->start_round(1);
         return [$num_record_loaded, $errors];
     }

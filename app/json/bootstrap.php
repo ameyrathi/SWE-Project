@@ -113,6 +113,7 @@
                             $prerequisitedao = new PrerequisiteDAO();
                             $sectiondao = new SectionDAO();
                             $studentdao = new StudentDAO();
+                            $biddingrounddao = new BiddingRoundDAO();
             
                             $biddao->removeAll();
                             $coursedao->removeAll();
@@ -526,13 +527,10 @@
                                 }
 
                                 //not own school course
-                                $biddingrounddao = new BiddingRoundDAO();
-                                $round = $biddingrounddao->get_current_round();
-                                if($round == 0.5 || $round == 1){
-                                    if($coursedao->get_school($code) != $studentdao->get_school($userid)) {
-                                        array_push($bid_row_errors, "not own school course");
-                                    }
+                                if($coursedao->get_school($code) != $studentdao->get_school($userid)) {
+                                    array_push($bid_row_errors, "not own school course");
                                 }
+                                
     
                                 //section limit reached
                                 $pending_bidded_sections = $biddao->get_pending_bids_and_amount($userid, 1);
