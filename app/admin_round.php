@@ -57,12 +57,6 @@
         </form>        
         ";
     } elseif($round_status == 1.5) {
-        if(isset($_GET['run_stop_round1'])) {
-            require_once 'round1_closing.php';
-
-            close_bidding_round1();
-        }
-
         echo "<h1>$round_message</h1>";
 
         echo 
@@ -72,6 +66,12 @@
             <input type='submit' name='start_round2' value='Start Round 2'>
         </form>        
         ";
+
+        if(isset($_GET['run_stop_round1'])) {
+            require_once 'round1_closing.php';
+
+            close_bidding_round1();
+        }
     } elseif($round_status == 2) {
         echo "<h1>$round_message</h1>";
 
@@ -83,13 +83,13 @@
             </form>
             ";
     } elseif($round_status == 2.5) {
+        echo "<h1>$round_message</h1>";
+
         if(isset($_GET['run_stop_round2'])) {
             require_once 'round2_closing.php';
 
             close_bidding_round2();
         }
-
-        echo "<h1>$round_message</h1>";
     }
 
 

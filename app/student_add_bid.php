@@ -68,7 +68,6 @@
         ";
 
         $StudentDAO = new StudentDAO();
-
                
         if(!in_array("", [$bid_amount, $bid_course, $bid_section])) {
             if($current_round == 1) {
