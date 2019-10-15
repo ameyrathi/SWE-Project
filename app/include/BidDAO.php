@@ -338,7 +338,7 @@ class BidDAO {
         }
     }
 
-    function retireve_all_bids($current_round){
+    function retrieve_all_bids($current_round){
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
@@ -357,7 +357,7 @@ class BidDAO {
         $result = [];
 
         while($row = $stmt->fetch()) {
-            $student_list = [];
+            $bids_list = [];
             foreach($row as $idx => $value) {
                 array_push($bids_list, $value);
             }
