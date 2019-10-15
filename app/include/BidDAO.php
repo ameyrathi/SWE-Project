@@ -338,7 +338,7 @@ class BidDAO {
         }
     }
 
-    function retireve_all_bids($current_round){
+    function retrieve_all_bids($current_round){
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
 
