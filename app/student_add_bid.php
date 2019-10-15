@@ -40,7 +40,6 @@
     if($current_round == 0.5 || $current_round == 1.5 || $current_round == 2.5) {
         echo "<h1>$round_message</h1>";
     } elseif($current_round == 1 || $current_round == 2) { // round 1 ongoing or round 2 ongoing
-
         $bid_course = "";
         $bid_section = "";
         $bid_amount = "";
@@ -63,7 +62,7 @@
             Course: <input type='text' name='bid_courseid' value=$bid_course><br><br>
             Section: <input type='text' name='bid_section' value=$bid_section><br><br>
             Bid Amount: <input type='text' name='bid_amount' value=$bid_amount><br><br>
-            <input type='submit'/>
+            <input type='submit' name='submit' value='Submit'>
         </form>
         <br>
         ";
@@ -99,6 +98,27 @@
                         echo "<span id='error'>$error_counter. $error</span><br>";
                         $error_counter++;
                     }
+                }
+            }
+        } else {
+            if(isset($_GET['submit'])) { // if user had submitted form
+                $empty_errors = [];
+                if(empty($_GET['bid_courseid'])) {
+                    $empty_errors[] = "Please enter a course ID.";
+                }
+                if(empty($_GET['bid_section'])) {
+                    $empty_errors[] = "Please enter a section ID.";
+                }
+                if(empty($_GET['bid_amount'])) {
+                    $empty_errors[] = "Please enter an amount.";
+                }
+
+                $empty_error_counter = 1;   
+                echo "<strong><span id='error'>Errors:</span></strong><br>";
+
+                foreach($empty_errors as $this_error) {
+                    echo "<span id='error'>$empty_error_counter. $this_error<br></span>";
+                    $empty_error_counter ++;
                 }
             }
         }
