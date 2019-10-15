@@ -6,6 +6,7 @@ function close_bidding_round2(){
     $sectionresultsdao = new SectionResultsDAO();
     $biddingrounddao = new BiddingRoundDAO();
     $successfuldao = new SuccessfulDAO();
+    $unsuccessfuldao = new UnsuccessfulDAO();
     $studentdao = new StudentDAO();
 
     $round2_bids_with_status = $biddao->retrieve_sort_bids(2);
