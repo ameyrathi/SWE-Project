@@ -56,7 +56,7 @@
 
             Course: <input type='text' name='drop_courseid' value=$drop_courseid><br><br>
             Section: <input type='text' name='drop_section' value=$drop_section><br><br>
-        <input type='submit'/>
+        <input type='submit' name='submit' value='Submit'/>
         </form><br>
         ";
 
@@ -91,6 +91,24 @@
             } else {
                 echo "<strong><span id='error'>Error:</span></strong><br><br>";
                 echo "<span id='error'>$drop_courseid $drop_section is not a course you have bidded for.</span>";
+            }
+        } else {
+            if(isset($_GET['submit'])) { // if user had submitted form
+                $empty_errors = [];
+                if(empty($_GET['drop_courseid'])) {
+                    $empty_errors[] = "Please enter a course ID.";
+                }
+                if(empty($_GET['drop_section'])) {
+                    $empty_errors[] = "Please enter a section ID.";
+                }
+
+                $empty_error_counter = 1;   
+                echo "<strong><span id='error'>Errors:</span></strong><br>";
+
+                foreach($empty_errors as $this_error) {
+                    echo "<span id='error'>$empty_error_counter. $this_error<br></span>";
+                    $empty_error_counter ++;
+                }
             }
         }
     }
