@@ -1,2 +1,0 @@
-username=calvin.ng.2009
-password=qwerty130
