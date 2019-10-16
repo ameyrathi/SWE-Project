@@ -167,7 +167,7 @@ class StudentDAO {
     }
 
     function adminLogin($password){
-        if($password == "P@ssword1"){
+        if($password == "P@ssword2"){
             return true;
         }
         return false;
