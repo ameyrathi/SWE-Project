@@ -304,7 +304,10 @@ class BidDAO {
 
         $stmt->execute();
 
-        return $stmt->fetch();
+        if($success = $stmt->fetch()){
+            return true;
+        }
+        return false;
     }
 
     function update_round2_bid_status($userid, $course, $status) {

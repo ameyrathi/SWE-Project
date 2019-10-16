@@ -296,6 +296,18 @@ class SuccessfulDAO{
         }
         return $result;
     }
+
+    public function removeAll() {
+        $sql = 'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE round1_successful; TRUNCATE TABLE round2_successful;';
+        
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+        
+        $stmt = $conn->prepare($sql);
+        
+        $stmt->execute();
+        $count = $stmt->rowCount();
+    } 
 }
 
 // $successfuldao = new SuccessfulDAO();

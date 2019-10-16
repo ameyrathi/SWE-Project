@@ -87,6 +87,18 @@ class UnsuccessfulDAO{
         }
         return $result;
     }
+
+    public function removeAll() {
+        $sql = 'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE round1_unsuccessful; TRUNCATE TABLE round2_unsuccessful;';
+        
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+        
+        $stmt = $conn->prepare($sql);
+        
+        $stmt->execute();
+        $count = $stmt->rowCount();
+    } 
 }
 
 // $unsuccessfuldao = new UnsuccessfulDAO();

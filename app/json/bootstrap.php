@@ -114,20 +114,29 @@
                             $sectiondao = new SectionDAO();
                             $studentdao = new StudentDAO();
                             $biddingrounddao = new BiddingRoundDAO();
-            
+                            $successfuldao = new SuccessfulDAO();
+                            $unsuccessfuldao = new UnsuccessfulDAO();
+                            $sectionresultsdao = new SectionResultsDAO();
+                            
+                            # truncate current SQL tables
                             $biddao->removeAll();
                             $coursedao->removeAll();
                             $coursecompleteddao->removeAll();
                             $prerequisitedao->removeAll();
                             $sectiondao->removeAll();
                             $studentdao->removeAll();
+                            $successfuldao->removeAll();
+                            $unsuccessfuldao->removeAll();
+                            $sectionresultsdao->removeAll();
+
             
                             // student.csv
                             $student_headers_list = fgetcsv($student_file); # skip header
                             $student_row_count = 1;
             
                             while(($student_row = fgetcsv($student_file)) != false) { # we want to insert these values into the database
-            
+                                $student_row = mb_convert_encoding($student_row,"UTF-8");
+
                                 $student_row_errors = [];
             
                                 // blank field(s) check
@@ -201,7 +210,7 @@
                             $course_row_count = 1;
             
                             while(($course_row = fgetcsv($course_file)) != false) {
-            
+                                $course_row = mb_convert_encoding($course_row,"UTF-8");
                                 $course_row_errors = [];
             
                                 // blank field(s) check
@@ -272,7 +281,7 @@
                             $section_row_count = 1;
             
                             while(($section_row = fgetcsv($section_file)) != false) {
-            
+                                $section_row = mb_convert_encoding($section_row,"UTF-8");
                                 $section_row_errors = [];
             
                                 // blank field(s) check
@@ -385,7 +394,7 @@
                             $prerequisite_row_count = 1;
             
                             while(($prerequisite_row = fgetcsv($prerequisite_file)) != false) {
-            
+                                $prerequisite_row = mb_convert_encoding($prerequisite_row,"UTF-8");
                                 $prerequisite_row_errors = [];
             
                                 // blank field(s) check
@@ -431,7 +440,7 @@
                             $course_completed_row_count = 1;
             
                             while(($course_completed_row = fgetcsv($course_completed_file)) != false) {
-            
+                                $course_completed_row = mb_convert_encoding($course_completed_row,"UTF-8");
                                 $course_completed_row_errors = [];
             
                                 // blank field(s) check
@@ -487,7 +496,7 @@
                             $bid_row_count = 1;
             
                             while(($bid_row = fgetcsv($bid_file)) != false) {
-            
+                                $bid_row = mb_convert_encoding($bid_row,"UTF-8");
                                 $bid_row_errors = [];
             
                                 // blank field(s) check
