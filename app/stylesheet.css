@@ -74,6 +74,18 @@ input[type=button], input[type=submit], input[type=reset] {
     cursor: pointer;
   }
 
+  #drop_button {
+    font-family: "Arial", sans-serif;
+    font-size: 16px;
+    background-color: rgb(212, 83, 83);
+    border: none;
+    color: white;
+    padding: 8px 8px;
+    text-decoration: none;
+    margin: 0px 0px;
+    cursor: pointer;
+  }
+
 .sidebar {
     font-family: "Arial", sans-serif;
     margin: 0;

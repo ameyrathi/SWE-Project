@@ -28,7 +28,6 @@
 <!-- The sidebar -->
 <div class="sidebar">
   <a href="admin_home.php?token=<?php echo $token;?>">Home</a>
-  <a href="admin_round.php?token=<?php echo $token;?>">Round Management</a>
   <a class="active" href="admin_bootstrap.php?token=<?php echo $token;?>">Bootstrap</a>
   <a href="sign_out.php">Sign Out</a>
 </div>
