@@ -109,7 +109,7 @@
                         <td>$amount</td>
                         <td>Pending</td>
                         <td align='center'>
-                            <form>
+                            <form id='drop_form'>
                                 <input type='hidden' name='drop_bid_courseid' value=$course>
                                 <input type='hidden' name='drop_bid_sectionid' value=$section>
                                 <input type='hidden' name='drop_bid_amount' value=$amount>
@@ -134,7 +134,7 @@
                     <td>$amount</td>
                     <td>Successful (Round 1)</td>
                     <td align='center'>
-                        <form>
+                        <form id='drop_form'>
                             <input type='hidden' name='drop_section_courseid' value=$course>
                             <input type='hidden' name='drop_section_sectionid' value=$section>
                             <input type='hidden' name='drop_section_amount' value=$amount>
@@ -154,6 +154,7 @@
                     <td>$section</td>
                     <td>$amount</td>
                     <td>Unsuccessful (Round 1)</td>
+                    <td></td>
                 </tr>
                 ";
             }
@@ -175,7 +176,7 @@
                     <td>$amount</td>
                     <td>Pending</td>
                     <td align='center'>
-                        <form>
+                        <form id='drop_form'>
                             <input type='hidden' name='drop_bid_courseid' value=$course>
                             <input type='hidden' name='drop_bid_sectionid' value=$section>
                             <input type='hidden' name='drop_bid_amount' value=$amount>
@@ -196,7 +197,7 @@
                     <td>$amount</td>
                     <td>Successful (Round 1)</td>
                     <td align='center'>
-                        <form>
+                        <form id='drop_form'>
                             <input type='hidden' name='drop_section_courseid' value=$course>
                             <input type='hidden' name='drop_section_sectionid' value=$section>
                             <input type='hidden' name='drop_section_amount' value=$amount>
@@ -218,6 +219,7 @@
                         <td>$section</td>
                         <td>$amount</td>
                         <td>Unsuccessful (Round 1)</td>
+                        <td></td>
                     </tr>
                     ";
                 }
@@ -244,7 +246,7 @@
                     <td>$amount</td>
                     <td>Successful (Round 1)</td>
                     <td align='center'>
-                        <form>
+                        <form id='drop_form'>
                             <input type='hidden' name='drop_section_courseid' value=$course>
                             <input type='hidden' name='drop_section_sectionid' value=$section>
                             <input type='hidden' name='drop_section_amount' value=$amount>
@@ -266,7 +268,7 @@
                     <td>$amount</td>
                     <td>Successful (Round 2)</td>
                     <td align='center'>
-                        <form>
+                        <form id='drop_form'>
                             <input type='hidden' name='drop_section_courseid' value=$course>
                             <input type='hidden' name='drop_section_sectionid' value=$section>
                             <input type='hidden' name='drop_section_amount' value=$amount>
@@ -288,6 +290,7 @@
                         <td>$section</td>
                         <td>$amount</td>
                         <td>Unsuccessful (Round 2)</td>
+                        <td></td>
                     </tr>
                     ";
                 }
@@ -302,6 +305,7 @@
                         <td>$section</td>
                         <td>$amount</td>
                         <td>Unsuccessful (Round 1)</td>
+                        <td></td>
                     </tr>
                     ";
                 }
@@ -315,6 +319,110 @@
     }
 
 
+    // view timetable segment
+    if($current_round == 1.5 || $current_round == 2 || $current_round == 2.5) {
+        echo "<br><h1>Your Timetable:<h1>";
+
+        echo 
+        "
+        <table id='timetable'>
+            <tr>
+                <th id='blankdayslot'></th>
+                <th id='dayslot'>Mon</th>
+                <th id='dayslot'>Tue</th>
+                <th id='dayslot'>Wed</th>
+                <th id='dayslot'>Thu</th>
+                <th id='dayslot'>Fri</th>
+            </tr>
+        ";
+
+        $days = [1, 2, 3, 4, 5];
+        $timeslots = ['08:30', '11:45', '12:00', '15:15', '15:30', '18:45', '19:00', '22:15'];
+
+        $sectiondao = new SectionDAO();
+        if($current_round == 2.5) {
+            $successful_sections = $successfuldao->get_student_successful_bids($_SESSION["userid"],2);
+        } else { // if round 1.5 or 2
+            $successful_sections = $successfuldao->get_student_successful_bids($_SESSION["userid"],1);
+        }
+
+        foreach($timeslots as $timeslot) {
+            echo 
+            "
+            <tr>
+                <th id='timeslot'>$timeslot</th>
+            ";
+
+            $timeslot = date("h:i:s",strtotime($timeslot));
+
+            for($timetable_day=1; $timetable_day<=5; $timetable_day++) {
+                $printed = false;
+                foreach($successful_sections as [$this_course, $this_section, $this_amount]) {
+                    [$day, $start, $end] = $sectiondao->get_timetable_details($this_course, $this_section);
+                    
+                    if($day == $timetable_day && $start == $timeslot) {
+                        echo "
+                        <td id='confirmed_timeslot'>
+                            $this_course $this_section<br>
+                            Bid: $$this_amount
+                        ";
+
+                        if($current_round != 2.5) {
+                            echo 
+                            "
+                            <br>
+                            <form id='drop_form'>
+                                <input type='hidden' name='drop_section_courseid' value=$this_course>
+                                <input type='hidden' name='drop_section_sectionid' value=$this_section>
+                                <input type='hidden' name='drop_section_amount' value=$this_amount>
+                                <input type='hidden' name='token' value=$token>
+                                <input type='submit' value='Drop Section' id='drop_button'>
+                            </form>
+                            ";
+                        }
+
+                        echo "</td>";
+
+                        $printed = true;
+                        break;
+                    }
+                }
+
+                if(!$printed && ($current_round == 1 || $current_round == 2)) {
+                    $pending_sections = $biddao->get_pending_bids_and_amount($_SESSION["userid"], $current_round);
+
+                    foreach($pending_sections as [$this_course, $this_section, $this_amount]) {
+                        [$day, $start, $end] = $sectiondao->get_timetable_details($this_course, $this_section);
+                        
+                        if($day == $timetable_day && $start == $timeslot) {
+                            echo "
+                            <td id='pending_timeslot'>
+                                $this_course $this_section<br>
+                                Bid: $$this_amount<br>
+                                <form id='drop_form'>
+                                    <input type='hidden' name='drop_bid_courseid' value=$this_course>
+                                    <input type='hidden' name='drop_bid_sectionid' value=$this_section>
+                                    <input type='hidden' name='drop_bid_amount' value=$this_amount>
+                                    <input type='hidden' name='token' value=$token>
+                                    <input type='submit' value='Drop Bid' id='drop_button'>
+                                </form>
+                            </td>
+                            ";
+
+                            $printed = true;
+                            break;
+                        }
+                    }
+                }
+
+                if(!$printed) {
+                    echo "<td id='timeslot_data'></td>";
+                }
+            }
+            echo "</tr>";
+        }
+        echo "</table>";
+    }
 ?>
 </div>
 </html>
