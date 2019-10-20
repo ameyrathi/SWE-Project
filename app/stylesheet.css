@@ -4,6 +4,7 @@
     color: black;
 }
 
+
 h1 {
     font-family: "Arial", sans-serif;
     font-size: 23px;
@@ -35,7 +36,7 @@ p, form {
     color: limegreen;
 }
 
-#view_results, #real_time_bids {
+#view_results, #real_time_bids, #timetable {
     font-family: "Arial", sans-serif;
     font-size: 16px;
     border-collapse: collapse;
@@ -54,12 +55,54 @@ td, th {
     padding: 8px;
 }
 
+#timeslot {
+    border: 1px solid #ddd;
+    padding: 8px;
+    height: 50px;
+}
+
+
+#dayslot {
+    border: 1px solid #ddd;
+    padding: 8px;
+    width: 110px;
+}
+
+#blankdayslot {
+    border: 0px;
+    background-color: white;
+    padding: 8px;
+    width: 3%;
+}
+
+#timeslot_data {
+    text-align: center;
+    height:80px;
+}
+
+#confirmed_timeslot {
+    text-align: center;
+    height:80px;
+    background-color: rgb(0, 223, 30);
+}
+
+#pending_timeslot {
+    text-align: center;
+    height:80px;
+    background-color: rgb(243, 182, 52);
+}
+
+#drop_form {
+    margin-bottom: 0;
+}
+
 th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
     background-color: #4CAF50;
     color: white;
+    height: 100%;
 }
 
 input[type=button], input[type=submit], input[type=reset] {
@@ -74,7 +117,7 @@ input[type=button], input[type=submit], input[type=reset] {
     cursor: pointer;
   }
 
-  #drop_button {
+#drop_button {
     font-family: "Arial", sans-serif;
     font-size: 16px;
     background-color: rgb(212, 83, 83);
@@ -84,7 +127,7 @@ input[type=button], input[type=submit], input[type=reset] {
     text-decoration: none;
     margin: 0px 0px;
     cursor: pointer;
-  }
+}
 
 .sidebar {
     font-family: "Arial", sans-serif;
