@@ -154,6 +154,28 @@ class SectionDAO {
         }
         return $result;
     }
+
+    function get_timetable_details($course, $section) {
+        // returns [day, start, end]
+
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("SELECT day, start, end FROM section WHERE course=:course AND section=:section");
+
+        $stmt->bindParam(":course", $course);
+        $stmt->bindParam(":section", $section);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $result = [];
+
+        if($row = $stmt->fetch()) {
+            return array_values($row);
+        }
+    }
 }
 
 
