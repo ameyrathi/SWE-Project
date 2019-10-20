@@ -239,6 +239,38 @@ class SuccessfulDAO{
         return $result;
     }
 
+    function get_student_successful_bids($userid, $closed_round) {
+        // returns THIS STUDENT'S successful [[course1, section1, amount1], [course2, section2, amount2], ...]
+
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        if($closed_round == 1) {
+            $table = "round1_successful";
+        } elseif($closed_round == 2) {
+            $table = "round2_successful";
+        }
+
+        $stmt = $conn->prepare("SELECT code, section, amount FROM $table WHERE userid=:userid");
+
+        $stmt->bindParam(":userid", $userid);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            $this_bid_list = [];
+            foreach($row as $idx => $value) {
+                array_push($this_bid_list, $value);
+            }
+            array_push($result, $this_bid_list);
+        }
+        return $result;
+    }
+
     function get_specific_bid($userid, $course, $section, $closed_round){
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();
