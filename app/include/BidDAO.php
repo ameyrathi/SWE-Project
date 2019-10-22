@@ -61,7 +61,7 @@ class BidDAO {
      * truncates bid table (used in bootstrapping stage)
      */
     public function removeAll() {
-        $sql = 'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE round1_bid';
+        $sql = 'SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE round1_bid; TRUNCATE TABLE round2_bid';
         
         $connection_manager = new connection_manager();
         $conn = $connection_manager->connect();

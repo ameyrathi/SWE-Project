@@ -344,6 +344,7 @@
             $successful_sections = $successfuldao->get_student_successful_bids($_SESSION["userid"],2);
         } else { // if round 1.5 or 2
             $successful_sections = $successfuldao->get_student_successful_bids($_SESSION["userid"],1);
+            var_dump($successful_sections);
         }
 
         foreach($timeslots as $timeslot) {
@@ -353,7 +354,7 @@
                 <th id='timeslot'>$timeslot</th>
             ";
 
-            $timeslot = date("h:i:s",strtotime($timeslot));
+            $timeslot = date("H:i:s",strtotime($timeslot));
 
             for($timetable_day=1; $timetable_day<=5; $timetable_day++) {
                 $printed = false;
