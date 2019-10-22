@@ -133,15 +133,6 @@
                     <td>$section</td>
                     <td>$amount</td>
                     <td>Successful (Round 1)</td>
-                    <td align='center'>
-                        <form id='drop_form'>
-                            <input type='hidden' name='drop_section_courseid' value=$course>
-                            <input type='hidden' name='drop_section_sectionid' value=$section>
-                            <input type='hidden' name='drop_section_amount' value=$amount>
-                            <input type='hidden' name='token' value=$token>
-                            <input type='submit' value='Drop Section' id='drop_button'>
-                        </form>
-                    </td>
                 </tr>
                 ";
             }
@@ -245,16 +236,6 @@
                     <td>$section</td>
                     <td>$amount</td>
                     <td>Successful (Round 1)</td>
-                    <td align='center'>
-                        <form id='drop_form'>
-                            <input type='hidden' name='drop_section_courseid' value=$course>
-                            <input type='hidden' name='drop_section_sectionid' value=$section>
-                            <input type='hidden' name='drop_section_amount' value=$amount>
-                            <input type='hidden' name='token' value=$token>
-                            <input type='submit' value='Drop Section' id='drop_button'>
-                        </form>
-                    </td>
-
                 </tr>
                 ";
             }
@@ -267,16 +248,6 @@
                     <td>$section</td>
                     <td>$amount</td>
                     <td>Successful (Round 2)</td>
-                    <td align='center'>
-                        <form id='drop_form'>
-                            <input type='hidden' name='drop_section_courseid' value=$course>
-                            <input type='hidden' name='drop_section_sectionid' value=$section>
-                            <input type='hidden' name='drop_section_amount' value=$amount>
-                            <input type='hidden' name='token' value=$token>
-                            <input type='submit' value='Drop Section' id='drop_button'>
-                        </form>
-                    </td>
-
                 </tr>
                 ";
             }
@@ -367,7 +338,7 @@
                             Bid: $$this_amount
                         ";
 
-                        if($current_round != 2.5) {
+                        if($current_round == 2) {
                             echo 
                             "
                             <br>
