@@ -37,6 +37,10 @@ function close_bidding_round1(){
         // get maximum capacity of each section
         $capacity = (int)($sectiondao->get_size($course, $section));
 
+        // echo "Capacity: $capacity";
+        // $no_of_bids = count($value);
+        // echo "Number of bids: $no_";
+
         // sort $array_of_bids by descending bid amount
         usort(
             $array_of_bids, 
@@ -63,9 +67,26 @@ function close_bidding_round1(){
                     if($amount == $clearing_price) { // if this bid amount = clearing price, bid fails
                         $studentdao->add_balance($userid,$amount); // bid fail, so refund
                         $unsuccessfuldao->add_unsuccessful($userid, $amount, $course, $section, 1);
-
+                        // echo "
+                        // Course: $course<br>
+                        // Section: $section<br>
+                        // User: $userid<br>
+                        // Bid Amount: $$amount<br>
+                        // Clearing Type: Section Just Nice Full<br>
+                        // Status: <span id='fail'>Fail</span>, refunded $$amount<br>
+                        // ------------------------------------------------------------<br>                   
+                        // ";
                     } else {
                         $successfuldao->add_success($userid, $amount, $course, $section, 1); // bid success
+                        // echo "
+                        // Course: $course<br>
+                        // Section: $section<br>
+                        // User: $userid<br>
+                        // Bid Amount: $$amount<br>
+                        // Clearing Type: Section Just Nice Full<br>
+                        // Status: <span id='success'>Success</span><br>
+                        // ------------------------------------------------------------<br>                   
+                        // ";
                         $num_successful_bids++;
                     }
                 }
@@ -73,6 +94,15 @@ function close_bidding_round1(){
                 for($i=0; $i<count($array_of_bids); $i++) {
                     [$userid, $amount] = $array_of_bids[$i];
                     $successfuldao->add_success($userid, $amount, $course, $section, 1); // bid success
+                    // echo "
+                    // Course: $course<br>
+                    // Section: $section<br>
+                    // User: $userid<br>
+                    // Bid Amount: $$amount<br>
+                    // Clearing Type: Section Just Nice Full<br>
+                    // Status: <span id='success'>Success</span><br>
+                    // ------------------------------------------------------------<br>                   
+                    // ";
                     $num_successful_bids++;
                 }
             }
@@ -102,8 +132,26 @@ function close_bidding_round1(){
                     if($amount <= $clearing_price) { // if this bid amount <= clearing price
                         $studentdao->add_balance($userid, $amount); // bid fail, so refund
                         $unsuccessfuldao->add_unsuccessful($userid, $amount, $course, $section, 1);
+                        // echo "
+                        // Course: $course<br>
+                        // Section: $section<br>
+                        // User: $userid<br>
+                        // Bid Amount: $$amount<br>
+                        // Clearing Type: Section Overbooked<br>
+                        // Status: <span id='fail'>Fail</span>, refunded $$amount<br>
+                        // ------------------------------------------------------------<br>                   
+                        // ";
                     } else { // if this bid amount > clearing price
                         $successfuldao->add_success($userid, $amount, $course, $section, 1); // bid succeed
+                        // echo "
+                        // Course: $course<br>
+                        // Section: $section<br>
+                        // User: $userid<br>
+                        // Bid Amount: $$amount<br>
+                        // Clearing Type: Section Overbooked<br>
+                        // Status: <span id='success'>Success</span><br>
+                        // ------------------------------------------------------------<br>                   
+                        // ";
                         $num_successful_bids++;
                     }
                 }
@@ -111,6 +159,15 @@ function close_bidding_round1(){
                 for($i=0; $i<$capacity; $i++) { // all bids within $capacity will be successful
                     [$userid, $amount] = $array_of_bids[$i];
                     $successfuldao->add_success($userid, $amount, $course, $section, 1); // bid succeed
+                    // echo "
+                    // Course: $course<br>
+                    // Section: $section<br>
+                    // User: $userid<br>
+                    // Bid Amount: $$amount<br>
+                    // Clearing Type: Section Overbooked<br>
+                    // Status: <span id='success'>Success</span><br>
+                    // ------------------------------------------------------------<br>                   
+                    // ";
                     $num_successful_bids++;
                 }
                 
@@ -118,6 +175,15 @@ function close_bidding_round1(){
                     [$userid, $amount] = $array_of_bids[$i];
                     $studentdao->add_balance($userid, $amount); // bid fail, so refund
                     $unsuccessfuldao->add_unsuccessful($userid, $amount, $course, $section, 1);
+                    // echo "
+                    // Course: $course<br>
+                    // Section: $section<br>
+                    // User: $userid<br>
+                    // Bid Amount: $$amount<br>
+                    // Clearing Type: Section Overbooked<br>
+                    // Status: <span id='fail'>Fail</span>, refunded $$amount<br>
+                    // ------------------------------------------------------------<br>                   
+                    // ";
                 }
             }
 
@@ -129,6 +195,15 @@ function close_bidding_round1(){
 
             foreach($array_of_bids as $idx => [$userid, $amount]) {
                 $successfuldao->add_success($userid, $amount, $course, $section, 1);
+                // echo "
+                // Course: $course<br>
+                // Section: $section<br>
+                // User: $userid<br>
+                // Bid Amount: $$amount<br>
+                // Clearing Type: Section Underbooked<br>
+                // Status: <span id='success'>Success</span><br>
+                // ------------------------------------------------------------<br>                   
+                // ";
             }
 
             $vacancies = $capacity - count($array_of_bids);

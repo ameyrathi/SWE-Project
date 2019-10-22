@@ -26,8 +26,8 @@ function close_bidding_round2(){
                 ------------------------------------------------------------<br>                   
                 ";
             } elseif($this_status == "Pending, fail") {
-                $studentdao->add_balance($this_userid,$this_amount); // bid fail, so refund
-                $unsuccessfuldao->add_unsuccessful($userid, $amount, $course, $section, 2);
+                $studentdao->add_balance($this_userid, $this_amount); // bid fail, so refund
+                $unsuccessfuldao->add_unsuccessful($this_userid, $this_amount, $this_course, $this_section, 2);
                 echo "
                 Course: $this_course<br>
                 Section: $this_section<br>

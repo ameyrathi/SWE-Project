@@ -3,42 +3,39 @@
     require_once '../include/token.php';
 
     // isMissingOrEmpty(...) is in common.php
-    $errors = [ isMissingOrEmpty ("username"), isMissingOrEmpty ("password") ];
+    $errors = [ isMissingOrEmpty ("username"), 
+    isMissingOrEmpty ("password") ];
     $errors = array_filter($errors);
 
-    if(!isEmpty($errors)){
+    if (!isEmpty($errors)) {
         $result = [
             "status" => "error",
             "message" => array_values($errors)
             ];
-    }
-    else
-    {
+    } else {
         $username = $_POST["username"];
         $password = $_POST["password"];
 
-        $studentdao = new StudentDAO();
+        $StudentDAO = new StudentDAO();
 
-        if(strtolower($username) == "admin"){
-            if($studentdao->adminLogin($password) == $password){
+        if(($StudentDAO->validUser($username)) == true) { // if username exists in database
+            if($StudentDAO->getPassword($username) == $password) { // if password is correct
                 $token = generate_token($username);
                 $result = [
                     "status" => "success",
                     "token" => $token
                 ];
-            }
-            else{
+            } else { // if username is correct but password is wrong
                 $result = [
                     "status" => "error",
-                    "message" => ["invalid password"]
-                ];
+                    "message" => ["invalid username/password"]
+                    ];
             }
-        }
-        else{
+        } else { // if username not in database
             $result = [
                 "status" => "error",
-                "message" => ["invalid username"]
-            ];
+                "message" => ["invalid username/password"]
+                ];
         }
     }
 
