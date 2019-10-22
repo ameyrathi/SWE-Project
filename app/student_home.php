@@ -344,7 +344,6 @@
             $successful_sections = $successfuldao->get_student_successful_bids($_SESSION["userid"],2);
         } else { // if round 1.5 or 2
             $successful_sections = $successfuldao->get_student_successful_bids($_SESSION["userid"],1);
-            var_dump($successful_sections);
         }
 
         foreach($timeslots as $timeslot) {
