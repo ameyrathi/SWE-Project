@@ -705,11 +705,9 @@
                             unlink($bid_path);
             
                             if(!isEmpty($json_errors)){
-                                // $sortclass = new Sort();
-                                // $json_errors = $sortclass->sort_it($json_errors,"file");
-                                // $num_record_loaded = $sortclass->sort_it($num_record_loaded, "filename");
-
-                                // ^ no need sort bc everything alr the correct order according to the way we processed the bootstrap right? eg. order of files
+                                $sortclass = new Sort();
+                                $json_errors = $sortclass->sort_it($json_errors,"file");
+                                $num_record_loaded = $sortclass->sort_it($num_record_loaded, "filename");
                                 
                                 $result = [
                                     "status" => "error",
@@ -720,8 +718,8 @@
                                 $biddingrounddao->start_round(1);
                             }
                             else{
-                                // $sortclass = new Sort();
-                                // $num_record_loaded = $sortclass->sort_it($num_record_loaded, "filename");
+                                $sortclass = new Sort();
+                                $num_record_loaded = $sortclass->sort_it($num_record_loaded, "filename");
                                 $result = [
                                     "status" => "success",
                                     "num-record-loaded" => $num_record_loaded
