@@ -32,7 +32,7 @@ function isMissingOrEmpty($name) {
 
     // client did send the value over
     $value = $_REQUEST[$name];
-    if (empty($value)) {
+    if ($value == "") {
         return "blank $name";
     }
 }

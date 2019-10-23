@@ -3,7 +3,7 @@
     require_once '../include/token.php';
 
     // isMissingOrEmpty(...) is in common.php
-    $errors = [ isMissingOrEmpty ("token")];
+    $errors = [isMissingOrEmpty ("token")];
     $errors = array_filter($errors);
 
     if (!isEmpty($errors)) { // if missing or empty token
@@ -20,7 +20,7 @@
                     "message" => ["invalid token"]
                     ];
             }
-            else{
+            else{ // if valid token
     
                 $json_errors = [];
                 $num_record_loaded = [];
@@ -132,58 +132,65 @@
             
                             // student.csv
                             $student_headers_list = fgetcsv($student_file); # skip header
-                            $student_row_count = 1;
+                            $student_row_count = 2;
             
                             while(($student_row = fgetcsv($student_file)) != false) { # we want to insert these values into the database
                                 $student_row = mb_convert_encoding($student_row,"UTF-8");
 
                                 $student_row_errors = [];
+
+                                $student_row = array_map('trim', $student_row);
             
                                 // blank field(s) check
                                 for($i=0; $i<count($student_row); $i++) {
-                                    if(rtrim($student_row[$i]) === '' ) {
+                                    if($student_row[$i] == '' ) {
                                         array_push($student_row_errors, "blank $student_headers_list[$i]");
                                     }
                                 }
-            
-                                [$userid, $password, $name, $school, $edollar] = $student_row;
-            
-                                // invalid userid check
-                                if(strlen($userid) > 128) {
-                                    array_push($student_row_errors, "invalid userid");
-                                }
-            
-                                // duplicate userid check
-                                if($studentdao->validUser($userid)) { // if userid already exists
-                                    array_push($student_row_errors, "duplicate userid");
-                                }
-            
-                                // invalid e-dollar check
-                                if(is_numeric($edollar)) {
-                                    if($edollar < 0){
-                                        array_push($student_row_errors, "invalid edollar");
+
+                                if($student_row_errors == []) { // if common validations pass
+
+                                    // then perform file specific validations
+
+                                    [$userid, $password, $name, $school, $edollar] = $student_row;
+                
+                                    // invalid userid check
+                                    if(strlen($userid) > 128) {
+                                        array_push($student_row_errors, "invalid userid");
                                     }
-                                    else{
-                                        if(strpos($edollar , ".") != false) {
-                                            $decimal_places = strlen(substr(strrchr($edollar, "."), 1));
-                                            if($decimal_places > 2) {
-                                                array_push($student_row_errors, "invalid edollar");
+                
+                                    // duplicate userid check
+                                    if($studentdao->validUser($userid)) { // if userid already exists
+                                        array_push($student_row_errors, "duplicate userid");
+                                    }
+                
+                                    // invalid e-dollar check
+                                    if(is_numeric($edollar)) {
+                                        if($edollar < 0){
+                                            array_push($student_row_errors, "invalid edollar");
+                                        }
+                                        else{
+                                            if(strpos($edollar , ".") != false) {
+                                                $decimal_places = strlen(substr(strrchr($edollar, "."), 1));
+                                                if($decimal_places > 2) {
+                                                    array_push($student_row_errors, "invalid edollar");
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                else{
-                                    array_push($student_row_errors, "invalid edollar");
-                                }
-            
-                                // invalid password check
-                                if(strlen($password) > 128) {
-                                    array_push($student_row_errors, "invalid password");
-                                }
-            
-                                // invalid name check
-                                if(strlen($name) > 100) {
-                                    array_push($student_row_errors, "invalid name");
+                                    else{
+                                        array_push($student_row_errors, "invalid edollar");
+                                    }
+                
+                                    // invalid password check
+                                    if(strlen($password) > 128) {
+                                        array_push($student_row_errors, "invalid password");
+                                    }
+                
+                                    // invalid name check
+                                    if(strlen($name) > 100) {
+                                        array_push($student_row_errors, "invalid name");
+                                    }
                                 }
             
                                 if(empty($student_row_errors)) {
@@ -207,53 +214,60 @@
             
                             // course.csv
                             $course_headers_list = fgetcsv($course_file); # skip header
-                            $course_row_count = 1;
+                            $course_row_count = 2;
             
                             while(($course_row = fgetcsv($course_file)) != false) {
                                 $course_row = mb_convert_encoding($course_row,"UTF-8");
                                 $course_row_errors = [];
+
+                                $course_row = array_map('trim', $course_row);
             
                                 // blank field(s) check
                                 for($i=0; $i<count($course_row); $i++) {
-                                    if(rtrim($course_row[$i]) === '' ) {
+                                    if($course_row[$i] == '') {
                                         array_push($course_row_errors, "blank $course_headers_list[$i]");
                                     }
                                 }
+
+                                if($course_row_errors == []) { // if common validations pass
+
+                                    // then perform file specific validations
             
-                                [$course, $school, $title, $description, $exam_date, $exam_start, $exam_end] = $course_row;
-            
-                                // invalid exam date check
-                                if(!validateDate($exam_date)){
-                                    array_push($course_row_errors, "invalid exam date");
-                                }
-            
-                                // invalid exam start check
-                                if(!isValidTime($exam_start)) {
-                                    array_push($course_row_errors, "invalid exam start");
-                                }
-            
-                                //invalid exam end check
-                                if(!isValidTime($exam_end)) {
-                                    array_push($course_row_errors, "invalid exam end");
-                                }
-            
-                                if(isValidTime($exam_end)){
-                                    $startdate = strtotime($exam_start);
-                                    $enddate = strtotime($exam_end);
-            
-                                    if($enddate < $startdate){
+                                    [$course, $school, $title, $description, $exam_date, $exam_start, $exam_end] = $course_row;
+                
+                                    // invalid exam date check
+                                    if(!validateDate($exam_date)){
+                                        array_push($course_row_errors, "invalid exam date");
+                                    }
+                
+                                    // invalid exam start check
+                                    if(!isValidTime($exam_start)) {
+                                        array_push($course_row_errors, "invalid exam start");
+                                    }
+                
+                                    //invalid exam end check
+                                    if(!isValidTime($exam_end)) {
                                         array_push($course_row_errors, "invalid exam end");
                                     }
-                                }
-            
-                                //invalid title check
-                                if(strlen($title) > 100){
-                                    array_push($course_row_errors, "invalid title");
-                                }
-            
-                                //invalid description check
-                                if(strlen($description) > 1000){
-                                    array_push($course_row_errors, "invalid description");
+                
+                                    if(isValidTime($exam_end)){
+                                        $startdate = strtotime($exam_start);
+                                        $enddate = strtotime($exam_end);
+                
+                                        if($enddate <= $startdate){
+                                            array_push($course_row_errors, "invalid exam end");
+                                        }
+                                    }
+                
+                                    //invalid title check
+                                    if(strlen($title) > 100){
+                                        array_push($course_row_errors, "invalid title");
+                                    }
+                
+                                    //invalid description check
+                                    if(strlen($description) > 1000){
+                                        array_push($course_row_errors, "invalid description");
+                                    }
                                 }
             
             
@@ -278,96 +292,107 @@
             
                             //section.csv
                             $section_headers_list = fgetcsv($section_file); # skip header
-                            $section_row_count = 1;
+                            $section_row_count = 2;
             
                             while(($section_row = fgetcsv($section_file)) != false) {
                                 $section_row = mb_convert_encoding($section_row,"UTF-8");
                                 $section_row_errors = [];
+
+                                $section_row = array_map('trim', $section_row);
             
                                 // blank field(s) check
                                 for($i=0; $i<count($section_row); $i++) {
-                                    if(rtrim($section_row[$i]) == '') {
+                                    if($section_row[$i] == '') {
                                         array_push($section_row_errors, "blank $section_headers_list[$i]");
                                     }
                                 }
-            
-                                [$course, $section, $day, $start, $end, $instructor, $venue, $size] = $section_row;
-            
-                                // invalid course check
-                                if($coursedao->get_course($course) != TRUE){
-                                    array_push($section_row_errors, "invalid course");
-                                }
-            
-                                // invalid section check
-                                if($coursedao->get_course($course) == TRUE){
-                                    $section_array = explode('S',$section);
-                                    if(count($section_array) == 2){
-                                        if($section_array[0] == ''){
-                                            if(!is_numeric($section_array[1])){
-                                                array_push($section_row_errors, "invalid section");
-                                            }
-                                            else{
-                                                if((int)$section_array[1] <= 0 || (int)$section_array[1] > 99){
+
+                                if($section_row_errors == []) { // if common validations pass
+
+                                    // then perform file specific validations
+
+                                    [$course, $section, $day, $start, $end, $instructor, $venue, $size] = $section_row;
+
+                                    $is_valid_course = false;
+                
+                                    // invalid course check
+                                    if($coursedao->get_course($course) == false){
+                                        array_push($section_row_errors, "invalid course");
+                                    } else {
+                                        $is_valid_course = true;
+                                    }
+                
+                                    // invalid section check
+                                    if($is_valid_course){
+                                        $section_array = explode('S',$section);
+                                        if(count($section_array) == 2){
+                                            if($section_array[0] == ''){
+                                                if(!is_numeric($section_array[1])){
                                                     array_push($section_row_errors, "invalid section");
                                                 }
+                                                else{
+                                                    if((int)$section_array[1] <= 0 || (int)$section_array[1] > 99){
+                                                        array_push($section_row_errors, "invalid section");
+                                                    }
+                                                }
                                             }
-                                        }
+                                            else{
+                                                array_push($section_row_errors, "invalid section");
+                                            }
+                                    }
                                         else{
                                             array_push($section_row_errors, "invalid section");
                                         }
-                                }
-                                    else{
-                                        array_push($section_row_errors, "invalid section");
                                     }
-                                }
-            
-                                // invalid day check
-                                if(is_numeric($day)){
-                                    if((int)$day < 1 || (int)$day > 7){
+                
+                                    // invalid day check
+                                    if(is_numeric($day)){
+                                        if((int)$day < 1 || (int)$day > 7){
+                                            array_push($section_row_errors, "invalid day");
+                                        }
+                                    }
+                                    else{
                                         array_push($section_row_errors, "invalid day");
                                     }
-                                }
-                                else{
-                                    array_push($section_row_errors, "invalid day");
-                                }
-            
-                                // invalid start time check
-                                if(!isValidTime($start)) {
-                                    array_push($section_row_errors, "invalid start");
-                                }
-            
-                                // invalid end time check
-                                if(!isValidTime($end)) {
-                                    array_push($section_row_errors, "invalid end");
-                                }
-    
-                                if(isValidTime($end)){
-                                    $startdate = strtotime($start);
-                                    $enddate = strtotime($end);
-        
-                                    if($enddate < $startdate){
+                
+                                    // invalid start time check
+                                    if(!isValidTime($start)) {
+                                        array_push($section_row_errors, "invalid start");
+                                    }
+                
+                                    // invalid end time check
+                                    if(!isValidTime($end)) {
                                         array_push($section_row_errors, "invalid end");
                                     }
-                                }
+        
+                                    if(isValidTime($end)){
+                                        $startdate = strtotime($start);
+                                        $enddate = strtotime($end);
             
-                                // invalid instructor check
-                                if(strlen($instructor) > 100){
-                                    array_push($section_row_errors, "invalid instructor");
-                                }
-            
-                                // invalid venue check
-                                if(strlen($venue) > 100){
-                                    array_push($section_row_errors, "invalid venue");
-                                }
-            
-                                // invalid size check
-                                if(is_numeric($size)){
-                                    if((int)$size < 0){
+                                        if($enddate <= $startdate){
+                                            array_push($section_row_errors, "invalid end");
+                                        }
+                                    }
+                
+                                    // invalid instructor check
+                                    if(strlen($instructor) > 100){
+                                        array_push($section_row_errors, "invalid instructor");
+                                    }
+                
+                                    // invalid venue check
+                                    if(strlen($venue) > 100){
+                                        array_push($section_row_errors, "invalid venue");
+                                    }
+                
+                                    // invalid size check
+                                    if(is_numeric($size)){
+                                        if((int)$size <= 0){
+                                            array_push($section_row_errors, "invalid size");
+                                        }
+                                    }
+                                    else{
                                         array_push($section_row_errors, "invalid size");
                                     }
-                                }
-                                else{
-                                    array_push($section_row_errors, "invalid size");
                                 }
             
                                 if(empty($section_row_errors)) {
@@ -391,29 +416,36 @@
             
                             //prerequisite.csv
                             $prerequisite_headers_list = fgetcsv($prerequisite_file); # skip header
-                            $prerequisite_row_count = 1;
+                            $prerequisite_row_count = 2;
             
                             while(($prerequisite_row = fgetcsv($prerequisite_file)) != false) {
                                 $prerequisite_row = mb_convert_encoding($prerequisite_row,"UTF-8");
                                 $prerequisite_row_errors = [];
+
+                                $prerequisite_row = array_map('trim', $prerequisite_row);
             
                                 // blank field(s) check
                                 for($i=0; $i<count($prerequisite_row); $i++) {
-                                    if(rtrim($prerequisite_row[$i]) == '') {
+                                    if($prerequisite_row[$i] == '') {
                                         array_push($prerequisite_row_errors, "blank $prerequisite_headers_list[$i]");
                                     }
                                 }
+
+                                if($prerequisite_row_errors == []) { // if common validations pass
+
+                                    // then perform file specific validations
             
-                                [$course, $prerequisite] = $prerequisite_row;
-            
-                                //invalid course check
-                                if($coursedao->get_course($course) != TRUE){
-                                    array_push($prerequisite_row_errors, "invalid course");
-                                }
-            
-                                //invalid prerequisite check
-                                if($coursedao->get_course($prerequisite) != TRUE){
-                                    array_push($prerequisite_row_errors, "invalid prerequisite");
+                                    [$course, $prerequisite] = $prerequisite_row;
+                
+                                    //invalid course check
+                                    if($coursedao->get_course($course) == false){
+                                        array_push($prerequisite_row_errors, "invalid course");
+                                    }
+                
+                                    //invalid prerequisite check
+                                    if($coursedao->get_course($prerequisite) == false){
+                                        array_push($prerequisite_row_errors, "invalid prerequisite");
+                                    }
                                 }
             
                                 if(empty($prerequisite_row_errors)) {
@@ -437,37 +469,45 @@
             
                             //course_completed.csv
                             $course_completed_list = fgetcsv($course_completed_file); # skip header
-                            $course_completed_row_count = 1;
+                            $course_completed_row_count = 2;
             
                             while(($course_completed_row = fgetcsv($course_completed_file)) != false) {
                                 $course_completed_row = mb_convert_encoding($course_completed_row,"UTF-8");
                                 $course_completed_row_errors = [];
+
+                                $course_completed_row = array_map('trim', $course_completed_row);
             
                                 // blank field(s) check
                                 for($i=0; $i<count($course_completed_row); $i++) {
-                                    if(rtrim($course_completed_row[$i]) == '') {
+                                    if($course_completed_row[$i] == '') {
                                         array_push($course_completed_row_errors, "blank $course_completed_headers_list[$i]");
                                     }
                                 }
+
+                                if($course_completed_row_errors == []) { // if common validations pass
+
+                                    // then perform file specific validations
             
-                                [$userid, $code] = $course_completed_row;
-            
-                                //invalid userid check
-                                if(!$studentdao->validUser($userid)){
-                                    array_push($course_completed_row_errors, "invalid userid");
-                                }
-            
-                                //invalid course check
-                                if(!$coursedao->get_course($code)){
-                                    array_push($course_completed_row_errors, "invalid course");
-                                }
-    
-                                //prerequisite fulfilled check
-                                $prerequisites_needed = $prerequisitedao->get_prerequisite_courses($code);
-                                $student_completed_courses = $coursecompleteddao->get_completed_courses($userid);
-                                foreach($prerequisites_needed as $this_prerequisite) {
-                                    if(!in_array($this_prerequisite, $student_completed_courses)) {
-                                        array_push($course_completed_row_errors, "invalid course completed");
+                                    [$userid, $code] = $course_completed_row;
+                
+                                    //invalid userid check
+                                    if(!$studentdao->validUser($userid)){
+                                        array_push($course_completed_row_errors, "invalid userid");
+                                    }
+                
+                                    //invalid course check
+                                    if($coursedao->get_course($code) == false){
+                                        array_push($course_completed_row_errors, "invalid course");
+                                    }
+        
+                                    //prerequisite fulfilled check
+                                    $prerequisites_needed = $prerequisitedao->get_prerequisite_courses($code);
+                                    $student_completed_courses = $coursecompleteddao->get_completed_courses($userid);
+                                    foreach($prerequisites_needed as $this_prerequisite) {
+                                        if(!in_array($this_prerequisite, $student_completed_courses)) {
+                                            array_push($course_completed_row_errors, "invalid course completed");
+                                            break;
+                                        }
                                     }
                                 }
             
@@ -493,120 +533,163 @@
             
                             //bid.csv
                             $bid_headers_list = fgetcsv($bid_file); # skip header
-                            $bid_row_count = 1;
+                            $bid_row_count = 2;
             
                             while(($bid_row = fgetcsv($bid_file)) != false) {
                                 $bid_row = mb_convert_encoding($bid_row,"UTF-8");
                                 $bid_row_errors = [];
+
+                                $bid_row = array_map('trim', $bid_row);
             
                                 // blank field(s) check
                                 for($i=0; $i<count($bid_row); $i++) {
-                                    if(rtrim($bid_row[$i]) == '') {
+                                    if($bid_row[$i] == '') {
                                         array_push($bid_row_errors, "blank $bid_headers_list[$i]");
                                     }
                                 }
-            
-                                [$userid, $amount, $code, $section] = $bid_row;
-            
-                                //invalid userid check
-                                if(!$studentdao->validUser($userid)){
-                                    array_push($bid_row_errors, "invalid userid");
-                                }
-            
-                                //invalid amount check
-                                if(is_numeric($amount)){
-                                    if((int)$amount < 10 || strlen(substr(strrchr($amount, "."), 1)) > 2){
-                                        array_push($bid_row_errors, "invalid amount");
-                                    }
-                                }
-                                else{
-                                    array_push($bid_row_errors, "invalid amount");
-                                }
-            
-                                //invalid course check
-                                if(!$coursedao->get_course($code)){
-                                    array_push($bid_row_errors, "invalid course");
-                                }
-            
-                                //invalid section check
-                                if($coursedao->get_course($code)){
-                                    if(!$sectiondao->is_valid_section($code, $section)){
-                                        array_push($bid_row_errors, "invalid section");
-                                    }
-                                }
 
-                                //not own school course
-                                if($coursedao->get_school($code) != $studentdao->get_school($userid)) {
-                                    array_push($bid_row_errors, "not own school course");
-                                }
+                                if($bid_row_errors == []) { // if common validations pass
+
+                                    // then perform file specific validations
+            
+                                    [$userid, $amount, $code, $section] = $bid_row;
+
+                                    $preliminary_checks = 4;
+                
+                                    //invalid userid check
+                                    if(!$studentdao->validUser($userid)){
+                                        array_push($bid_row_errors, "invalid userid");
+                                        $preliminary_checks--;
+                                    } else {
+                                    }
+                
+                                    //invalid amount check
+                                    if(is_numeric($amount)){
+                                        if((int)$amount < 10 || strlen(substr(strrchr($amount, "."), 1)) > 2){
+                                            array_push($bid_row_errors, "invalid amount");
+                                            $preliminary_checks--;
+                                        }
+                                    }
+                                    else{
+                                        array_push($bid_row_errors, "invalid amount");
+                                        $preliminary_checks--;
+                                    }
+                
+                                    //invalid course check
+                                    if($coursedao->get_course($code) == false){
+                                        array_push($bid_row_errors, "invalid course");
+                                        $preliminary_checks--;
+                                    }
+                
+                                    //invalid section check
+                                    if($coursedao->get_course($code) != false){
+                                        if(!$sectiondao->is_valid_section($code, $section)){
+                                            array_push($bid_row_errors, "invalid section");
+                                            $preliminary_checks--;
+                                        }
+                                    }
+
+                                    if($preliminary_checks == 4) { // if all 4 preliminary checks passed
+
+                                        // then conduct logic validations
+
+                                        $pending_bidded_sections = $biddao->get_pending_bids_and_amount($userid, 1);
+
+                                        //not own school course
+                                        if($coursedao->get_school($code) != $studentdao->get_school($userid)) {
+                                            array_push($bid_row_errors, "not own school course");
+                                        }
+                                        
+                                        //class timetable clash
+                                        //exam timetable clash
+                                        $no_clash_check_success = true;
+                                        if($sectiondao->is_valid_section($code, $section)){
+                                            $bidding_class = $sectiondao->get_class_day_start_end($code, $section);
+                                            foreach($pending_bidded_sections as $this_list) {
+                                                $existing_courseid = $this_list[0];
+                                                $existing_section = $this_list[1];
                                 
-    
-                                //section limit reached
-                                $pending_bidded_sections = $biddao->get_pending_bids_and_amount($userid, 1);
-                                if(!$max_course_check_success = count($pending_bidded_sections) < 5) {
-                                    array_push($errors, "section limit reached");
-                                }
-    
-                                //class timetable clash
-                                //exam timetable clash
-                                $no_clash_check_success = true;
-                                if($sectiondao->is_valid_section($code, $section)){
-                                    $bidding_class = $sectiondao->get_class_day_start_end($code, $section);
-                                    foreach($pending_bidded_sections as $this_list) {
-                                        $existing_courseid = $this_list[0];
-                                        $existing_section = $this_list[1];
-                        
-                                        $existing_class = $sectiondao->get_class_day_start_end($existing_courseid, $existing_section);
-                                        $class_clash_check = dont_clash($bidding_class[0], $bidding_class[1], $bidding_class[2], $existing_class[0], $existing_class[1], $existing_class[2]);
-                        
-                                        $bidding_exam = $coursedao->get_exam_date_start_end($code);
-                                        $existing_exam = $coursedao->get_exam_date_start_end($existing_courseid);
-                                        $exam_clash_check = dont_clash($bidding_exam[0], $bidding_exam[1], $bidding_exam[2], $existing_exam[0], $existing_exam[1], $existing_exam[2]);
-                        
-                                        $no_clash_check_success = $class_clash_check && $exam_clash_check;
-                        
-                                        if(!$no_clash_check_success) {
-                                            $no_clash_check_success = false;
-                                            if(!$class_clash_check) {
-                                                array_push($errors, "class timetable clash");
+                                                $existing_class = $sectiondao->get_class_day_start_end($existing_courseid, $existing_section);
+                                                $class_clash_check = dont_clash($bidding_class[0], $bidding_class[1], $bidding_class[2], $existing_class[0], $existing_class[1], $existing_class[2]);
+                                
+                                                $bidding_exam = $coursedao->get_exam_date_start_end($code);
+                                                $existing_exam = $coursedao->get_exam_date_start_end($existing_courseid);
+                                                $exam_clash_check = dont_clash($bidding_exam[0], $bidding_exam[1], $bidding_exam[2], $existing_exam[0], $existing_exam[1], $existing_exam[2]);
+                                
+                                                $no_clash_check_success = $class_clash_check && $exam_clash_check;
+                                
+                                                if(!$no_clash_check_success) {
+                                                    $no_clash_check_success = false;
+                                                    if(!$class_clash_check) {
+                                                        array_push($bid_row_errors, "class timetable clash");
+                                                        break;
+                                                    }
+                                                    if(!$exam_clash_check) {
+                                                        array_push($bid_row_errors, "exam timetable clash");
+                                                        break;
+                                                    }
+                                                }
                                             }
-                                            if(!$exam_clash_check) {
-                                                array_push($errors, "exam timetable clash");
+                                        }
+
+                                        //incomplete prerequisites
+                                        $prerequisites_needed = $prerequisitedao->get_prerequisite_courses($code);
+                                        $student_completed_courses = $coursecompleteddao->get_completed_courses($userid);
+                                        foreach($prerequisites_needed as $this_prerequisite) {
+                                            if(!in_array($this_prerequisite, $student_completed_courses)) {
+                                                array_push($bid_row_errors, "incomplete prerequisites");
+                                                break;
                                             }
+                                        }
+      
+                                        //student has already completed this course
+                                        if(in_array($code, $student_completed_courses)){
+                                            array_push($bid_row_errors, "course completed");
+                                        }
+            
+                                        //section limit reached
+                                        $pending_bidded_sections = $biddao->get_pending_bids_and_amount($userid, 1);
+                                        if(count($pending_bidded_sections) == 5) {
+                                            array_push($bid_row_errors, "section limit reached");
+                                        }
+
+                                        //not enough e-dollar
+                                        if($amount > $studentdao->get_balance($userid)){
+                                            array_push($bid_row_errors, "not enough e-dollar");
                                         }
                                     }
                                 }
-    
-                                //incomplete prerequisites
-                                $prerequisites_needed = $prerequisitedao->get_prerequisite_courses($code);
-                                $student_completed_courses = $coursecompleteddao->get_completed_courses($userid);
-                                foreach($prerequisites_needed as $this_prerequisite) {
-                                    if(!in_array($this_prerequisite, $student_completed_courses)) {
-                                        array_push($bid_row_errors, "incomplete prerequisites");
-                                    }
-                                }
-    
-                                //student has already completed this course
-                                if(in_array($code, $student_completed_courses)){
-                                    array_push($bid_row_errors, "course completed");
-                                }
-    
-                                //not enough e-dollar
-                                if($amount > $studentdao->get_balance($userid)){
-                                    array_push($bid_row_errors, "not enough e-dollar");
-                                }
             
-                                if(empty($bid_row_errors)) {
-                                    if($biddao->bid_already_exists($userid, $code, $section, 1)) {
-                                        $success = $biddao->update_bid_for_bootstrap($userid, $amount, $code, $section);
-                                    } else {
-                                        $success = $biddao->add_bid($userid, $amount, $code, $section, 1);
+                                if(empty($bid_row_errors)) { // if no error in this row, aka add/update bid
+                                    $bid_already_exists = false;
+
+                                    $pending_bidded_sections = $biddao->get_pending_bids_and_amount($userid, 1);
+                                    foreach($pending_bidded_sections as [$existing_course, $existing_section, $existing_amount]) {
+                                        if($existing_course == $code && $existing_section == $section) { // if bid for this course+section already exists
+                                            $update_bid_success = $biddao->update_bid_for_bootstrap($userid, $amount, $code, $section);
+
+                                            $refund_balance_success = $studentdao->add_balance($userid, $existing_amount); // refund $ for existing bid
+
+                                            $deduct_balance_success = $studentdao->deduct_balance($userid, $amount); // deduct $ for new bid
+
+                                            $bid_already_exists = true;
+                                            $success = $update_bid_success && $refund_balance_success && $deduct_balance_success;
+                                            break;
+                                        }
                                     }
+
+                                    if($bid_already_exists == false) {
+                                        $add_bid_success = $biddao->add_bid($userid, $amount, $code, $section, 1);
+                                        $deduct_balance_success = $studentdao->deduct_balance($userid, $amount);
+
+                                        $success = $add_bid_success && $deduct_balance_success;
+                                    }
+
                                     if($success) {
                                         $bid_processed++;
-                                        $studentdao->deduct_balance($userid, $amount);
                                     } 
-                                } else {
+
+                                } else { // if there is error(s) in this row, aka don't add/update bid
                                     $error = [
                                         "file" => "bid.csv",
                                         "line" => $bid_row_count,
@@ -622,9 +705,11 @@
                             unlink($bid_path);
             
                             if(!isEmpty($json_errors)){
-                                $sortclass = new Sort();
-                                $json_errors = $sortclass->sort_it($json_errors,"file");
-                                $num_record_loaded = $sortclass->sort_it($num_record_loaded, "filename");
+                                // $sortclass = new Sort();
+                                // $json_errors = $sortclass->sort_it($json_errors,"file");
+                                // $num_record_loaded = $sortclass->sort_it($num_record_loaded, "filename");
+
+                                // ^ no need sort bc everything alr the correct order according to the way we processed the bootstrap right? eg. order of files
                                 
                                 $result = [
                                     "status" => "error",
@@ -635,8 +720,8 @@
                                 $biddingrounddao->start_round(1);
                             }
                             else{
-                                $sortclass = new Sort();
-                                $num_record_loaded = $sortclass->sort_it($num_record_loaded, "filename");
+                                // $sortclass = new Sort();
+                                // $num_record_loaded = $sortclass->sort_it($num_record_loaded, "filename");
                                 $result = [
                                     "status" => "success",
                                     "num-record-loaded" => $num_record_loaded

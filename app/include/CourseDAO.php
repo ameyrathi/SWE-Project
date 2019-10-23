@@ -131,7 +131,7 @@ class CourseDAO {
 
         $stmt->execute();
 
-        return $stmt->fetch()[0];
+        return $stmt->fetch();
     }
 
     function retrieve_all_courses(){
@@ -158,6 +158,6 @@ class CourseDAO {
 }
 
 // $CourseDAO = new CourseDAO();
-// var_dump($CourseDAO->get_exam_date_start_end("IS100"));
+// var_dump($CourseDAO->get_course("IS100") == true);
 
 ?>

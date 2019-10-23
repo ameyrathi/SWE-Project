@@ -28,13 +28,13 @@
             } else { // if username is correct but password is wrong
                 $result = [
                     "status" => "error",
-                    "message" => ["invalid username/password"]
+                    "message" => ["invalid password"]
                     ];
             }
         } else { // if username not in database
             $result = [
                 "status" => "error",
-                "message" => ["invalid username/password"]
+                "message" => ["invalid username"]
                 ];
         }
     }
