@@ -12,7 +12,8 @@
         $result = [
             "status" => "error",
             "message" => array_values($errors)
-            ];
+        ];
+        sort($result["message"]);
     }
     else{
         if(isset($_GET["token"])) {
@@ -20,7 +21,7 @@
                 $result = [
                     "status" => "error",
                     "message" => ["invalid token"]
-                    ];
+                ];
             }
             else{
                 if(isset($_GET["r"])){
@@ -40,6 +41,7 @@
                             "status" => "error",
                             "message" => $errors
                         ];
+                        sort($result["message"]);
                     }
                     else{
             
@@ -60,11 +62,6 @@
                         $round = $biddingrounddao->get_round();
                         $status = $biddingrounddao->get_status();
 
-                        //invalid userid check
-                        if(!$studentdao->validUser($userid)){
-                            array_push($errors, "invalid userid");
-                        }
-            
                         //invalid amount
                         if(is_numeric($amount)){
                             if((int)$amount < 10 || strlen(substr(strrchr($amount, "."), 1)) > 2){
@@ -74,17 +71,22 @@
                         else{
                             array_push($errors, "invalid amount");
                         }
-                        
+
                         //invalid course check
                         if(!$coursedao->get_course($course)){
                             array_push($errors, "invalid course");
                         }
-            
+
                         //invalid section check
                         if($coursedao->get_course($course)){
                             if(!$sectiondao->is_valid_section($course, $section)){
                                 array_push($errors, "invalid section");
                             }
+                        }
+
+                        //invalid userid check
+                        if(!$studentdao->validUser($userid)){
+                            array_push($errors, "invalid userid");
                         }
             
                         if(!isEmpty($errors)){
@@ -92,21 +94,30 @@
                                 "status" => "error",
                                 "message" => $errors
                             ];
+                            sort($result["message"]);
                         }
                         else{
-            
+
                             if($biddao->bid_already_exists($userid, $course, $section, $round)){
-                                $studentdao->add_balance($userid, $amount);
+                                $bidded_amount_before = $biddao->get_amount($userid, $course, $section, $round);
+                                $studentdao->add_balance($userid, $bidded_amount_before);
                                 if($amount > $studentdao->get_balance($userid)){
                                     array_push($errors, "insufficient e$");
+                                    $studentdao->deduct_balance($userid, $bidded_amount_before);
                                 }
-            
-                                //bid too low
-                                if($round == 2){
-                                    $min_bid = process_min_bid($course, $section);
-                                    if($amount < $min_bid){
-                                        array_push($errors, "bid too low");
+                                else{
+                                    //bid too low
+                                    if($round == 2){
+                                        $min_bid = process_min_bid($course, $section);
+                                        if($amount < $min_bid){
+                                            array_push($errors, "bid too low");
+                                        }
                                     }
+                                }
+                            }
+                            else{
+                                if($amount > $studentdao->get_balance($userid)){
+                                    array_push($errors, "insufficient e$");
                                 }
                             }
 
@@ -177,26 +188,35 @@
                             }
             
                             //not own school course
-                            if($round != 2){
+                            if($round == 1){
                                 if($coursedao->get_school($course) != $studentdao->get_school($userid)) {
                                     array_push($errors, "not own school course");
                                 }
                             }
             
                             //no vacancy
-                            if($round == 2){
-                                $seats = $sectionresultsdao->get_available_seats($course, $section);
-                                if($seats < 1){
+                            if($round == 1){
+                                $size = $sectiondao->get_size($course, $section);
+                                if($size == 0){
                                     array_push($errors, "no vacancy");
                                 }
                             }
-                            
+                            else{
+                                if($round == 2){
+                                    $seats = $sectionresultsdao->get_available_seats($course, $section);
+                                    if($seats == 0){
+                                        array_push($errors, "no vacancy");
+                                    }
+                                }
+                            }
             
                             if(!isEmpty($errors)){
+                                sort($errors);
                                 $result =[
                                     "status" => "error",
                                     "message" => $errors
                                 ];
+                                sort($result["message"]);
                             }
                             else{
                                 if($biddao->bid_already_exists($userid, $course, $section, $round)){

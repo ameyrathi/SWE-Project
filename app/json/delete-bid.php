@@ -12,6 +12,7 @@
             "status" => "error",
             "message" => array_values($errors)
         ];
+        sort($result["message"]);
     }
     else{
         if(isset($_GET["token"])) {
@@ -39,6 +40,7 @@
                             "status" => "error",
                             "message" => $errors
                         ];
+                        sort($result["message"]);
                     }
                     else{
             
@@ -95,6 +97,7 @@
                                 "status" => "error",
                                 "message" => $errors
                             ];
+                            sort($result["message"]);
                         }
                         else{
                             $amount = $biddao->bid_already_exists($userid, $course, $section, $round)[1];

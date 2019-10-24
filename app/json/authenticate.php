@@ -11,6 +11,7 @@
             "status" => "error",
             "message" => array_values($errors)
         ];
+        sort($result["message"]);
     }
     else{
         $username = $_POST["username"];
@@ -39,10 +40,6 @@
                 "message" => ["invalid username"]
             ];
         }
-    }
-
-    if(isset($result["message"])) {
-        sort($result["message"]);
     }
 
     header('Content-Type: application/json');

@@ -4,7 +4,7 @@
     require_once '../include/token.php';
 
     // isMissingOrEmpty(...) is in common.php
-    $errors = [ isMissingOrEmpty ("r")];
+    $errors = [ isMissingOrEmpty ("token"), isMissingOrEmpty ("r")];
     $errors = array_filter($errors);
 
     if (!isEmpty($errors)) { // if missing or empty token
@@ -12,6 +12,7 @@
             "status" => "error",
             "message" => array_values($errors)
         ];
+        sort($result["message"]);
     }
     else{
         if(isset($_GET["token"])) {
@@ -39,6 +40,7 @@
                             "status" => "error",
                             "message" => $errors
                         ];
+                        sort($result["message"]);
                     }
                     else{
                         $coursedao = new CourseDAO();
