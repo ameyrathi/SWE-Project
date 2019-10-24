@@ -10,11 +10,6 @@ class Sort {
 		return $a["file"] > $b["file"] ? 1 : -1;
 	}
 
-	function filename($a, $b)
-	{
-		return ($a > $b) ? -1 : 1;
-	}
-
 	function sort_it($list,$sorttype)
 	{
 		usort($list,array($this,$sorttype));

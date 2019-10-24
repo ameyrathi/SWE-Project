@@ -204,11 +204,12 @@
                                         "line" => $student_row_count,
                                         "message" => $student_row_errors
                                     ];
+                                    sort($error["message"]);
                                     array_push($json_errors, $error);
                                 }
                                 $student_row_count++;
                             }
-                            array_push($num_record_loaded, array('student.csv' => $student_processed));
+                            $num_record_loaded["student.csv"] = $student_processed;
                             fclose($student_file);
                             unlink($student_path);
             
@@ -282,11 +283,12 @@
                                         "line" => $course_row_count,
                                         "message" => $course_row_errors
                                     ];
+                                    sort($error["message"]);
                                     array_push($json_errors, $error);
                                 }
                                 $course_row_count++;
                             }
-                            array_push($num_record_loaded, array('course.csv' => $course_processed));
+                            $num_record_loaded["course.csv"] = $course_processed;
                             fclose($course_file);
                             unlink($course_path);
             
@@ -406,11 +408,12 @@
                                         "line" => $section_row_count,
                                         "message" => $section_row_errors
                                     ];
+                                    sort($error["message"]);
                                     array_push($json_errors, $error);
                                 }
                                 $section_row_count++;
                             }
-                            array_push($num_record_loaded, array('section.csv' => $section_processed));
+                            $num_record_loaded["section.csv"] = $section_processed;
                             fclose($section_file);
                             unlink($section_path);
             
@@ -459,11 +462,12 @@
                                         "line" => $prerequisite_row_count,
                                         "message" => $prerequisite_row_errors
                                     ];
+                                    sort($error["message"]);
                                     array_push($json_errors, $error);
                                 }
                                 $prerequisite_row_count++;
                             }
-                            array_push($num_record_loaded, array('prerequisite.csv' => $prerequisite_processed));
+                            $num_record_loaded["prerequisite.csv"] = $prerequisite_processed;
                             fclose($prerequisite_file);
                             unlink($prerequisite_path);
             
@@ -522,12 +526,13 @@
                                         "line" => $course_completed_row_count,
                                         "message" => $course_completed_row_errors
                                     ];
+                                    sort($error["message"]);
                                     array_push($json_errors, $error);
                                 }
                                 $course_completed_row_count++;
             
                             }
-                            array_push($num_record_loaded, array('course_completed.csv' => $course_completed_processed));
+                            $num_record_loaded["course_completed.csv"] = $course_completed_processed;
                             fclose($course_completed_file);
                             unlink($course_completed_path);
             
@@ -695,19 +700,25 @@
                                         "line" => $bid_row_count,
                                         "message" => $bid_row_errors
                                     ];
+                                    sort($error["message"]);
                                     array_push($json_errors, $error);
                                 }
                                 $bid_row_count++;
-                                }
-
-                            array_push($num_record_loaded, array('bid.csv' => $bid_processed));
+                            }
+                            $num_record_loaded["bid.csv"] = $bid_processed;
                             fclose($bid_file);
                             unlink($bid_path);
             
                             if(!isEmpty($json_errors)){
                                 $sortclass = new Sort();
                                 $json_errors = $sortclass->sort_it($json_errors,"file");
-                                $num_record_loaded = $sortclass->sort_it($num_record_loaded, "filename");
+
+                                ksort($num_record_loaded);
+                                $arr = [];
+                                foreach($num_record_loaded as $key=>$value){
+                                    array_push($arr, array($key=>$value));
+                                }
+                                $num_record_loaded = $arr;
                                 
                                 $result = [
                                     "status" => "error",
@@ -719,7 +730,14 @@
                             }
                             else{
                                 $sortclass = new Sort();
-                                $num_record_loaded = $sortclass->sort_it($num_record_loaded, "filename");
+
+                                ksort($num_record_loaded);
+                                $arr = [];
+                                foreach($num_record_loaded as $key=>$value){
+                                    array_push($arr, array($key=>$value));
+                                }
+                                $num_record_loaded = $arr;
+                                
                                 $result = [
                                     "status" => "success",
                                     "num-record-loaded" => $num_record_loaded
