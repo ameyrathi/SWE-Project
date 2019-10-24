@@ -53,7 +53,6 @@
                         $section = $tempArr["section"];
         
                         $status = $biddingrounddao->get_status();
-                        $round = $biddingrounddao->get_round();
         
                         //invalid course check
                         if(!$coursedao->get_course($course)){
@@ -73,12 +72,7 @@
                         }
         
                         //round not active
-                        if($round == 2){
-                            if($status != "Ongoing"){
-                                array_push($errors, "round not active");
-                            }
-                        }
-                        else{
+                        if($status != "Ongoing"){
                             array_push($errors, "round not active");
                         }
         
