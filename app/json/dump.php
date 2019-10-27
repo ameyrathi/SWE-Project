@@ -31,6 +31,8 @@
                 $biddingrounddao = new BiddingRoundDAO();
                 $successfuldao = new SuccessfulDAO();
 
+                $days_of_week = ['1'=>'Monday', '2'=>'Tuesday', '3'=>'Wednesday', '4'=>'Thursday', '5'=>'Friday'];
+
                 $current_round = $biddingrounddao->get_current_round();
                 
                 $courses = $coursedao->retrieve_all_courses();
@@ -72,8 +74,8 @@
                         "title" => $title,
                         "description" => $description,
                         "examdate" => $examdate,
-                        "examstart" => $examstart,
-                        "examend" => $examend
+                        "examstart" => date('Gi',strtotime($examstart)),
+                        "examend" => date('Gi',strtotime($examend))
                     ];
 
                     array_push($courseJSON, $temp_arr);
@@ -92,12 +94,12 @@
                     $temp_arr = [
                         "course" => $course,
                         "section" => $section,
-                        "day" => $day,
-                        "start" => $start,
-                        "end" => $end,
+                        "day" => $days_of_week[$day],
+                        "start" => date('Gi',strtotime($start)),
+                        "end" => date('Gi',strtotime($end)),
                         "instructor" => $instructor,
                         "venue" => $venue,
-                        "size" => $size
+                        "size" => intval($size)
                     ];
 
                     array_push($sectionJSON, $temp_arr);
@@ -115,7 +117,7 @@
                         "password" => $password,
                         "name" => $name,
                         "school" => $school,
-                        "edollar" => $edollar
+                        "edollar" => floatval($edollar)
                     ];
 
                     array_push($studentJSON, $temp_arr);
@@ -141,7 +143,7 @@
 
                     $temp_arr = [
                         "userid" => $userid,
-                        "amount" => $amount,
+                        "amount" => floatval($amount),
                         "course" => $course,
                         "section" => $section
                     ];
@@ -185,7 +187,7 @@
     
                         $temp_arr = [
                             "userid" => $userid,
-                            "amount" => $amount,
+                            "amount" => floatval($amount),
                             "course" => $course,
                             "section" => $section
                         ];
@@ -197,9 +199,9 @@
 
                     $result = [
                         "status" => "success",
-                        "courses" => $courseJSON,
+                        "course" => $courseJSON,
                         "section" => $sectionJSON,
-                        "students" => $studentJSON,
+                        "student" => $studentJSON,
                         "prerequisite" => $prerequisiteJSON,
                         "bid" => $bidJSON,
                         "completed-course" => $completed_courseJSON,
@@ -214,7 +216,8 @@
                         "students" => $studentJSON,
                         "prerequisite" => $prerequisiteJSON,
                         "bid" => $bidJSON,
-                        "completed-course" => $completed_courseJSON
+                        "completed-course" => $completed_courseJSON,
+                        "section-student" => []
                     ];
                 
                 }
@@ -229,6 +232,6 @@
     }
 
     header('Content-Type: application/json');
-    echo json_encode($result, JSON_PRETTY_PRINT);
+    echo json_encode($result, JSON_PRETTY_PRINT | JSON_PRESERVE_ZERO_FRACTION);
 
 ?>
