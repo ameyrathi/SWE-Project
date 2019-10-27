@@ -380,6 +380,18 @@ class BidDAO {
         }
 
         $stmt = $conn->prepare("SELECT * FROM $table WHERE userid=:userid AND code=:courseid AND section=:section");
+
+        $stmt->bindParam(":userid", $userid);
+        $stmt->bindParam(":courseid", $course);
+        $stmt->bindParam(":section", $section);
+
+        $stmt->execute();
+
+        if($row = $stmt->fetch()) {
+            return $row['amount'];
+        }
+        
+        return false;
     }
 
     function retrieve_course_section_bids($course, $section, $current_round){
