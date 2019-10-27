@@ -80,15 +80,9 @@
                         }
             
                         //no such bid
-                        if($status == "Ongoing"){
-                            if($studentdao->validUser($userid)){
-                                if($coursedao->get_course($course)){
-                                    if($sectiondao->is_valid_section($course, $section)){
-                                        if(!$biddao->bid_already_exists($userid, $course, $section, 1)){
-                                            array_push($errors, "no such bid");
-                                        }
-                                    }
-                                }
+                        if(isEmpty($errors)) {
+                            if(!$biddao->bid_already_exists($userid, $course, $section, $round)){
+                                array_push($errors, "no such bid");
                             }
                         }
             
@@ -100,10 +94,10 @@
                             sort($result["message"]);
                         }
                         else{
-                            $amount = $biddao->bid_already_exists($userid, $course, $section, $round)[1];
-                            $success = $biddao->drop_bid($userid, $course, $round);
+                            $amount = $biddao->get_amount($userid, $course, $section, $round);
+                            $success = $biddao->drop_bid($userid, $course, $round) && $studentdao->add_balance($userid, $amount);
+
                             if($success){
-                                $studentdao->add_balance($userid, $amount);
                                 $result = [
                                     "status" => "success"
                                 ];
