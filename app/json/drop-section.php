@@ -75,12 +75,7 @@
                         }
         
                         //round not active
-                        if($round == 2){
-                            if($status != "Ongoing"){
-                                array_push($errors, "round not active");
-                            }
-                        }
-                        else{
+                        if($status != "Ongoing"){
                             array_push($errors, "round not active");
                         }
         
