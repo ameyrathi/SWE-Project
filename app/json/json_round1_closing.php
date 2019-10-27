@@ -1,6 +1,6 @@
 <?php
 
-function close_bidding_round1(){
+function json_close_bidding_round1(){
     $biddao = new BidDAO();
     $sectiondao = new SectionDAO();
     $sectionresultsdao = new SectionResultsDAO();
