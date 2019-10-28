@@ -29,14 +29,23 @@
             
                     $errors = [];
             
-                    foreach($tempArr as $key => $value){
-                        if(str_replace(' ', '' , $value) == ''){
-                            array_push($errors, "blank $key");
+                    if(!is_array($tempArr)){
+                        array_push($errors, "invalid format");
+                    }
+                    else{
+                        foreach($tempArr as $key => $value){
+                            if(str_replace(' ', '' , $value) == ''){
+                                array_push($errors, "blank $key");
+                            }
+                        }
+                        
+                        if(!array_key_exists("userid", $tempArr)){
+                            array_push($errors, "missing userid");
                         }
                     }
             
                     if(!isEmpty($errors)){
-                        $result =[
+                        $result = [
                             "status" => "error",
                             "message" => $errors
                         ];
@@ -53,7 +62,7 @@
                         }
         
                         if(!isEmpty($errors)){
-                            $result =[
+                            $result = [
                                 "status" => "error",
                                 "message" => $errors
                             ];
@@ -80,7 +89,7 @@
             }
         }
         else{
-            $result =[
+            $result = [
                 "status" => "error",
                 "message" => ["HTTP REQUEST NOT FOUND"]
             ];

@@ -29,14 +29,27 @@
             
                     $errors = [];
             
-                    foreach($tempArr as $key => $value){
-                        if(str_replace(' ', '' , $value) == ''){
-                            array_push($errors, "blank $key");
+                    if(!is_array($tempArr)){
+                        array_push($errors, "invalid format");
+                    }
+                    else{
+                        foreach($tempArr as $key => $value){
+                            if(str_replace(' ', '' , $value) == ''){
+                                array_push($errors, "blank $key");
+                            }
+                        }
+    
+                        if(!array_key_exists("course", $tempArr)){
+                            array_push($errors, "missing course");
+                        }
+    
+                        if(!array_key_exists("section", $tempArr)){
+                            array_push($errors, "missing section");
                         }
                     }
             
                     if(!isEmpty($errors)){
-                        $result =[
+                        $result = [
                             "status" => "error",
                             "message" => $errors
                         ];
@@ -69,7 +82,7 @@
                         }
         
                         if(!isEmpty($errors)){
-                            $result =[
+                            $result = [
                                 "status" => "error",
                                 "message" => $errors
                             ];
@@ -97,7 +110,7 @@
                                     array_push($success, $res);
                                 }
         
-                                $result =[
+                                $result = [
                                     "status" => "success",
                                     "bids" => $success
                                 ];
@@ -135,7 +148,7 @@
                                     array_push($success, $res);
                                 }
         
-                                $result =[
+                                $result = [
                                     "status" => "success",
                                     "bids" => $success
                                 ];
@@ -143,47 +156,49 @@
                             else{
                                 if($status == "Not Started"){
                                     if($round == 1){
-                                        $result =[
+                                        $result = [
                                             "status" => "error",
                                             "message" => ["no active round"]
                                         ];
                                     }
                                     else{
-                                        $successful_bids = $successfuldao->retrieve_successful_bids($course, $section, 1);
+                                        if($round == 2){
+                                            $successful_bids = $successfuldao->retrieve_successful_bids($course, $section, 1);
         
-                                        for($i=0; $i<count($successful_bids); $i++){
-                                            array_push($successful_bids[$i], "in");
-                                        }
-                
-                                        $unsuccessful_bids = $unsuccessfuldao->retrieve_unsuccessful_bids($course, $section, 1);
-                
-                                        for($i=0; $i<count($unsuccessful_bids); $i++){
-                                            array_push($unsuccessful_bids[$i], "out");
-                                        }
-                
-                                        $bids = array_merge($successful_bids, $unsuccessful_bids);
-                                        $sortclass = new Sort();
-                                        
-                                        $bids = $sortclass->sort_it($bids, "bid_dump");
-                                        for($i=0; $i<count($bids); $i++){
-                                            $userid = $bids[$i][0];
-                                            $amount = $bids[$i][1];
-                                            $result = $bids[$i][4];
-                
-                                            $res = [
-                                                "row" => $i+1,
-                                                "userid" => $userid,
-                                                "amount" => floatval($amount),
-                                                "result" => $result
+                                            for($i=0; $i<count($successful_bids); $i++){
+                                                array_push($successful_bids[$i], "in");
+                                            }
+                    
+                                            $unsuccessful_bids = $unsuccessfuldao->retrieve_unsuccessful_bids($course, $section, 1);
+                    
+                                            for($i=0; $i<count($unsuccessful_bids); $i++){
+                                                array_push($unsuccessful_bids[$i], "out");
+                                            }
+                    
+                                            $bids = array_merge($successful_bids, $unsuccessful_bids);
+                                            $sortclass = new Sort();
+                                            
+                                            $bids = $sortclass->sort_it($bids, "bid_dump");
+                                            for($i=0; $i<count($bids); $i++){
+                                                $userid = $bids[$i][0];
+                                                $amount = $bids[$i][1];
+                                                $result = $bids[$i][4];
+                    
+                                                $res = [
+                                                    "row" => $i+1,
+                                                    "userid" => $userid,
+                                                    "amount" => floatval($amount),
+                                                    "result" => $result
+                                                ];
+                    
+                                                array_push($success, $res);
+                                            }
+                    
+                                            $result = [
+                                                "status" => "success",
+                                                "bids" => $success
                                             ];
-                
-                                            array_push($success, $res);
                                         }
-                
-                                        $result =[
-                                            "status" => "success",
-                                            "bids" => $success
-                                        ];
                                     }
                                 }
                             }

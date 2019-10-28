@@ -25,19 +25,18 @@
                 $biddingrounddao = new BiddingRoundDAO();
                 $round = $biddingrounddao->get_round();
                 $status = $biddingrounddao->get_status();
-
-                // not started, ongoing, ended
+                
                 if($status == "Not Started"){
                     $result = [
                         "status" => "success",
-                        "round" => $round
+                        "round" => (int)$round
                     ];
                     $biddingrounddao->start_round($round);
                 }
                 else if($status == "Ongoing"){
                     $result = [
                         "status" => "success",
-                        "round" => $round
+                        "round" => (int)$round
                     ];
                 }
                 else{
@@ -62,7 +61,7 @@
             }
         }
         else{
-            $result =[
+            $result = [
                 "status" => "error",
                 "message" => ["HTTP REQUEST NOT FOUND"]
             ];

@@ -320,7 +320,7 @@ class SuccessfulDAO{
         $result = [];
 
         while($row = $stmt->fetch()) {
-            $student_list = [];
+            $bids_list = [];
             foreach($row as $idx => $value) {
                 array_push($bids_list, $value);
             }

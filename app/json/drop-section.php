@@ -29,14 +29,31 @@
             
                     $errors = [];
             
-                    foreach($tempArr as $key => $value){
-                        if(str_replace(' ', '' , $value) == ''){
-                            array_push($errors, "blank $key");
+                    if(!is_array($tempArr)){
+                        array_push($errors, "invalid format");
+                    }
+                    else{
+                        foreach($tempArr as $key => $value){
+                            if(str_replace(' ', '' , $value) == ''){
+                                array_push($errors, "blank $key");
+                            }
+                        }
+                        
+                        if(!array_key_exists("userid", $tempArr)){
+                            array_push($errors, "missing userid");
+                        }
+    
+                        if(!array_key_exists("course", $tempArr)){
+                            array_push($errors, "missing course");
+                        }
+    
+                        if(!array_key_exists("section", $tempArr)){
+                            array_push($errors, "missing section");
                         }
                     }
             
                     if(!isEmpty($errors)){
-                        $result =[
+                        $result = [
                             "status" => "error",
                             "message" => $errors
                         ];
@@ -61,6 +78,11 @@
                         if(!$coursedao->get_course($course)){
                             array_push($errors, "invalid course");
                         }
+
+                        //invalid userid check
+                        if(!$studentdao->validUser($userid)){
+                            array_push($errors, "invalid userid");
+                        }
         
                         //invalid section check
                         if($coursedao->get_course($course)){
@@ -69,18 +91,13 @@
                             }
                         }
         
-                        //invalid userid check
-                        if(!$studentdao->validUser($userid)){
-                            array_push($errors, "invalid userid");
-                        }
-        
                         //round not active
                         if($status != "Ongoing"){
                             array_push($errors, "round not active");
                         }
         
                         if(!isEmpty($errors)){
-                            $result =[
+                            $result = [
                                 "status" => "error",
                                 "message" => $errors
                             ];
@@ -98,7 +115,7 @@
                                 }
                             }
                             else{
-                                $result =[
+                                $result = [
                                     "status" => "error",
                                     "message" => ["no such enrollment found"]
                                 ];

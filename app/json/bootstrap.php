@@ -388,7 +388,7 @@
                 
                                     // invalid size check
                                     if(is_numeric($size)){
-                                        if((int)$size <= 0){
+                                        if((int)$size < 0){
                                             array_push($section_row_errors, "invalid size");
                                         }
                                     }

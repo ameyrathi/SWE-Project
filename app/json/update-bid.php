@@ -29,15 +29,36 @@
                     $tempArr = json_decode($_GET["r"], true);
             
                     $errors = [];
-                    
-                    foreach($tempArr as $key => $value){
-                        if(str_replace(' ', '' , $value) == ''){
-                            array_push($errors, "blank $key");
+
+                    if(!is_array($tempArr)){
+                        array_push($errors, "invalid format");
+                    }
+                    else{
+                        foreach($tempArr as $key => $value){
+                            if(str_replace(' ', '' , $value) == ''){
+                                array_push($errors, "blank $key");
+                            }
+                        }
+                        
+                        if(!array_key_exists("userid", $tempArr)){
+                            array_push($errors, "missing userid");
+                        }
+    
+                        if(!array_key_exists("amount", $tempArr)){
+                            array_push($errors, "missing amount");
+                        }
+    
+                        if(!array_key_exists("course", $tempArr)){
+                            array_push($errors, "missing course");
+                        }
+    
+                        if(!array_key_exists("section", $tempArr)){
+                            array_push($errors, "missing section");
                         }
                     }
             
                     if(!isEmpty($errors)){
-                        $result =[
+                        $result = [
                             "status" => "error",
                             "message" => $errors
                         ];
@@ -53,6 +74,7 @@
                         $coursecompleteddao = new CourseCompletedDAO();
                         $biddingrounddao = new BiddingRoundDAO();
                         $successfuldao = new SuccessfulDAO();
+                        $sectionresultsdao = new SectionResultsDAO();
             
                         $userid = $tempArr["userid"];
                         $amount = $tempArr["amount"];
@@ -97,7 +119,7 @@
                         }
 
                         if(!isEmpty($errors)){
-                            $result =[
+                            $result = [
                                 "status" => "error",
                                 "message" => $errors
                             ];
@@ -183,7 +205,8 @@
                                     array_push($errors, "course enrolled");
                                 }
                             }
-            
+
+
                             //section limit reached
                             if($round == 1) { // round 1 ongoing
                                 $pending_bidded_sections = $biddao->get_pending_bids_and_amount($userid, 1);
@@ -232,7 +255,7 @@
             
                             if(!isEmpty($errors)){
                                 sort($errors);
-                                $result =[
+                                $result = [
                                     "status" => "error",
                                     "message" => $errors
                                 ];
@@ -243,7 +266,6 @@
                                     $previous_bid_amount = $biddao->get_amount($userid, $course, $section, $round); // bid to be replaced
 
                                     $success = $biddao->update_bid($userid, $amount, $course, $section, $round) && $studentdao->add_balance($userid, $previous_bid_amount) && $studentdao->deduct_balance($userid, $amount);
-
                                     if($success){
                                         $result = [
                                             "status" => "success"
@@ -252,7 +274,7 @@
                                 } else { // NEW bid
                                     $success = $biddao->add_bid($userid, $amount, $course, $section, $round) && $studentdao->deduct_balance($userid, $amount);
                                     if($success){
-                                        $result =[
+                                        $result = [
                                             "status" => "success"
                                         ];
                                     }
@@ -264,7 +286,7 @@
             }
         }
         else{
-            $result =[
+            $result = [
                 "status" => "error",
                 "message" => ["HTTP REQUEST NOT FOUND"]
             ];

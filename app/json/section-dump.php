@@ -29,14 +29,27 @@
             
                     $errors = [];
             
-                    foreach($tempArr as $key => $value){
-                        if(str_replace(' ', '' , $value) == ''){
-                            array_push($errors, "blank $key");
+                    if(!is_array($tempArr)){
+                        array_push($errors, "invalid format");
+                    }
+                    else{
+                        foreach($tempArr as $key => $value){
+                            if(str_replace(' ', '' , $value) == ''){
+                                array_push($errors, "blank $key");
+                            }
+                        }
+    
+                        if(!array_key_exists("course", $tempArr)){
+                            array_push($errors, "missing course");
+                        }
+    
+                        if(!array_key_exists("section", $tempArr)){
+                            array_push($errors, "missing section");
                         }
                     }
             
                     if(!isEmpty($errors)){
-                        $result =[
+                        $result = [
                             "status" => "error",
                             "message" => $errors
                         ];
@@ -67,7 +80,7 @@
                         }
         
                         if(!isEmpty($errors)){
-                            $result =[
+                            $result = [
                                 "status" => "error",
                                 "message" => $errors
                             ];
@@ -92,7 +105,7 @@
                                     array_push($success, $res);
                                 }
         
-                                $result =[
+                                $result = [
                                     "status" => "success",
                                     "students" => $success
                                 ];
@@ -123,14 +136,14 @@
                             }
                             else{
                                 if($round == 1){
-                                    $result =[
+                                    $result = [
                                         "status" => "error",
                                         "message" => ["round 1 ongoing"]
                                     ];
                                 }
                                 else{
                                     if($round == 0.5){
-                                        $result =[
+                                        $result = [
                                             "status" => "error",
                                             "message" => ["round 1 not started"]
                                         ];
@@ -143,7 +156,7 @@
             }
         }
         else{
-            $result =[
+            $result = [
                 "status" => "error",
                 "message" => ["HTTP REQUEST NOT FOUND"]
             ];
