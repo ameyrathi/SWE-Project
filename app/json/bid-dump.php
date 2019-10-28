@@ -90,7 +90,7 @@
                                     $res = [
                                         "row" => $i+1,
                                         "userid" => $userid,
-                                        "amount" => $amount,
+                                        "amount" => floatval($amount),
                                         "result" => "-"
                                     ];
         
@@ -128,7 +128,7 @@
                                     $res = [
                                         "row" => $i+1,
                                         "userid" => $userid,
-                                        "amount" => $amount,
+                                        "amount" => floatval($amount),
                                         "result" => $result
                                     ];
         
@@ -173,7 +173,7 @@
                                             $res = [
                                                 "row" => $i+1,
                                                 "userid" => $userid,
-                                                "amount" => $amount,
+                                                "amount" => floatval($amount),
                                                 "result" => $result
                                             ];
                 
@@ -201,7 +201,7 @@
     }
 
     header('Content-Type: application/json');
-    echo json_encode($result, JSON_PRETTY_PRINT);
+    echo json_encode($result, JSON_PRETTY_PRINT | JSON_PRESERVE_ZERO_FRACTION);
 
 
 ?>
