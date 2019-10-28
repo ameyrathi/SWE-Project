@@ -132,6 +132,7 @@
                     <td>$section</td>
                     <td>$amount</td>
                     <td>Successful (Round 1)</td>
+                    <td></td>
                 </tr>
                 ";
             }
@@ -235,6 +236,7 @@
                     <td>$section</td>
                     <td>$amount</td>
                     <td>Successful (Round 1)</td>
+                    <td></td>
                 </tr>
                 ";
             }
@@ -247,6 +249,7 @@
                     <td>$section</td>
                     <td>$amount</td>
                     <td>Successful (Round 2)</td>
+                    <td></td>
                 </tr>
                 ";
             }
@@ -313,7 +316,7 @@
 
         $days = [1, 2, 3, 4, 5];
         $timeslots = ['08:30', '11:45', '12:00', '15:15', '15:30', '18:45', '19:00', '22:15'];
-        $break_timeslots = ['11:45', '15:15', '18:45'];
+        $break_timeslots = ['11:45', '15:15', '18:45', '22:15'];
 
         $sectiondao = new SectionDAO();
 
