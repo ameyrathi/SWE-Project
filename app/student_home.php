@@ -39,7 +39,7 @@
 
         if($drop_success) {
             $balance = $StudentDAO->get_balance($_SESSION["userid"]);
-            $drop_message = "<span id='success'>Your bid for $drop_bid_courseid $drop_bid_sectionid has been successfully dropped.<br>You have been refunded $$drop_bid_amount.<br>Your e-balance is now $$balance.</span>";
+            $drop_message = "<span id='success'>Your bid for $drop_bid_courseid $drop_bid_sectionid has been successfully dropped.<br>You have been refunded $$drop_bid_amount.<br>Your e-balance is now $$balance.</span><br>";
         } else {
             echo "ERROR - FAILED TO DROP BID. TO DEBUG";
         }
@@ -57,7 +57,7 @@
 
         if($drop_success) {
             $balance = $StudentDAO->get_balance($_SESSION["userid"]);
-            $drop_message = "<span id='success'>Your section in $drop_section_courseid $drop_section_sectionid has been successfully dropped.<br>You have been refunded $$drop_section_amount.<br>Your e-balance is now $$balance.</span>";
+            $drop_message = "<span id='success'>Your section in $drop_section_courseid $drop_section_sectionid has been successfully dropped.<br>You have been refunded $$drop_section_amount.<br>Your e-balance is now $$balance.</span><br>";
         } else {
             echo "ERROR - FAILED TO DROP BID. TO DEBUG";
         }
@@ -69,13 +69,12 @@
 
 <!-- Page content -->
 <div class="content">
-    <h1>Welcome to BIOS, <?php echo $_SESSION["name"]; ?>!</h1>
-    <h1><?php echo $round_message;?></h1>
-    <h2>Your e$ balance is $<?php echo $balance; ?>.</h2><br>
+    <h1>Welcome to BIOS, <?php echo $_SESSION["name"]; ?>! 
+    Your e$ balance is $<?php echo $balance; ?>.</h1><br>
 
 <?php
     // view results segment
-    echo "<h1>Your Results:<h1>";
+    echo "<strong>Your Results:</strong><br><br>";
     $StudentDAO = new StudentDAO();
     $biddingrounddao = new BiddingRoundDAO();
     $current_round = $biddingrounddao->get_current_round();
@@ -283,16 +282,21 @@
             }     
         }
     }
-    echo "</table>";
+    echo "</table><br>";
 
     if(isset($drop_message)) {
-        echo "<br><br>$drop_message";
+        echo "<br>$drop_message";
     }
 
 
     // view timetable segment
-    if($current_round == 1.5 || $current_round == 2 || $current_round == 2.5) {
-        echo "<br><h1>Your Timetable:<h1>";
+    if($current_round == 1 || $current_round == 1.5 || $current_round == 2 || $current_round == 2.5) {
+        echo "<br><strong>Your Timetable:</strong><br><br>
+        
+        <div class='color-box' style='background-color:rgb(243, 182, 52);'></div> - Pending Bid<br>
+        <div class='color-box' style='background-color:rgb(0, 223, 30);'></div> - Successful Section
+        <br><br>"
+        ;
 
         echo 
         "
@@ -309,53 +313,64 @@
 
         $days = [1, 2, 3, 4, 5];
         $timeslots = ['08:30', '11:45', '12:00', '15:15', '15:30', '18:45', '19:00', '22:15'];
+        $break_timeslots = ['11:45', '15:15', '18:45'];
 
         $sectiondao = new SectionDAO();
+
         if($current_round == 2.5) {
             $successful_sections = $successfuldao->get_student_successful_bids($_SESSION["userid"],2);
-        } else { // if round 1.5 or 2
+        }
+
+        if($current_round == 1.5 || $current_round == 2) {
             $successful_sections = $successfuldao->get_student_successful_bids($_SESSION["userid"],1);
         }
 
+
         foreach($timeslots as $timeslot) {
-            echo 
-            "
-            <tr>
-                <th id='timeslot'>$timeslot</th>
-            ";
+
+            if(in_array($timeslot, $break_timeslots)) {
+                $height_style = "style='height:5px;'";
+            } else {
+                $height_style = "";
+            }
+
+            echo "<tr><th id='timeslot' $height_style>$timeslot</th>";
 
             $timeslot = date("H:i:s",strtotime($timeslot));
 
             for($timetable_day=1; $timetable_day<=5; $timetable_day++) {
                 $printed = false;
-                foreach($successful_sections as [$this_course, $this_section, $this_amount]) {
-                    [$day, $start, $end] = $sectiondao->get_timetable_details($this_course, $this_section);
-                    
-                    if($day == $timetable_day && $start == $timeslot) {
-                        echo "
-                        <td id='confirmed_timeslot'>
-                            $this_course $this_section<br>
-                            Bid: $$this_amount
-                        ";
 
-                        if($current_round == 2) {
-                            echo 
-                            "
-                            <br>
-                            <form id='drop_form'>
-                                <input type='hidden' name='drop_section_courseid' value=$this_course>
-                                <input type='hidden' name='drop_section_sectionid' value=$this_section>
-                                <input type='hidden' name='drop_section_amount' value=$this_amount>
-                                <input type='hidden' name='token' value=$token>
-                                <input type='submit' value='Drop Section' id='drop_button'>
-                            </form>
+                if($current_round != 1) {
+                    foreach($successful_sections as [$this_course, $this_section, $this_amount]) {
+                        [$day, $start, $end] = $sectiondao->get_timetable_details($this_course, $this_section);
+                        
+                        if($day == $timetable_day && $start == $timeslot) {
+                            echo "
+                            <td id='confirmed_timeslot' $height_style>
+                                $this_course $this_section<br>
+                                Bid: $$this_amount
                             ";
+
+                            if($current_round == 2) {
+                                echo 
+                                "
+                                <br>
+                                <form id='drop_form'>
+                                    <input type='hidden' name='drop_section_courseid' value=$this_course>
+                                    <input type='hidden' name='drop_section_sectionid' value=$this_section>
+                                    <input type='hidden' name='drop_section_amount' value=$this_amount>
+                                    <input type='hidden' name='token' value=$token>
+                                    <input type='submit' value='Drop Section' id='drop_button'>
+                                </form>
+                                ";
+                            }
+
+                            echo "</td>";
+
+                            $printed = true;
+                            break;
                         }
-
-                        echo "</td>";
-
-                        $printed = true;
-                        break;
                     }
                 }
 
@@ -367,7 +382,7 @@
                         
                         if($day == $timetable_day && $start == $timeslot) {
                             echo "
-                            <td id='pending_timeslot'>
+                            <td id='pending_timeslot' $height_style>
                                 $this_course $this_section<br>
                                 Bid: $$this_amount<br>
                                 <form id='drop_form'>
@@ -387,12 +402,12 @@
                 }
 
                 if(!$printed) {
-                    echo "<td id='timeslot_data'></td>";
+                    echo "<td id='timeslot_data' $height_style></td>";
                 }
             }
             echo "</tr>";
         }
-        echo "</table>";
+        echo "</table><br><br>";
     }
 ?>
 </div>

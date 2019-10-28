@@ -36,7 +36,7 @@ p, form {
     color: limegreen;
 }
 
-#view_results, #real_time_bids, #timetable {
+#view_results, #real_time_bids, #timetable, #section_search {
     font-family: "Arial", sans-serif;
     font-size: 16px;
     border-collapse: collapse;
@@ -59,6 +59,12 @@ td, th {
     border: 1px solid #ddd;
     padding: 8px;
     height: 50px;
+}
+
+#break_timeslot {
+    border: 1px solid #ddd;
+    padding: 8px;
+    height: 30px;
 }
 
 
@@ -129,11 +135,20 @@ input[type=button], input[type=submit], input[type=reset] {
     cursor: pointer;
 }
 
+.color-box {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    background-color: rgb(143, 23, 23);
+    /* left: 5px;
+    top: 5px; */
+}
+
 .sidebar {
     font-family: "Arial", sans-serif;
     margin: 0;
     padding: 0;
-    width: 200px;
+    width: 165px;
     background-color: #f1f1f1;
     position: fixed;
     height: 100%;
@@ -162,9 +177,10 @@ input[type=button], input[type=submit], input[type=reset] {
 
 /* Page content. The value of the margin-left property should match the value of the sidebar's width property */
 div.content {
-    margin-left: 230px;
+    margin-left: 200px;
     padding: 1px 16px;
     height: 1000px;
+    width:840px;
 }
 
 /* On screens that are less than 700px wide, make the sidebar into a topbar */
