@@ -1,6 +1,6 @@
 <?php
 // Change the value of $url to point to the web path that contains all your JSON APIs.
-$url = 'http://localhost/project/app/json/';
+$url = 'http://localhost/project-g5t5/app/json';
 
 // The directories that contains the test cases, expected JSON output, and where to save the actual JSON output recieved
 $directories = [

@@ -213,7 +213,7 @@
                         "status" => "success",
                         "course" => $courseJSON,
                         "section" => $sectionJSON,
-                        "students" => $studentJSON,
+                        "student" => $studentJSON,
                         "prerequisite" => $prerequisiteJSON,
                         "bid" => $bidJSON,
                         "completed-course" => $completed_courseJSON,
