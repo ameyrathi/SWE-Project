@@ -84,9 +84,12 @@ class Sort {
 	}
 
 	function section_dump($a, $b){
-
 		return ($a[0] > $b[0]) ? 1 : -1;
-	}
+    }
+    
+    function search_bid_course($a, $b) {
+        return ($a[0] > $b[0]) ? 1 : -1;
+    }
 
 }
 
