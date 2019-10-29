@@ -1,5 +1,7 @@
 <?php
+
 require_once 'include/common.php';
+require_once '../process_add_bid.php';
 
 function doBootstrap() {
 

@@ -231,8 +231,16 @@
                             //course enrolled
                             if($round == 2){
                                 $enrolled = $successfuldao->check_success($userid, $course, $section, 1);
+                                $successful_bids = $successfuldao->get_student_successful_bids($userid, 1);
                                 if($enrolled){
                                     array_push($errors, "course enrolled");
+                                }
+                                else{
+                                    foreach($successful_bids as $bids){
+                                        if(in_array($course, $bids)){
+                                            array_push($errors, "course enrolled");
+                                        }
+                                    }
                                 }
                             }
 

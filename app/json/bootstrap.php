@@ -1,6 +1,7 @@
 <?php
     require_once '../include/common.php';
     require_once '../include/token.php';
+    require_once '../process_add_bid.php';
 
     // isMissingOrEmpty(...) is in common.php
     $errors = [isMissingOrEmpty ("token")];
@@ -472,7 +473,7 @@
                             unlink($prerequisite_path);
             
                             //course_completed.csv
-                            $course_completed_list = fgetcsv($course_completed_file); # skip header
+                            $course_completed_headers_list = fgetcsv($course_completed_file); # skip header
                             $course_completed_row_count = 2;
             
                             while(($course_completed_row = fgetcsv($course_completed_file)) != false) {
