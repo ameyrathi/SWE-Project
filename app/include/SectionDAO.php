@@ -176,6 +176,31 @@ class SectionDAO {
             return array_values($row);
         }
     }
+
+    function get_course_sections_times($course) {
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("SELECT section, day, start, end, instructor FROM section WHERE course=:course");
+
+        $stmt->bindParam(":course", $course);
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            $result[] = array_values($row);
+        }
+
+        if($result != []) {
+            return $result;
+        }
+
+        return false;
+    }
 }
 
 
