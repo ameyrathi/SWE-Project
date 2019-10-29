@@ -1,6 +1,6 @@
 {
     "status": "success",
-    "courses": [
+    "course": [
         {
             "course": "ECON001",
             "school": "SOE",
