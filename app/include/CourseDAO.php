@@ -155,6 +155,28 @@ class CourseDAO {
         }
         return $result;
     }
+
+    function get_codes_and_titles() {
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        $stmt = $conn->prepare("SELECT course, title FROM course");
+
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+        $stmt->execute();
+
+        $result = [];
+
+        while($row = $stmt->fetch()) {
+            $course_list = [];
+            foreach($row as $idx => $value) {
+                array_push($course_list, $value);
+            }
+            array_push($result, $course_list);
+        }
+        return $result;
+    }
 }
 
 // $CourseDAO = new CourseDAO();
