@@ -184,12 +184,15 @@
 
                                     if($round == 2) {
                                         // check clash with ROUND 1 SUCCESSFUL bids
+                                        $bidding_class = $sectiondao->get_class_day_start_end($course, $section);
+                                        $round1_successful_bids = $successfuldao->get_successful_bids_and_amount($userid, 1);
+
                                         foreach($round1_successful_bids as [$existing_courseid, $existing_section, $this_amount]) {
 
                                             $existing_class = $sectiondao->get_class_day_start_end($existing_courseid, $existing_section);
                                             $class_clash_check = dont_clash($bidding_class[0], $bidding_class[1], $bidding_class[2], $existing_class[0], $existing_class[1], $existing_class[2]);
 
-                                            $bidding_exam = $coursedao->get_exam_date_start_end($courseid);
+                                            $bidding_exam = $coursedao->get_exam_date_start_end($course);
                                             $existing_exam = $coursedao->get_exam_date_start_end($existing_courseid);
                                             $exam_clash_check = dont_clash($bidding_exam[0], $bidding_exam[1], $bidding_exam[2], $existing_exam[0], $existing_exam[1], $existing_exam[2]);
 
