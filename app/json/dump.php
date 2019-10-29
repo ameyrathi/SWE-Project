@@ -211,7 +211,7 @@
                 else{
                     $result = [
                         "status" => "success",
-                        "courses" => $courseJSON,
+                        "course" => $courseJSON,
                         "section" => $sectionJSON,
                         "students" => $studentJSON,
                         "prerequisite" => $prerequisiteJSON,
