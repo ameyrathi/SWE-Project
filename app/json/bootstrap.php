@@ -662,9 +662,9 @@
                                         }
 
                                         //not enough e-dollar
-                                        if($amt = $biddao->bid_already_exists($userid, $code, $section, 1)){
-                                            $updated_amount = $studentdao->get_balance($userid) + $amt[1];
-                                            if($updated_amount > $studentdao->get_balance($userid)){
+                                        if($biddao->bid_already_exists($userid, $code, $section, 1)){
+                                            $updated_amount = $studentdao->get_balance($userid) + $biddao->get_amount($userid, $code, $section, 1);
+                                            if($amount > $updated_amount){
                                                 array_push($bid_row_errors, "not enough e-dollar");
                                             }
                                         }
