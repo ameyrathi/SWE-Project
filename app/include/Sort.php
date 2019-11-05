@@ -89,7 +89,20 @@ class Sort {
     
     function search_bid_course($a, $b) {
         return ($a[0] > $b[0]) ? 1 : -1;
-    }
+	}
+	
+	function bid_status($a, $b){
+		if($a["amount"] == $b["amount"]){
+			if ($a["userid"] > $b["userid"]){
+				return 1;
+			}
+		}
+		return $a["amount"] < $b["amount"] ? 1 : -1;
+	}
+
+	function min_bid($a, $b){
+		return $a[1] < $b[1] ? 1 : -1;
+	}
 
 }
 

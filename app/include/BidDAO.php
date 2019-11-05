@@ -98,7 +98,7 @@ class BidDAO {
             $table = "round2_bid";
         }
 
-        $stmt = $conn->prepare("UPDATE $table SET amount=:amount WHERE userid=:userid AND code=:courseid AND section=:section");
+        $stmt = $conn->prepare("UPDATE $table SET amount=:amount, section=:section WHERE userid=:userid AND code=:courseid");
         
         $stmt->bindParam(":userid", $userid);
         $stmt->bindParam(":amount", $amount);
@@ -423,6 +423,53 @@ class BidDAO {
             array_push($result, $this_bid_list);
         }
         return $result;
+    }
+
+    function course_bidded_exists($userid, $courseid, $current_round) {
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        if($current_round == 1) {
+            $table = "round1_bid";
+        } elseif($current_round == 2) {
+            $table = "round2_bid";
+        }
+
+        $stmt = $conn->prepare("SELECT * FROM $table WHERE userid=:userid AND code=:courseid");
+
+        $stmt->bindParam(":userid", $userid);
+        $stmt->bindParam(":courseid", $courseid);
+
+        $stmt->execute();
+
+        if($success = $stmt->fetch()){
+            return true;
+        }
+        return false;
+    }
+
+    function get_course_amount($userid, $course, $current_round){
+        $connection_manager = new connection_manager();
+        $conn = $connection_manager->connect();
+
+        if($current_round == 1) {
+            $table = "round1_bid";
+        } elseif($current_round == 2) {
+            $table = "round2_bid";
+        }
+
+        $stmt = $conn->prepare("SELECT * FROM $table WHERE userid=:userid AND code=:courseid");
+
+        $stmt->bindParam(":userid", $userid);
+        $stmt->bindParam(":courseid", $course);
+
+        $stmt->execute();
+
+        if($row = $stmt->fetch()) {
+            return $row['amount'];
+        }
+        
+        return false;
     }
 }
 
