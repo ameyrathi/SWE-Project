@@ -554,7 +554,7 @@ function doBootstrap() {
                             
                             //class timetable clash
                             //exam timetable clash
-                            if(!$biddao->bid_already_exists($userid, $code, $section, 1)){
+                            if(!$biddao->course_bidded_exists($userid, $code, 1)){
                                 $no_clash_check_success = true;
                                 if($sectiondao->is_valid_section($code, $section)){
                                     $bidding_class = $sectiondao->get_class_day_start_end($code, $section);
@@ -575,11 +575,9 @@ function doBootstrap() {
                                             $no_clash_check_success = false;
                                             if(!$class_clash_check) {
                                                 array_push($bid_row_errors, "class timetable clash");
-                                                break;
                                             }
                                             if(!$exam_clash_check) {
                                                 array_push($bid_row_errors, "exam timetable clash");
-                                                break;
                                             }
                                         }
                                     }
@@ -608,8 +606,8 @@ function doBootstrap() {
                             }
 
                             //not enough e-dollar
-                            if($biddao->bid_already_exists($userid, $code, $section, 1)){
-                                $updated_amount = $studentdao->get_balance($userid) + $biddao->get_amount($userid, $code, $section, 1);
+                            if($biddao->course_bidded_exists($userid, $code, 1)){
+                                $updated_amount = $studentdao->get_balance($userid) + $biddao->get_course_amount($userid, $code, 1);
                                 if($amount > $updated_amount){
                                     array_push($bid_row_errors, "not enough e-dollar");
                                 }
@@ -627,7 +625,7 @@ function doBootstrap() {
 
                         $pending_bidded_sections = $biddao->get_pending_bids_and_amount($userid, 1);
                         foreach($pending_bidded_sections as [$existing_course, $existing_section, $existing_amount]) {
-                            if($existing_course == $code && $existing_section == $section) { // if bid for this course+section already exists
+                            if($existing_course == $code) { // if bid for this course+section already exists
                                 $update_bid_success = $biddao->update_bid_for_bootstrap($userid, $amount, $code, $section);
 
                                 $refund_balance_success = $studentdao->add_balance($userid, $existing_amount); // refund $ for existing bid
@@ -671,6 +669,7 @@ function doBootstrap() {
     if(!in_array("input files not found", $errors)){
         $biddingrounddao = new BiddingRoundDAO();
         $biddingrounddao->start_round(1);
+        sort($num_record_loaded);
         return [$num_record_loaded, $errors];
     }
     return "failed";
