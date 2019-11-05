@@ -1,10 +1,13 @@
 <?php
     require_once '../include/common.php';
     require_once '../include/token.php';
+    $sortclass = new Sort();
 
     // isMissingOrEmpty(...) is in common.php
     $errors = [ isMissingOrEmpty ("username"), isMissingOrEmpty ("password") ];
     $errors = array_filter($errors);
+
+    $errors = $sortclass->sort_it($errors, "common_validation");
 
     if(!isEmpty($errors)){
         $result = [

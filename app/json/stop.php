@@ -4,68 +4,61 @@
     require_once 'json_round1_closing.php';
     require_once 'json_round2_closing.php';
     require_once '../include/token.php';
+    $sortclass = new Sort();
 
     // isMissingOrEmpty(...) is in common.php
     $errors = [ isMissingOrEmpty ("token")];
     $errors = array_filter($errors);
+    
+    if(isset($_GET["token"]) && $_GET["token"] != "") {
+        if(!verify_token($_GET["token"])) { // if invalid token
+            $errors[] = "invalid token";
+        }
+    }
 
-    if (!isEmpty($errors)) { // if missing or empty token
+    // if there are common validation errors
+    if(!isEmpty($errors)) {
+        $errors = $sortclass->sort_it($errors, "common_validation");
+
         $result = [
             "status" => "error",
             "message" => array_values($errors)
         ];
-    }
-    else{
-        if(isset($_GET["token"])) {
-            if(!verify_token($_GET["token"])) { // if invalid token
-                $result = [
-                    "status" => "error",
-                    "message" => ["invalid token"]
-                ];
-            }
-            else{
-                $biddingrounddao = new BiddingRoundDAO();
-                $round = $biddingrounddao->get_round();
-                $status = $biddingrounddao->get_status();
+    } else { // if there are no common validation errors
+        $biddingrounddao = new BiddingRoundDAO();
+        $round = $biddingrounddao->get_round();
+        $status = $biddingrounddao->get_status();
 
-                if($status == "Not Started"){
+        if($status == "Not Started"){
+            $result = [
+                "status" => "error",
+                "message" => ["round already ended"]
+            ];
+        }
+        else if($status == "Ongoing"){
+            $stop = $biddingrounddao->stop_round($round);
+            if($stop){
+                if($round == 1){
+                    json_close_bidding_round1();
                     $result = [
-                        "status" => "error",
-                        "message" => ["round already ended"]
+                        "status" => "success"
                     ];
                 }
-                else if($status == "Ongoing"){
-                    $stop = $biddingrounddao->stop_round($round);
-                    if($stop){
-                        if($round == 1){
-                            json_close_bidding_round1();
-                            $result = [
-                                "status" => "success"
-                            ];
-                        }
-                        else{
-                            json_close_bidding_round2();
-                            $result = [
-                                "status" => "success"
-                            ];
-                        }
-                    }
-                }
                 else{
-                    if($status == "Ended"){
-                        $result = [
-                            "status" => "error",
-                            "message" => ["round already ended"]
-                        ];
-                    }
+                    json_close_bidding_round2();
+                    $result = [
+                        "status" => "success"
+                    ];
                 }
             }
         }
         else{
-            $result =[
-                "status" => "error",
-                "message" => ["HTTP REQUEST NOT FOUND"]
-            ];
+            if($status == "Ended"){
+                $result = [
+                    "status" => "error",
+                    "message" => ["round already ended"]
+                ];
+            }
         }
     }
 

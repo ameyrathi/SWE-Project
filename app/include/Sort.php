@@ -102,7 +102,14 @@ class Sort {
 
 	function min_bid($a, $b){
 		return $a[1] < $b[1] ? 1 : -1;
-	}
+    }
+    
+    function common_validation($a, $b) {
+        $a_field = explode(" ", $a)[1];
+        $b_field = explode(" ", $b)[1];
+
+        return $a_field > $b_field ? 1 : -1;
+    }
 
 }
 
