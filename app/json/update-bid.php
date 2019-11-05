@@ -13,7 +13,6 @@
             "status" => "error",
             "message" => array_values($errors)
         ];
-        sort($result["message"]);
     }
     else{
         if(isset($_GET["token"])) {
@@ -62,7 +61,6 @@
                             "status" => "error",
                             "message" => $errors
                         ];
-                        sort($result["message"]);
                     }
                     else{
             
@@ -123,7 +121,6 @@
                                 "status" => "error",
                                 "message" => $errors
                             ];
-                            sort($result["message"]);
                         }
                         else{
 
@@ -305,7 +302,6 @@
                                     "status" => "error",
                                     "message" => $errors
                                 ];
-                                sort($result["message"]);
                             }
                             else{
                                 if($biddao->course_bidded_exists($userid, $course, $round)){

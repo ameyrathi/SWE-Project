@@ -11,7 +11,6 @@
             "status" => "error",
             "message" => array_values($errors)
         ];
-        sort($result["message"]);
     }
     else{
         $username = $_POST["username"];

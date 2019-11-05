@@ -12,7 +12,6 @@
             "status" => "error",
             "message" => array_values($errors)
         ];
-        sort($result["message"]);
     }
     else{
         if(isset($_GET["token"])) {
@@ -101,7 +100,6 @@
                                 "status" => "error",
                                 "message" => $errors
                             ];
-                            sort($result["message"]);
                         }
                         else{
                             if($successfuldao->check_success($userid, $course, $section, 1)){

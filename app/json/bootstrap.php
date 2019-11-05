@@ -205,7 +205,6 @@
                                         "line" => $student_row_count,
                                         "message" => $student_row_errors
                                     ];
-                                    sort($error["message"]);
                                     array_push($json_errors, $error);
                                 }
                                 $student_row_count++;
@@ -284,7 +283,6 @@
                                         "line" => $course_row_count,
                                         "message" => $course_row_errors
                                     ];
-                                    sort($error["message"]);
                                     array_push($json_errors, $error);
                                 }
                                 $course_row_count++;
@@ -409,7 +407,6 @@
                                         "line" => $section_row_count,
                                         "message" => $section_row_errors
                                     ];
-                                    sort($error["message"]);
                                     array_push($json_errors, $error);
                                 }
                                 $section_row_count++;
@@ -463,7 +460,6 @@
                                         "line" => $prerequisite_row_count,
                                         "message" => $prerequisite_row_errors
                                     ];
-                                    sort($error["message"]);
                                     array_push($json_errors, $error);
                                 }
                                 $prerequisite_row_count++;
@@ -527,7 +523,6 @@
                                         "line" => $course_completed_row_count,
                                         "message" => $course_completed_row_errors
                                     ];
-                                    sort($error["message"]);
                                     array_push($json_errors, $error);
                                 }
                                 $course_completed_row_count++;
@@ -709,7 +704,6 @@
                                         "line" => $bid_row_count,
                                         "message" => $bid_row_errors
                                     ];
-                                    sort($error["message"]);
                                     array_push($json_errors, $error);
                                 }
                                 $bid_row_count++;
