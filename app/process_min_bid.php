@@ -61,11 +61,7 @@ function process_min_bid($course, $section) {
             }
         } else { // if more than 1 bid at clearing price, aka all clearing price bids fail
             foreach($round2_pending_bids as [$this_userid, $this_amount]) {
-                if($this_amount == $clearing_price) {
-                    $biddao->update_round2_bid_status($this_userid, $course, "Pending, fail");
-                } else {
-                    $biddao->update_round2_bid_status($this_userid, $course, "Pending, successful");
-                }
+                $biddao->update_round2_bid_status($this_userid, $course, "Pending, successful");
             }
         }
 
