@@ -127,8 +127,8 @@
                         }
                         else{
 
-                            if($biddao->bid_already_exists($userid, $course, $section, $round)){
-                                $previous_bid_amount = $biddao->get_amount($userid, $course, $section, $round);
+                            if($biddao->course_bidded_exists($userid, $course, $round)){
+                                $previous_bid_amount = $biddao->get_course_amount($userid, $course, $round);
                                 $current_balance = $studentdao->get_balance($userid);
                                 $balance_after_dropping = $previous_bid_amount + $current_balance;
 
@@ -148,13 +148,21 @@
                                 if($amount > $studentdao->get_balance($userid)){
                                     array_push($errors, "insufficient e$");
                                 }
+                                else{
+                                    if($round == 2){ // if round 2, update real-time bid info
+                                        $min_bid = process_min_bid($course, $section);
+                                        if($amount < $min_bid){
+                                            array_push($errors, "bid too low");
+                                        }
+                                    }
+                                }
                             }
 
                             $pending_bidded_sections = $biddao->get_pending_bids_and_amount($userid, $round);
 
                             //class timetable clash
                             //exam timetable clash
-                            if(!$biddao->bid_already_exists($userid, $course, $section, $round)){
+                            if(!$biddao->course_bidded_exists($userid, $course, $round)){
                                 $no_clash_check_success = true;
                                 if($sectiondao->is_valid_section($course, $section)){
                                     $bidding_class = $sectiondao->get_class_day_start_end($course, $section);
@@ -249,7 +257,7 @@
                             if($round == 1) { // round 1 ongoing
                                 $pending_bidded_sections = $biddao->get_pending_bids_and_amount($userid, 1);
 
-                                if(!$biddao->bid_already_exists($userid, $course, $section, 1)) {
+                                if(!$biddao->course_bidded_exists($userid, $course, 1)) {
                                     // if this is a NEW bid
                                     // (if update of prev bid, definitely won't exceed section limit)
                                     if(count($pending_bidded_sections) == 5) {
@@ -300,14 +308,17 @@
                                 sort($result["message"]);
                             }
                             else{
-                                if($biddao->bid_already_exists($userid, $course, $section, $round)){
-                                    $previous_bid_amount = $biddao->get_amount($userid, $course, $section, $round); // bid to be replaced
-
+                                if($biddao->course_bidded_exists($userid, $course, $round)){
+                                    $previous_bid_amount = $biddao->get_course_amount($userid, $course, $round); // bid to be replaced
                                     $success = $biddao->update_bid($userid, $amount, $course, $section, $round) && $studentdao->add_balance($userid, $previous_bid_amount) && $studentdao->deduct_balance($userid, $amount);
                                     if($success){
                                         $result = [
                                             "status" => "success"
                                         ];
+
+                                        if($round == 2){
+                                            process_min_bid($course, $section);
+                                        }
                                     }
                                 } else { // NEW bid
                                     $success = $biddao->add_bid($userid, $amount, $course, $section, $round) && $studentdao->deduct_balance($userid, $amount);
@@ -315,6 +326,10 @@
                                         $result = [
                                             "status" => "success"
                                         ];
+
+                                        if($round == 2){
+                                            process_min_bid($course, $section);
+                                        }
                                     }
                                 }
                             }
@@ -385,11 +400,7 @@
                 }
             } else { // if more than 1 bid at clearing price, aka all clearing price bids fail
                 foreach($round2_pending_bids as [$this_userid, $this_amount]) {
-                    if($this_amount == $clearing_price) {
-                        $biddao->update_round2_bid_status($this_userid, $course, "Pending, fail");
-                    } else {
-                        $biddao->update_round2_bid_status($this_userid, $course, "Pending, successful");
-                    }
+                    $biddao->update_round2_bid_status($this_userid, $course, "Pending, successful");
                 }
             }
     

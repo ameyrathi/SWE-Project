@@ -20,7 +20,7 @@
                 $result = [
                     "status" => "error",
                     "message" => ["invalid token"]
-                    ];
+                ];
             }
             else{
                 if(isset($_GET["r"])){
@@ -208,7 +208,7 @@
             }
         }
         else{
-            $result =[
+            $result = [
                 "status" => "error",
                 "message" => ["HTTP REQUEST NOT FOUND"]
             ];

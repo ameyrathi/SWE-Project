@@ -57,7 +57,13 @@ function json_close_bidding_round1(){
 
             $num_successful_bids = 0;
 
-            if($array_of_bids[$capacity-2][1] == $clearing_price) { // if more than 1 clearing price bid
+            if($capacity == 1) {
+                [$userid, $amount] = $array_of_bids[0];
+                $successfuldao->add_success($userid, $amount, $course, $section, 1); // bid success
+
+                $num_successful_bids++;
+            }
+            elseif($array_of_bids[$capacity-2][1] == $clearing_price) { // if more than 1 clearing price bid
                 for($i=0; $i<count($array_of_bids); $i++) {
                     [$userid, $amount] = $array_of_bids[$i];
                     if($amount == $clearing_price) { // if this bid amount = clearing price, bid fails

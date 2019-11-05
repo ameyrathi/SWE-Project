@@ -135,20 +135,10 @@
                                 ];
                             }
                             else{
-                                if($round == 1){
-                                    $result = [
-                                        "status" => "error",
-                                        "message" => ["round 1 ongoing"]
-                                    ];
-                                }
-                                else{
-                                    if($round == 0.5){
-                                        $result = [
-                                            "status" => "error",
-                                            "message" => ["round 1 not started"]
-                                        ];
-                                    }
-                                }
+                                $result = [
+                                    "status" => "success",
+                                    "students" => $success
+                                ];
                             }
                         }
                     }

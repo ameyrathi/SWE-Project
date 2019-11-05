@@ -73,9 +73,9 @@
                         "school" => $school,
                         "title" => $title,
                         "description" => $description,
-                        "examdate" => $examdate,
-                        "examstart" => date('Gi',strtotime($examstart)),
-                        "examend" => date('Gi',strtotime($examend))
+                        "exam date" => $examdate,
+                        "exam start" => date('Gi',strtotime($examstart)),
+                        "exam end" => date('Gi',strtotime($examend))
                     ];
 
                     array_push($courseJSON, $temp_arr);
