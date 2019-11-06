@@ -36,6 +36,7 @@
         $coursecompleteddao = new CourseCompletedDAO();
         $studentdao = new StudentDAO();
 
+
         $errors = [];
         $is_valid_section = true;
         $is_numeric = true;
@@ -52,9 +53,13 @@
         }
 
         if($is_valid_section && $is_numeric) {
-
             if($amount < 10) {
                 array_push($errors, "Minimum bid cannot be less than $10.");
+            }
+
+            $size = $sectiondao->get_size($courseid, $section);
+            if($size == 0) {
+                $errors[] = "There is no vacancy for this section.";
             }
 
             $courses_completed = $coursecompleteddao->get_completed_courses($_SESSION["userid"]);
@@ -167,7 +172,11 @@
         }
 
         if($is_valid_section) {
-
+            $vacancy = $sectionresultsdao->get_available_seats($courseid, $section);
+            if($vacancy == 0) {
+                $errors[] = "There is no vacancy for this section.";
+            }
+            
             // course already completed check
             $courses_completed = $coursecompleteddao->get_completed_courses($_SESSION["userid"]);
             foreach($courses_completed as $course_completed) {
