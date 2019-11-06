@@ -88,8 +88,19 @@
                     <th>Section</th>
                     <th>Lesson Time</th>
                     <th>Instructor</th>
-                    <th>Action</th>
-                </tr>";
+                ";
+
+                if($current_round == 2) {
+                    echo "
+                    <th>Vacancy</th>
+                    <th>Min Bid</th>
+                    ";
+                }
+                
+                echo "
+                <th>Action</th>
+                </tr>
+                ";
 
                 $section_details = $sectiondao->get_course_sections_times($searched_course);
                 $course_name = $coursedao->get_course_title($searched_course);
@@ -101,6 +112,10 @@
                     $this_day = $days_of_week[$this_day];
                     $this_start = date("H:i", strtotime($this_start));
                     $this_end = date("H:i", strtotime($this_end));
+                    if($current_round == 2) {
+                        $min_bid = $sectionresultsdao->get_min_bid($searched_course, $this_section);
+                        $vacancy = $sectionresultsdao->get_available_seats($searched_course, $this_section);
+                    }
 
                     echo "
                     <tr>
@@ -108,6 +123,16 @@
                         <td>$this_section</td>
                         <td>$this_day $this_start-$this_end</td>
                         <td>$this_instructor</td>
+                    ";
+
+                    if($current_round == 2) {
+                        echo "
+                        <td>$vacancy</td>
+                        <td>$min_bid</td>
+                        ";
+                    }
+
+                    echo "
                         <td>
                             <form id='drop_form'>
                                 <input type='hidden' name='token' value=$token>
@@ -160,44 +185,6 @@
                             $error_counter++;
                         }
                     }
-                }
-            }
-        }
-
-        if($current_round == 2) {
-            $round2_pending_bids = $biddao->get_pending_bids_and_amount($_SESSION["userid"], 2);
-
-            if($round2_pending_bids != []) {
-                echo "<br><strong>Real-time Bid Information:</strong><br><br>";
-                echo "
-                <table id='real_time_bids'>
-                <tr>
-                    <th>Course</th>
-                    <th>Section</th>
-                    <th>Available Seats</th>
-                    <th>Minimum Bid</th>
-                    <th>Your Bid</th>
-                    <th>Bid Status</th>
-                </tr>
-                ";
-
-                foreach($round2_pending_bids as $this_bid) {
-                    [$this_course, $this_section, $this_amount] = $this_bid;
-
-                    $total_available_seats = $sectionresultsdao->get_available_seats($this_course, $this_section);
-                    $min_bid = $sectionresultsdao->get_min_bid($this_course, $this_section);
-                    $bid_status = $biddao->get_round2_bid_status($_SESSION["userid"], $this_course);
-
-                    echo "
-                    <tr>
-                        <td>$this_course</td>
-                        <td>$this_section</td>
-                        <td>$total_available_seats</td>
-                        <td>$$min_bid</td>
-                        <td>$$this_amount</td>
-                        <td>$bid_status</td>
-                    </tr>
-                    ";
                 }
             }
         }
