@@ -77,6 +77,44 @@
         <input type='submit' name='submit_search' value='Search Sections'>
         </form><br>";
 
+        $to_echo_below_table = "";
+
+        if(isset($_GET['bid_amount'])) { // if user submitted a bid
+            if(trim($_GET['bid_amount']) == "") {
+                $to_echo_below_table = "<span id='error'>Please enter a bid amount.</span><br>";
+            } else {
+                if($current_round == 1) {
+                    $bid_check_success = round1_bid_check($bid_amount, $bid_course, $bid_section);
+                    if($bid_check_success == "success") {
+                        $balance = $studentdao->get_balance($_SESSION["userid"]);
+                        $to_echo_below_table = "You have successfully bidded $$bid_amount for $bid_course $bid_section.<br>
+                            Your current balance is $$balance.";
+                    } else { // return errors
+                        $to_echo_below_table = "<strong><span id='error'>Errors:</span></strong><br>";
+                        $error_counter = 1;
+                        foreach($bid_check_success as $error) {
+                            $to_echo_below_table .= "<span id='error'>$error_counter. $error</span><br>";
+                            $error_counter++;
+                        }
+                    }
+                } elseif($current_round == 2) {
+                    $bid_check_success = round2_bid_check($bid_amount, $bid_course, $bid_section);
+                    if($bid_check_success == "success") {
+                        $balance = $studentdao->get_balance($_SESSION["userid"]);
+                        $to_echo_below_table = "You have successfully bidded $$bid_amount for $bid_course $bid_section.<br>
+                            Your current balance is $$balance.<br>";                        
+                    } else { // return errors
+                        $to_echo_below_table = "<strong><span id='error'>Errors:</span></strong><br>";
+                        $error_counter = 1;
+                        foreach($bid_check_success as $error) {
+                            $to_echo_below_table .= "<span id='error'>$error_counter. $error</span><br>";
+                            $error_counter++;
+                        }
+                    }
+                }
+            }
+        }
+
         if($searched_course != "") {
             if($coursedao->get_course($searched_course) == false) {
                 echo "<span id='error'>Course $searched_course does not exist.</span><br>"; 
@@ -153,41 +191,11 @@
             }
         }
 
-        if(isset($_GET['bid_amount'])) { // if user submitted a bid
-            if(trim($_GET['bid_amount']) == "") {
-                echo "<span id='error'>Please enter a bid amount.</span><br>";
-            } else {
-                if($current_round == 1) {
-                    $bid_check_success = round1_bid_check($bid_amount, $bid_course, $bid_section);
-                    if($bid_check_success == "success") {
-                        $balance = $studentdao->get_balance($_SESSION["userid"]);
-                        echo "You have successfully bidded $$bid_amount for $bid_course $bid_section.<br>
-                            Your current balance is $$balance.";
-                    } else { // return errors
-                        echo "<strong><span id='error'>Errors:</span></strong><br>";
-                        $error_counter = 1;
-                        foreach($bid_check_success as $error) {
-                            echo "<span id='error'>$error_counter. $error</span><br>";
-                            $error_counter++;
-                        }
-                    }
-                } elseif($current_round == 2) {
-                    $bid_check_success = round2_bid_check($bid_amount, $bid_course, $bid_section);
-                    if($bid_check_success == "success") {
-                        $balance = $studentdao->get_balance($_SESSION["userid"]);
-                        echo "You have successfully bidded $$bid_amount for $bid_course $bid_section.<br>
-                            Your current balance is $$balance.<br>";                        
-                    } else { // return errors
-                        echo "<strong><span id='error'>Errors:</span></strong><br>";
-                        $error_counter = 1;
-                        foreach($bid_check_success as $error) {
-                            echo "<span id='error'>$error_counter. $error</span><br>";
-                            $error_counter++;
-                        }
-                    }
-                }
-            }
+        if($to_echo_below_table != "") {
+            echo $to_echo_below_table;
         }
+
+
     }
 
 ?>

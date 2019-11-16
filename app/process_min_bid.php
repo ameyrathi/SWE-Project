@@ -31,6 +31,7 @@ function process_min_bid($course, $section) {
         foreach($round2_pending_bids as [$this_userid, $this_amount]) {
             $biddao->update_round2_bid_status($this_userid, $course, "Pending, fail");
         }
+        return 10;
         
     // Case 1: If there are less than N bids for the section (where N is the total available seats)
     // The minimum bid value remains the same

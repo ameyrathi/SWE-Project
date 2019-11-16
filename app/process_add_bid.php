@@ -163,6 +163,7 @@
 
         $errors = [];
         $is_valid_section = true;
+        $is_numeric = true;
         $balance = $studentdao->get_balance($_SESSION["userid"]);
 
         // invalid course / section check
@@ -171,7 +172,12 @@
             array_push($errors, "$courseid $section does not exist.");
         }
 
-        if($is_valid_section) {
+        if(!is_numeric($amount)) {
+            $is_numeric = false;
+            $errors[] = "Please enter a numeric amount";
+        }
+
+        if($is_valid_section && $is_numeric) {
             $vacancy = $sectionresultsdao->get_available_seats($courseid, $section);
             if($vacancy == 0) {
                 $errors[] = "There is no vacancy for this section.";
