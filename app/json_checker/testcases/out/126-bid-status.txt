@@ -1,0 +1,73 @@
+{
+    "status": "success",
+    "vacancy": "10",
+    "min-bid-amount": 12.0,
+    "students": [
+        {
+            "userid": "olivia.ng.2009",
+            "amount": 22.0,
+            "balance": 178.0,
+            "status": "pending"
+        },
+        {
+            "userid": "neilson.ng.2009",
+            "amount": 21.0,
+            "balance": 179.0,
+            "status": "pending"
+        },
+        {
+            "userid": "maggie.ng.2009",
+            "amount": 20.0,
+            "balance": 180.0,
+            "status": "pending"
+        },
+        {
+            "userid": "larry.ng.2009",
+            "amount": 19.0,
+            "balance": 181.0,
+            "status": "pending"
+        },
+        {
+            "userid": "ian.ng.2009",
+            "amount": 18.0,
+            "balance": 182.0,
+            "status": "pending"
+        },
+        {
+            "userid": "harry.ng.2009",
+            "amount": 17.0,
+            "balance": 183.0,
+            "status": "pending"
+        },
+        {
+            "userid": "fred.ng.2009",
+            "amount": 15.0,
+            "balance": 185.0,
+            "status": "pending"
+        },
+        {
+            "userid": "eddy.ng.2009",
+            "amount": 14.0,
+            "balance": 186.0,
+            "status": "pending"
+        },
+        {
+            "userid": "dawn.ng.2009",
+            "amount": 13.0,
+            "balance": 187.0,
+            "status": "pending"
+        },
+        {
+            "userid": "calvin.ng.2009",
+            "amount": 12.0,
+            "balance": 188.0,
+            "status": "pending"
+        },
+        {
+            "userid": "ben.ng.2009",
+            "amount": 11.0,
+            "balance": 189.0,
+            "status": "pending"
+        }
+    ]
+}
