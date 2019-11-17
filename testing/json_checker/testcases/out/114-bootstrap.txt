@@ -5,7 +5,7 @@
             "bid.csv": 5
         },
         {
-            "course.csv": 9
+            "course.csv": 10
         },
         {
             "course_completed.csv": 1
@@ -14,7 +14,7 @@
             "prerequisite.csv": 1
         },
         {
-            "section.csv": 13
+            "section.csv": 14
         },
         {
             "student.csv": 2
@@ -177,49 +177,49 @@
         },
         {
             "file": "course.csv",
-            "line": 21,
+            "line": 22,
             "message": [
                 "blank course"
             ]
         },
         {
             "file": "course.csv",
-            "line": 22,
+            "line": 23,
             "message": [
                 "blank school"
             ]
         },
         {
             "file": "course.csv",
-            "line": 23,
+            "line": 24,
             "message": [
                 "blank title"
             ]
         },
         {
             "file": "course.csv",
-            "line": 24,
+            "line": 25,
             "message": [
                 "blank description"
             ]
         },
         {
             "file": "course.csv",
-            "line": 25,
+            "line": 26,
             "message": [
                 "blank exam date"
             ]
         },
         {
             "file": "course.csv",
-            "line": 26,
+            "line": 27,
             "message": [
                 "blank exam start"
             ]
         },
         {
             "file": "course.csv",
-            "line": 27,
+            "line": 28,
             "message": [
                 "blank exam end"
             ]

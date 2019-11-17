@@ -1,0 +1,61 @@
+{
+    "status": "success",
+    "vacancy": 1,
+    "min-bid-amount": 20.0,
+    "students": [
+        {
+            "userid": "winston.ng.2009",
+            "amount": 33.0,
+            "balance": 167.0,
+            "status": "success"
+        },
+        {
+            "userid": "yasir.ng.2009",
+            "amount": 28.0,
+            "balance": 172.0,
+            "status": "success"
+        },
+        {
+            "userid": "xavier.ng.2009",
+            "amount": 24.0,
+            "balance": 176.0,
+            "status": "success"
+        },
+        {
+            "userid": "calvin.ng.2009",
+            "amount": 22.0,
+            "balance": 166.0,
+            "status": "success"
+        },
+        {
+            "userid": "kelly.ng.2009",
+            "amount": 21.0,
+            "balance": 179.0,
+            "status": "success"
+        },
+        {
+            "userid": "neilson.ng.2009",
+            "amount": 20.0,
+            "balance": 159.0,
+            "status": "success"
+        },
+        {
+            "userid": "timothy.ng.2009",
+            "amount": 20.0,
+            "balance": 180.0,
+            "status": "success"
+        },
+        {
+            "userid": "ursala.ng.2009",
+            "amount": 20.0,
+            "balance": 180.0,
+            "status": "success"
+        },
+        {
+            "userid": "amy.ng.2009",
+            "amount": 17.0,
+            "balance": 183.0,
+            "status": "success"
+        }
+    ]
+}
