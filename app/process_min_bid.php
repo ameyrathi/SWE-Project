@@ -26,12 +26,17 @@ function process_min_bid($course, $section) {
     // echo "Round 2 bids: $num_round2_pending_bids<br>";
     // echo "Round 2 available seats: $current_available_seats<br>";
 
+    // if no pending bids in round 2
+    if($num_round2_pending_bids == 0) {
+        return $current_min_bid;
+    }
+
     // if 0 vacancies in course
     if($current_available_seats == 0) {
         foreach($round2_pending_bids as [$this_userid, $this_amount]) {
             $biddao->update_round2_bid_status($this_userid, $course, "Pending, fail");
         }
-        return 10;
+        return $current_min_bid;
         
     // Case 1: If there are less than N bids for the section (where N is the total available seats)
     // The minimum bid value remains the same
