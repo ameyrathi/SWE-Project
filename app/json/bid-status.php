@@ -146,7 +146,7 @@
                         $unsuccessful_bids = $unsuccessfuldao->retrieve_unsuccessful_bids($course, $section, 1);
                         $sortclass = new Sort();
 
-                        if(count($bids) === 0 || count($successful_bids) == 0){
+                        if(count($bids) === 0 || count($successful_bids) === 0){
                             $min_bid_amount = 10;
                         }
                         else{
@@ -205,6 +205,7 @@
                             $userid = $bids[$i][0];
                             $amount = $bids[$i][1];
                             $status = $biddao->get_round2_bid_status($userid, $course);
+
                             if($status == "Pending, successful") {
                                 $status = "success";
                             } elseif($status == "Pending, fail") {
@@ -247,8 +248,13 @@
 
                             $round2_bids_sorted_by_amount = $sortclass->sort_it($round2_bids, "min_bid");
 
-                            $min_bid_amount = end($successful_bids)[1];
-                            
+                            if(count($round2_bids) === 0){
+                                $min_bid_amount = 10;
+                            }
+                            else{
+                                $min_bid_amount = end($round2_bids_sorted_by_amount)[1];
+                            }
+
                             $students = [];
 
                             for($i=0; $i<count($bids); $i++){
