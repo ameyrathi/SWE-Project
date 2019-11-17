@@ -151,13 +151,6 @@
                         }
                         else{
                             $min_bid_amount = end($successful_bids)[1];
-                            // if(count(bids) > $size){
-                            //     $new_bids = array_slice($bids_sorted_by_amount, 0, $size);
-                            //     $min_bid_amount = end($new_bids)[1];
-                            // }
-                            // else{
-                            //     $min_bid_amount = end($bids_sorted_by_amount)[1];
-                            // }
                         }
 
                         $students = [];
@@ -253,9 +246,6 @@
                             $bids = array_merge($round1_bids, $round2_bids);
 
                             $round2_bids_sorted_by_amount = $sortclass->sort_it($round2_bids, "min_bid");
-                        
-                            // does process min bid here still means N+1 price or the price of the minimum successful bid
-                            // $min_bid_amount = process_min_bid($course, $section);
 
                             $min_bid_amount = end($successful_bids)[1];
                             
