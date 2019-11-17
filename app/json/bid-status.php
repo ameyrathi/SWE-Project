@@ -133,7 +133,7 @@
                         $result = [
                             "status" => "success",
                             "vacancy" => $vacancy,
-                            "min_bid_amount" => floatval($min_bid_amount),
+                            "min-bid-amount" => floatval($min_bid_amount),
                             "students" => $students
                         ];
                     }
@@ -188,7 +188,7 @@
                         $result = [
                             "status" => "success",
                             "vacancy" => $vacancy,
-                            "min_bid_amount" => floatval($min_bid_amount),
+                            "min-bid-amount" => floatval($min_bid_amount),
                             "students" => $students
                         ];
                     }
@@ -228,7 +228,7 @@
                         $result = [
                             "status" => "success",
                             "vacancy" => $vacancy,
-                            "min_bid_amount" => floatval($min_bid_amount),
+                            "min-bid-amount" => floatval($min_bid_amount),
                             "students" => $students
                         ];
                     }
@@ -270,7 +270,7 @@
                             $result = [
                                 "status" => "success",
                                 "vacancy" => $vacancy,
-                                "min_bid_amount" => floatval($min_bid_amount),
+                                "min-bid-amount" => floatval($min_bid_amount),
                                 "students" => $students
                             ];
                         }
